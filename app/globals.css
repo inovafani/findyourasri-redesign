@@ -98,7 +98,7 @@ a {
   position: absolute;
   left: -9999px;
   top: 0;
-  z-index: 100;
+  z-index: 130;
   padding: 12px 18px;
   background: var(--a-ink);
   color: #fff;
@@ -219,26 +219,6 @@ html.anim-ready .line-mask       { opacity: 0; }
 .pill--sm { height: 40px; padding: 0 18px; font-size: 14px; }
 .pill--lg { height: 50px; padding: 0 24px; font-size: 15px; gap: 10px; }
 
-/* Tag: the small mono capsule used for status lines. */
-.tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 9px 15px;
-  border-radius: 999px;
-  border: 1px solid var(--a-line-soft);
-  font: 500 11px/1 var(--font-mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--a-ink-2);
-}
-.tag__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--a-accent);
-}
-
 /* Mono kicker used on dark grounds. */
 .kicker {
   font: 500 11px/1 var(--font-mono);
@@ -250,7 +230,9 @@ html.anim-ready .line-mask       { opacity: 0; }
 .header {
   position: sticky;
   top: 0;
-  z-index: 40;
+  /* Above the menu sheet (80) so the burger stays reachable while the sheet is
+     open, below the lightbox (120) so a viewed frame covers everything. */
+  z-index: 100;
   background: var(--a-canvas);
   padding: 18px 0 14px;
   transition: padding 260ms var(--ease), background-color 260ms var(--ease);
@@ -671,7 +653,7 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   color: var(--a-ink);
   text-wrap: balance;
 }
-.sector__body p:not([class]) {
+.sector__body-text {
   font: 400 14.5px/1.58 var(--font-sans);
   color: var(--a-ink-2);
   text-wrap: pretty;
@@ -793,7 +775,7 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   max-width: 16ch;
   text-wrap: balance;
 }
-.production p:not([class]) {
+.production__body {
   font: 400 14.5px/1.58 var(--font-sans);
   color: rgba(255, 255, 255, .82);
   text-wrap: pretty;
@@ -1038,7 +1020,6 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   gap: 10px;
   margin-top: 6px;
 }
-.contact__foot { margin-top: auto; padding-top: 20px; }
 .contact__media {
   position: relative;
   border-radius: var(--a-r);
@@ -1172,11 +1153,120 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
 }
 .to-top:hover { background: #fff; color: var(--a-black); border-color: #fff; }
 
+/* ---------- phone navigation ---------- */
+/* Both the button and the sheet are off above 860px: the desktop header keeps
+   its inline nav and its CTA exactly as it was. */
+.burger {
+  display: none;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--a-line);
+  background: var(--a-card);
+  cursor: pointer;
+  transition: background-color 200ms var(--ease), border-color 200ms var(--ease);
+}
+.burger:hover { background: var(--a-tint); }
+.burger__bar {
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--a-ink);
+  transition: transform 360ms var(--ease);
+}
+.burger__bar:nth-child(1) { transform: translateY(-4px); }
+.burger__bar:nth-child(2) { transform: translateY(4px); }
+.burger.is-open .burger__bar:nth-child(1) { transform: rotate(45deg); }
+.burger.is-open .burger__bar:nth-child(2) { transform: rotate(-45deg); }
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+}
+.sheet__panel {
+  position: absolute;
+  inset: 0;
+  background: var(--a-canvas);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  overflow-y: auto;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 96px)
+    var(--pad)
+    calc(env(safe-area-inset-bottom, 0px) + 28px);
+}
+
+.sheet__nav {
+  display: flex;
+  flex-direction: column;
+  /* Takes the free height and centres the rows in it, so the list sits in
+     thumb reach rather than up against the header. */
+  flex: 1;
+  justify-content: center;
+}
+.sheet__row {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--a-line-soft);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden; /* the mask the rows rise out of */
+}
+.sheet__row span {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+  padding: 17px 0;
+  font: 500 clamp(28px, 8.4vw, 38px)/1.05 var(--font-sans);
+  letter-spacing: -.03em;
+  color: var(--a-ink);
+  transition: color 200ms var(--ease);
+}
+.sheet__row:hover span { color: var(--a-accent); }
+.sheet__row i {
+  font: 500 11px/1 var(--font-mono);
+  font-style: normal;
+  color: var(--a-ink-3);
+}
+
+.sheet__foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+.sheet__email {
+  font: 500 18px/1.2 var(--font-sans);
+  letter-spacing: -.02em;
+  color: var(--a-ink);
+  border-bottom: 1px solid var(--a-line);
+  padding-bottom: 4px;
+}
+.sheet__phone { font: 400 15px/1 var(--font-sans); color: var(--a-ink-2); }
+.sheet__foot .pill { width: 100%; justify-content: center; margin-top: 10px; }
+
+/* ---------- archive rail (phone only) ---------- */
+.mosaic__rail { display: none; }
+
 /* ---------- lightbox ---------- */
 .lb {
   position: fixed;
   inset: 0;
-  z-index: 90;
+  z-index: 120;
   display: grid;
   grid-template-rows: auto 1fr auto;
   padding: clamp(12px, 2vw, 24px);
@@ -1276,18 +1366,167 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   .lb__caption { font-size: 13px; }
 }
 
-/* ---------- responsive ---------- */
-@media (max-width: 860px) {
-  .nav { display: none; }
-  .header__row { gap: 12px; }
-  .hero__lede { text-align: left; }
-  .hero__aside { align-items: flex-start; }
-  .hero__actions { justify-content: flex-start; }
-  .footer__year { align-items: flex-start; }
-}
+/* ============================================================
+   Responsive
+   Everything below is phone and small-tablet only. Nothing in this block
+   applies at desktop width — the desktop layout is the one above, untouched.
+   ============================================================ */
 
-@media (max-width: 640px) {
+@media (max-width: 860px) {
+  /* ---- header becomes logo + burger ---- */
+  .nav,
+  .header__cta { display: none; }
+  .burger { display: inline-flex; }
+  .header__row { gap: 12px; }
+
+  /* ---- hero: give the photograph room, stop the blocks colliding ---- */
+  .hero__frame {
+    /* Content alone ran to ~500px, which left the frame with no visible
+       photograph between the two blocks. */
+    min-height: min(86svh, 720px);
+  }
+  .hero__top { padding: 16px; gap: 14px; }
+  /* The eyebrow repeats what the header and the copy already say, and on a
+     phone it only costs the photograph height. */
+  .hero__eyebrow { display: none; }
+  .hero__card {
+    /* Hugs its own text rather than stretching the full frame width — it is a
+       credit line, not a banner. max-width keeps it inside on narrow screens. */
+    min-width: 0;
+    max-width: 100%;
+    align-self: flex-start;
+    gap: 12px;
+    padding: 12px 13px;
+  }
+  .hero__card-title { font-size: 13.5px; }
+  .hero__card-sub { font-size: 11.5px; margin-top: 4px; }
+  .hero__card-arrow { width: 24px; height: 24px; }
+
+  .hero__bottom {
+    padding: 18px 16px 20px;
+    gap: 18px;
+  }
+  .hero__title { font-size: clamp(30px, 8.6vw, 40px); letter-spacing: -.03em; }
+  .hero__aside { align-items: flex-start; gap: 18px; width: 100%; }
+  .hero__lede { text-align: left; font-size: 14.5px; max-width: none; }
+  .hero__actions { justify-content: flex-start; width: 100%; gap: 10px; }
+  /* Ragged button widths read as a mistake at this size. */
+  .hero__actions .pill { flex: 1 1 100%; justify-content: center; height: 46px; }
+
+  /* ---- who we are: cards hug their content instead of holding a desktop
+          minimum and opening a void in the middle ---- */
+  .statement__lead { font-size: clamp(21px, 6.2vw, 27px); max-width: none; }
+  .statement__grid > * { min-height: 0; }
+  .statement__grid { gap: 10px; }
+  .card { padding: 20px; }
+  .stat-card,
+  .quote-card,
+  .strip-card {
+    justify-content: flex-start;
+    gap: 20px;
+  }
+  .stat-card__figure { font-size: 40px; }
+  .strip-card__media img { height: 130px; }
+  .photo-card { min-height: 0; }
+  .photo-card__body { min-height: 0; padding: 20px; gap: 56px; }
+  .photo-card__figure { font-size: 40px; }
+
+  /* ---- sectors ---- */
   .sector--flip .sector__media,
   .sector--flip .sector__body { order: 0; }
+  .sector__media { min-height: clamp(260px, 62vw, 340px); }
+  .sector__body { padding: 18px 14px 14px; gap: 13px; }
+  .sector__title { font-size: clamp(22px, 6.4vw, 28px); }
+  /* The bottom-pinned proof line leaves a hole once the column is narrow. */
+  .sector__proof { margin-top: 4px; }
+
+  /* ---- services ---- */
+  .services__grid { gap: 10px; }
+  .service__claim { font-size: 17px; }
+
+  /* ---- how we shoot: a panel, not a billboard ---- */
+  .production {
+    padding: 22px 20px;
+    gap: 16px;
+    margin-top: 10px;
+  }
+  .production__title {
+    margin-top: 10px;
+    font-size: clamp(20px, 5.8vw, 24px);
+    max-width: none;
+  }
+  .production__body { font-size: 14px; }
+
+  /* ---- process, accountability, contact ---- */
+  .steps, .measure__cols { gap: 10px; }
+  .measure { padding: 22px 20px; }
+  .measure__cols { gap: 4px; }
+  .contact__body { padding: 20px 16px; gap: 14px; }
+  .contact__title { font-size: clamp(27px, 8vw, 38px); }
+  .contact__actions .pill { flex: 1 1 100%; justify-content: center; }
+  .contact__media { min-height: 260px; }
+
+  /* ---- footer ---- */
+  .footer { padding: 28px 20px 20px; }
+  .footer__year { align-items: flex-start; }
+  .footer__cols { gap: 28px; margin-top: 32px; }
   .footer__bar { justify-content: flex-start; }
+}
+
+/* ---- the archive becomes a slider ---- */
+@media (max-width: 700px) {
+  .mosaic {
+    display: flex;
+    grid-template-areas: none;
+    gap: 12px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    /* Bleed to the screen edges, then pad back in, so a slide can sit centre
+       stage with the next one peeking. */
+    margin-inline: calc(var(--pad) * -1);
+    padding-inline: var(--pad);
+  }
+  .mosaic::-webkit-scrollbar { display: none; }
+
+  .mosaic figure {
+    flex: 0 0 78%;
+    aspect-ratio: 4 / 5;
+    scroll-snap-align: center;
+  }
+  .mosaic__tile { cursor: pointer; }
+
+  .mosaic__rail {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 16px;
+  }
+  .mosaic__dots { display: flex; align-items: center; gap: 6px; }
+  .mosaic__dot {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--a-line);
+    cursor: pointer;
+    transition: width 320ms var(--ease), background-color 320ms var(--ease);
+  }
+  .mosaic__dot.is-on { width: 20px; background: var(--a-ink); }
+  .mosaic__pos {
+    font: 500 11px/1 var(--font-mono);
+    letter-spacing: .07em;
+    color: var(--a-ink-3);
+    font-variant-numeric: tabular-nums;
+    flex: none;
+  }
+}
+
+/* The sheet only ever belongs to the phone header. */
+@media (min-width: 861px) {
+  .sheet { display: none; }
 }

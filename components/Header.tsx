@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useRef } from 'react';
 
+import MobileMenu from '@/components/MobileMenu';
 import SmoothLink from '@/components/SmoothLink';
 import { navLinks } from '@/lib/content';
 
@@ -63,12 +64,14 @@ export default function Header() {
           ))}
         </nav>
 
-        <SmoothLink href="#contact" className="pill pill--ink pill--sm hdr-item magnetic">
+        <SmoothLink href="#contact" className="pill pill--ink pill--sm hdr-item magnetic header__cta">
           Start a conversation
           <span className="pill__arrow" aria-hidden="true">
             &#8599;
           </span>
         </SmoothLink>
+
+        <MobileMenu />
       </div>
     </header>
   );

@@ -119,6 +119,29 @@ double-invokes effects in dev) has the element mid-flight. For the same reason
 the global `a` transition covers `color` and `border-color` but deliberately not
 `opacity`.
 
+## Mobile
+
+The phone layout is not the desktop one reflowed. Everything mobile-specific
+lives in the `@media (max-width: 860px)` and `(max-width: 700px)` blocks at the
+bottom of `globals.css`, plus two components; **nothing above those widths is
+touched**, so the desktop layout is exactly the one the design canvas specifies.
+
+- **Navigation** becomes a burger ([`components/MobileMenu.tsx`](components/MobileMenu.tsx)).
+  The sheet wipes down from the header and the rows rise out of their own masks,
+  the same language the hero and the headlines use. The header deliberately
+  outranks the sheet (z-index 100 vs 80) so the burger stays reachable and can
+  morph to an X while the sheet is open; the lightbox outranks both at 120.
+  Escape closes it, the body is scroll-locked while open, and focus returns to
+  the button. A `<noscript>` block in `layout.tsx` restores the inline links,
+  since without JS the burger would leave the phone with no navigation at all.
+- **Cards hug their content.** The desktop `min-height: 280px` on the "who we
+  are" tiles, combined with `justify-content: space-between`, opened a void in
+  the middle of every card once they went single-column. Both are dropped below
+  860px.
+- **The archive becomes a slider** — an edge-to-edge scroll-snap rail with a dot
+  index and a counter, instead of twelve stacked frames. Same markup and the
+  same lightbox; only the layout switches.
+
 ## Verification hook
 
 `?shot` disables all motion and renders the page at rest — useful for

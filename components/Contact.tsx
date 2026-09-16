@@ -30,12 +30,6 @@ export default function Contact() {
               {site.phone}
             </a>
           </div>
-          <p className="contact__foot">
-            <span className="tag reveal">
-              <span className="tag__dot" aria-hidden="true" />
-              From Bali. Built to grow.
-            </span>
-          </p>
         </div>
 
         <div className="contact__media">

@@ -35,7 +35,7 @@ export default function Sectors() {
             <div className="sector__body">
               <p className="sector__kicker reveal">{s.kicker}</p>
               <h3 className="sector__title reveal">{s.title}</h3>
-              <p className="reveal">{s.body}</p>
+              <p className="sector__body-text reveal">{s.body}</p>
               <p className="sector__proof reveal">{s.proof}</p>
             </div>
           </article>

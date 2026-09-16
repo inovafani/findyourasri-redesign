@@ -75,7 +75,6 @@ export default function Footer() {
           &#169; 2026 Asri. All photography shot in Indonesia by Asri.
         </p>
         <div className="footer__sign">
-          <p className="kicker reveal">From Bali. Built to grow.</p>
           <ToTop />
         </div>
       </div>

@@ -56,11 +56,11 @@ export default function Services() {
           </p>
           <p className="production__title">Full crew. Permits. Finishing.</p>
         </div>
-        <p className="reveal">
+        <p className="production__body reveal">
           Full in-house crew: direction, camera, drone, underwater, edit. Permits, fixers, boats and
           remote logistics handled by us.
         </p>
-        <p className="reveal">
+        <p className="production__body reveal">
           Colour, sound and finishing to broadcast standard. Every asset cut to platform-native
           ratios, not cropped as an afterthought.
         </p>

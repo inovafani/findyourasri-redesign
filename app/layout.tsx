@@ -90,6 +90,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
 
+        {/* The phone header hands navigation to a JS-driven sheet, so without
+            JS there would be no nav at all. Fall back to the inline links. */}
+        <noscript>
+          <style>{`@media (max-width: 860px){
+            .burger{display:none!important}
+            .nav{display:flex!important;flex-wrap:wrap;gap:10px 14px;font-size:13.5px}
+            .nav__sep{display:none}
+          }`}</style>
+        </noscript>
+
         <a className="skip-link" href="#main">
           Skip to content
         </a>

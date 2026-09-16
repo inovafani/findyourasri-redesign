@@ -19,6 +19,9 @@ import { mosaic } from '@/lib/content';
 export default function Gallery() {
   const [index, setIndex] = useState<number | null>(null);
   const [closing, setClosing] = useState(false);
+  // Which slide is centred, for the rail under the phone slider.
+  const [slide, setSlide] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   const imageRef = useRef<HTMLImageElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -151,6 +154,52 @@ export default function Gallery() {
     });
   }, [index]);
 
+  /* ---------- phone slider: which frame is centred ---------- */
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    let frame = 0;
+    const read = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        // Above the slider breakpoint the grid does not scroll, so this is a
+        // no-op rather than a branch on window width.
+        const middle = track.scrollLeft + track.clientWidth / 2;
+        let nearest = 0;
+        let best = Infinity;
+        Array.from(track.children).forEach((child, i) => {
+          const el = child as HTMLElement;
+          const centre = el.offsetLeft + el.offsetWidth / 2;
+          const gap = Math.abs(centre - middle);
+          if (gap < best) {
+            best = gap;
+            nearest = i;
+          }
+        });
+        setSlide(nearest);
+      });
+    };
+
+    read();
+    track.addEventListener('scroll', read, { passive: true });
+    return () => {
+      track.removeEventListener('scroll', read);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const goToSlide = (i: number) => {
+    const track = trackRef.current;
+    const target = track?.children[i] as HTMLElement | undefined;
+    if (!track || !target) return;
+    track.scrollTo({
+      left: target.offsetLeft - (track.clientWidth - target.offsetWidth) / 2,
+      behavior: motionIsOff() ? 'auto' : 'smooth',
+    });
+  };
+
   /* ---------- swipe ---------- */
   const swipeRef = useRef<{ x: number; y: number } | null>(null);
   const onPointerDown = (event: React.PointerEvent) => {
@@ -168,7 +217,7 @@ export default function Gallery() {
 
   return (
     <>
-      <div className="mosaic">
+      <div className="mosaic" ref={trackRef}>
         {mosaic.map((frame, i) => (
           <figure key={frame.src} className="clip-reveal" style={{ gridArea: frame.area }}>
             <button
@@ -185,6 +234,26 @@ export default function Gallery() {
             </button>
           </figure>
         ))}
+      </div>
+
+      {/* Phone only: the rail is display:none above the slider breakpoint. */}
+      <div className="mosaic__rail">
+        <div className="mosaic__dots" role="tablist" aria-label="Archive frames">
+          {mosaic.map((frame, i) => (
+            <button
+              key={frame.src}
+              type="button"
+              role="tab"
+              aria-selected={i === slide}
+              aria-label={`Go to frame ${i + 1}`}
+              className={`mosaic__dot${i === slide ? ' is-on' : ''}`}
+              onClick={() => goToSlide(i)}
+            />
+          ))}
+        </div>
+        <p className="mosaic__pos">
+          {String(slide + 1).padStart(2, '0')} / {String(mosaic.length).padStart(2, '0')}
+        </p>
       </div>
 
       {(isOpen || closing) &&
