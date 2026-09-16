@@ -20,20 +20,22 @@ export default function MobileMenu() {
   const sheetRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const timeline = useRef<gsap.core.Timeline | null>(null);
+  /**
+   * What to do once the sheet is really gone. It is run by the open effect's
+   * cleanup rather than straight after `setOpen(false)`, because that state
+   * update is what releases `body { overflow: hidden }` — and it releases it a
+   * commit later. A scroll started before that lands on a locked document and
+   * gets clamped back to 0, which is exactly the nav "not working".
+   */
+  const pending = useRef<(() => void) | null>(null);
 
-  /** Close, then run whatever the link wanted to do — never both at once. */
-  const close = useCallback((then?: () => void) => {
-    const finish = () => {
-      setOpen(false);
-      then?.();
-    };
-
+  const close = useCallback(() => {
     if (motionIsOff() || !timeline.current) {
-      finish();
+      setOpen(false);
       return;
     }
     timeline.current.timeScale(1.7).reverse();
-    timeline.current.eventCallback('onReverseComplete', finish);
+    timeline.current.eventCallback('onReverseComplete', () => setOpen(false));
   }, []);
 
   /* ---------- open: keys, scroll lock, focus ---------- */
@@ -58,7 +60,12 @@ export default function MobileMenu() {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = previous.overflow;
       document.body.style.paddingRight = previous.paddingRight;
-      button?.focus();
+      // preventScroll: returning focus must not fight the jump below.
+      button?.focus({ preventScroll: true });
+
+      const run = pending.current;
+      pending.current = null;
+      run?.();
     };
   }, [open, close]);
 
@@ -98,7 +105,7 @@ export default function MobileMenu() {
   }, [open]);
 
   const go = (href: string) => {
-    close(() => {
+    pending.current = () => {
       const target = document.querySelector(href);
       if (!target) return;
       history.replaceState(null, '', href);
@@ -108,7 +115,8 @@ export default function MobileMenu() {
       }
       initGsap();
       scrollToTarget(href === '#top' ? 0 : target);
-    });
+    };
+    close();
   };
 
   return (

@@ -1409,9 +1409,16 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   .hero__title { font-size: clamp(30px, 8.6vw, 40px); letter-spacing: -.03em; }
   .hero__aside { align-items: flex-start; gap: 18px; width: 100%; }
   .hero__lede { text-align: left; font-size: 14.5px; max-width: none; }
-  .hero__actions { justify-content: flex-start; width: 100%; gap: 10px; }
-  /* Ragged button widths read as a mistake at this size. */
-  .hero__actions .pill { flex: 1 1 100%; justify-content: center; height: 46px; }
+  /* One grid column sized to the widest button: every pill then stretches to
+     that same width, and the group stays left-aligned instead of spanning the
+     frame. minmax(0, …) lets it clamp rather than overflow on a narrow phone. */
+  .hero__actions {
+    display: grid;
+    grid-template-columns: minmax(0, max-content);
+    gap: 10px;
+    width: auto;
+  }
+  .hero__actions .pill { justify-content: center; height: 46px; }
 
   /* ---- who we are: cards hug their content instead of holding a desktop
           minimum and opening a void in the middle ---- */
@@ -1463,7 +1470,12 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   .measure__cols { gap: 4px; }
   .contact__body { padding: 20px 16px; gap: 14px; }
   .contact__title { font-size: clamp(27px, 8vw, 38px); }
-  .contact__actions .pill { flex: 1 1 100%; justify-content: center; }
+  .contact__actions {
+    display: grid;
+    grid-template-columns: minmax(0, max-content);
+    gap: 10px;
+  }
+  .contact__actions .pill { justify-content: center; }
   .contact__media { min-height: 260px; }
 
   /* ---- footer ---- */
