@@ -1526,7 +1526,11 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+    /* The rail belongs to the slider above it, so it sits close to that and
+       well clear of the band below — 16px up, 28px + the section's own 12px
+       down. Evenly spaced, it read as though it belonged to the next card. */
     padding-top: 16px;
+    padding-bottom: 28px;
   }
   .mosaic__dots { display: flex; align-items: center; gap: 6px; }
   .mosaic__dot {

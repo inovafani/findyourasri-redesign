@@ -1,5 +1,12 @@
 import { services, stages } from '@/lib/content';
 
+/**
+ * Hidden on request, not deleted — flip to `true` to bring the
+ * "[ HOW WE SHOOT ]" panel back exactly as it was. Its markup below and its
+ * `.production*` styles in globals.css are both left untouched.
+ */
+const SHOW_HOW_WE_SHOOT = false;
+
 /** 04 · what we do. The stage chips, the four service cards, the production note. */
 export default function Services() {
   return (
@@ -49,22 +56,24 @@ export default function Services() {
         ))}
       </div>
 
-      <div className="production">
-        <div className="reveal">
-          <p className="kicker" style={{ color: 'rgba(255,255,255,.62)' }}>
-            [ HOW WE SHOOT ]
+      {SHOW_HOW_WE_SHOOT && (
+        <div className="production">
+          <div className="reveal">
+            <p className="kicker" style={{ color: 'rgba(255,255,255,.62)' }}>
+              [ HOW WE SHOOT ]
+            </p>
+            <p className="production__title">Full crew. Permits. Finishing.</p>
+          </div>
+          <p className="production__body reveal">
+            Full in-house crew: direction, camera, drone, underwater, edit. Permits, fixers, boats
+            and remote logistics handled by us.
           </p>
-          <p className="production__title">Full crew. Permits. Finishing.</p>
+          <p className="production__body reveal">
+            Colour, sound and finishing to broadcast standard. Every asset cut to platform-native
+            ratios, not cropped as an afterthought.
+          </p>
         </div>
-        <p className="production__body reveal">
-          Full in-house crew: direction, camera, drone, underwater, edit. Permits, fixers, boats and
-          remote logistics handled by us.
-        </p>
-        <p className="production__body reveal">
-          Colour, sound and finishing to broadcast standard. Every asset cut to platform-native
-          ratios, not cropped as an afterthought.
-        </p>
-      </div>
+      )}
     </section>
   );
 }

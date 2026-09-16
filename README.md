@@ -142,6 +142,34 @@ touched**, so the desktop layout is exactly the one the design canvas specifies.
   index and a counter, instead of twelve stacked frames. Same markup and the
   same lightbox; only the layout switches.
 
+## Hero video (planned, not yet wired)
+
+The hero is still the `/img/hero.jpg` still. The slots are prepared:
+
+| Path | What goes there |
+|---|---|
+| `_src/video/` | the **master** file, dropped as `hero-master.*` — gitignored, never deployed |
+| `public/video/` | the encoded `hero.mp4` + `hero.webm` that ship |
+
+See `_src/video/README.md` for what the master should look like. Nothing in
+`Hero.tsx`, `globals.css` or `Motion.tsx` has been changed — swapping the still
+for the video is a deliberate, separate step.
+
+When it is wired, these are the things that decide whether it helps or hurts:
+
+- **Autoplay only works muted**, and needs `playsInline` or iOS opens it
+  fullscreen. `poster="/img/hero.jpg"` keeps the frame filled while it loads.
+- **`prefers-reduced-motion` gets the still**, not the video — the same rule the
+  rest of the site's motion follows.
+- **Phones keep the still by default.** A hero video is the single heaviest
+  thing on a page; serving it on a phone connection costs more than it adds.
+- **The hero's GSAP moves retarget to the video element** — the clip-path wipe,
+  the 1.14 → 1 settle and the scroll parallax all currently address
+  `.hero__media img`.
+
+Encoding needs `ffmpeg`, which is not installed on this machine yet
+(`brew install ffmpeg`).
+
 ## Verification hook
 
 `?shot` disables all motion and renders the page at rest — useful for

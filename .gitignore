@@ -6,3 +6,7 @@ out/
 next-env.d.ts
 .env*.local
 .netlify/
+
+# Video masters: the drop zone for original footage. Encoded web files go to
+# public/video/ instead — masters must never be committed or deployed.
+_src/
