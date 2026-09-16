@@ -1379,6 +1379,17 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   .burger { display: inline-flex; }
   .header__row { gap: 12px; }
 
+  /* The header sits inside .wrap, so its background stopped at the 18px
+     gutters — and the archive slider, which bleeds to the screen edges,
+     showed through them. Pull the bar out to the edges and pad the content
+     back in. `.is-stuck` is listed too: its shorthand `padding` would
+     otherwise reset the inline padding this adds. */
+  .header,
+  .header.is-stuck {
+    margin-inline: calc(var(--pad) * -1);
+    padding-inline: var(--pad);
+  }
+
   /* ---- hero: give the photograph room, stop the blocks colliding ---- */
   .hero__frame {
     /* Content alone ran to ~500px, which left the frame with no visible
