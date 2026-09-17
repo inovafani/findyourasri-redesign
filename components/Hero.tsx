@@ -1,3 +1,4 @@
+import HeroMedia from '@/components/HeroMedia';
 import SmoothLink from '@/components/SmoothLink';
 
 /**
@@ -13,13 +14,7 @@ export default function Hero() {
     <section id="top" className="hero" style={{ paddingTop: 'clamp(10px, 1.4vw, 20px)' }}>
       <div className="hero__frame clip-reveal">
         <div className="hero__media media-zoom">
-          <img
-            src="/img/hero.jpg"
-            alt="Three phinisi sailing yachts under full sail on open water"
-            width={2000}
-            height={1336}
-            fetchPriority="high"
-          />
+          <HeroMedia />
         </div>
         <div className="hero__scrim" aria-hidden="true" />
 

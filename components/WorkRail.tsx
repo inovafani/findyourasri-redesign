@@ -253,9 +253,11 @@ export default function WorkRail() {
       <div className="work__rail" ref={trackRef}>
         {projects.map((project, i) => (
           <article key={project.src} className="proj clip-reveal">
+            {/* The whole card is the control, caption included — a strip of
+                text sitting on an image should not be the one dead spot. */}
             <button
               type="button"
-              className="proj__media"
+              className="proj__card"
               aria-label={`Open ${project.client}: ${project.alt}`}
               onClick={(event) => {
                 openerRef.current = event.currentTarget;
@@ -270,10 +272,11 @@ export default function WorkRail() {
                 height={project.h}
                 loading="lazy"
               />
+              <span className="proj__caption">
+                <span className="proj__client">{project.client}</span>
+                <span className="proj__services">{project.services}</span>
+              </span>
             </button>
-
-            <p className="proj__client">{project.client}</p>
-            <p className="proj__services">{project.services}</p>
           </article>
         ))}
       </div>

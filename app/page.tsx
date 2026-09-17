@@ -15,9 +15,9 @@ export default function Home() {
       <Hero />
       <BrandReel />
       <Statement />
+      <Work />
       <Sectors />
       <Services />
-      <Work />
       <Band />
       <Process />
       <Measure />

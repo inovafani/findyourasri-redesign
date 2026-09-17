@@ -1,7 +1,7 @@
 /** The full-width standard band that closes the archive. */
 export default function Band() {
   return (
-    <section className="section--tight" aria-label="Our standard" style={{ paddingTop: 'var(--gap)' }}>
+    <section className="section section--band" aria-label="Our standard">
       <div className="band">
         <div className="band__media parallax-media">
           <img src="/img/band-wake.jpg" alt="" width={986} height={1600} loading="lazy" />

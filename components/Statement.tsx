@@ -14,9 +14,8 @@ export default function Statement() {
       </div>
 
       <p className="statement__lead read-through">
-        <span className="lit">Asri pairs two things that rarely sit together:</span> a decade of
-        agency-side performance marketing, and a decade of actually running the venues, expeditions
-        and shoots <span className="lit">that the marketing is meant to sell.</span>
+        <span className="lit">A decade of marketing.</span> A decade of running the places{' '}
+        <span className="lit">the marketing is meant to sell.</span>
       </p>
 
       <div className="statement__grid">

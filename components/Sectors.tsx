@@ -7,7 +7,7 @@ export default function Sectors() {
       <div className="sec-head">
         <div>
           <div className="eyebrow">
-            <span className="eyebrow__num reveal">[03]</span>
+            <span className="eyebrow__num reveal">[04]</span>
             <span className="eyebrow__label reveal">Who we work with</span>
           </div>
           <h2 className="sec-head__title line-mask">Four Kinds of Client, One Way of Working</h2>

@@ -81,7 +81,7 @@ export default function Motion() {
             { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.15 },
             0.1,
           )
-          .fromTo('.hero__media img', { scale: 1.14 }, { scale: 1, duration: 2.2 }, 0.1)
+          .fromTo('.hero__media img, .hero__media video', { scale: 1.14 }, { scale: 1, duration: 2.2 }, 0.1)
           // `.to`, not `.from`: these carry the CSS resting state from
           // globals.css, so the tween has to move them to their final values
           // rather than away from them.

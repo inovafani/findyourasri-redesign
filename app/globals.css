@@ -113,7 +113,8 @@ a {
 html.anim-ready .reveal          { opacity: 0; transform: translateY(26px); }
 html.anim-ready .rule-draw       { transform: scaleX(0); transform-origin: left center; }
 html.anim-ready .clip-reveal     { clip-path: inset(0 0 100% 0); }
-html.anim-ready .media-zoom img  { transform: scale(1.14); }
+html.anim-ready .media-zoom img,
+html.anim-ready .media-zoom video { transform: scale(1.14); }
 html.anim-ready .dot-pop         { transform: scale(0); }
 /* SplitText replaces the element's contents; until it has, keep the source
    invisible so the un-split text never flashes in the wrong position. */
@@ -140,6 +141,11 @@ html.anim-ready .line-mask       { opacity: 0; }
 .section       { padding-top: var(--sec); }
 .section--tight{ padding-top: var(--gap); }
 .section--anchor { scroll-margin-top: 90px; }
+
+/* The "Our standard" band. It is a statement, not a section of its own, so it
+   sits closer than the full `--sec` rhythm but clear of the cards above it.
+   ↓ This one value is the gap above that band — nothing else uses it. */
+.section--band { padding-top: clamp(34px, 4vw, 60px); }
 
 /* The [01] / label / rule triplet that opens each section. */
 .eyebrow {
@@ -325,21 +331,30 @@ html.anim-ready .line-mask       { opacity: 0; }
   inset: -8% 0;
   will-change: transform;
 }
-.hero__media img {
+.hero__media img,
+.hero__media video {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: 50% 44%;
+  /* The poster is painted behind the first decoded frame; matching it to the
+     scrim keeps the corner radius from flashing white. */
+  background: var(--a-black);
 }
 .hero__scrim {
   position: absolute;
   inset: 0;
+  /* Re-weighted to the middle. The original curve thinned to .16 at 68% height
+     because the copy used to sit along the bottom edge; the copy is centred
+     now, and the background is video whose brightness we do not control, so
+     the darkest part has to be where the text actually is. */
   background: linear-gradient(
     to top,
-    rgba(8, 14, 13, .9),
-    rgba(8, 14, 13, .52) 42%,
-    rgba(8, 14, 13, .16) 68%,
-    rgba(8, 14, 13, .42)
+    rgba(8, 14, 13, .78) 0%,
+    rgba(8, 14, 13, .58) 26%,
+    rgba(8, 14, 13, .52) 50%,
+    rgba(8, 14, 13, .44) 74%,
+    rgba(8, 14, 13, .6) 100%
   );
 }
 
@@ -387,7 +402,9 @@ html.anim-ready .line-mask       { opacity: 0; }
 }
 
 /* ---------- brand reel ---------- */
-.reel { padding: clamp(36px, 4vw, 60px) 0 clamp(28px, 3vw, 44px); }
+/* No bottom padding: the following section brings its own `--sec`, and the two
+   together made this the widest gap on the page by some margin. */
+.reel { padding: clamp(36px, 4vw, 60px) 0 0; }
 .reel__head { padding-bottom: 26px; }
 .reel__viewport {
   overflow: hidden;
@@ -444,7 +461,10 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   letter-spacing: -.024em;
   color: var(--a-ink-3);
   max-width: 34ch;
-  text-wrap: pretty;
+  /* `balance`, not `pretty`: it evens the two lines out, which stops a single
+     muted word being orphaned at the head of line two right before the tone
+     changes back — that read as a mistake rather than as emphasis. */
+  text-wrap: balance;
 }
 /* The two halves the scrubbed read-through resolves to. */
 .statement__lead .lit { color: var(--a-ink); }
@@ -556,20 +576,22 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   background: var(--a-card);
   border-radius: var(--a-r);
   overflow: hidden;
-  padding: clamp(10px, 1vw, 14px);
+  /* No padding and no gap: the photograph runs to the card's own edge and
+     meets the copy directly, with the seam dissolved rather than drawn. */
+  padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: clamp(14px, 1.8vw, 28px);
+  gap: 0;
   align-items: stretch;
 }
 .sector__media {
   position: relative;
-  border-radius: var(--a-r-sm);
   overflow: hidden;
   background: var(--a-tint);
-  /* Taller than the source canvas: at 340px the aerials were cropped too
-     tightly to read as a place. */
-  min-height: clamp(320px, 34vw, 460px);
+  /* Between the canvas's original 340px, which cropped the aerials too tightly
+     to read as a place, and the 460px that overwhelmed the copy beside it.
+     Phones override this in the 860px block below. */
+  min-height: clamp(320px, 28vw, 400px);
 }
 .sector__media img {
   position: absolute;
@@ -579,11 +601,38 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   object-fit: cover;
   will-change: transform;
 }
+
+/*
+ * The seam. Same idea as the work cards, turned on its side: a masked layer
+ * that blurs the photograph and fades it into the card's white, so the two
+ * meet in a dissolve instead of on a line. The mask is what keeps the blur
+ * from stopping dead at the layer's own edge.
+ */
+.sector__media::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 26%;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(9px);
+  backdrop-filter: blur(9px);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), var(--a-card) 88%);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 60%);
+  mask-image: linear-gradient(to right, transparent, #000 60%);
+}
+/* Image on the right: the seam moves to its left edge and reverses. */
+.sector--flip .sector__media::after {
+  inset: 0 auto 0 0;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0), var(--a-card) 88%);
+  -webkit-mask-image: linear-gradient(to left, transparent, #000 60%);
+  mask-image: linear-gradient(to left, transparent, #000 60%);
+}
+
 .sector--flip .sector__media { order: 2; }
 .sector--flip .sector__body { order: 1; }
 
 .sector__body {
-  padding: clamp(14px, 1.8vw, 30px) clamp(14px, 1.6vw, 26px);
+  padding: clamp(22px, 2.6vw, 40px) clamp(22px, 2.4vw, 38px);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -766,7 +815,7 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
 
 .work__rail {
   display: flex;
-  gap: clamp(12px, 1.3vw, 18px);
+  gap: clamp(16px, 1.9vw, 28px);
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
@@ -784,47 +833,83 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
 .work__rail::-webkit-scrollbar { display: none; }
 
 .proj {
-  flex: 0 0 clamp(260px, 31%, 460px);
+  flex: 0 0 clamp(280px, 35%, 520px);
   scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
 }
-.proj__media {
+
+/* The image fills the card and the caption sits on it, frosted, along the
+   bottom edge. `overflow: hidden` on this element is what rounds the caption's
+   bottom corners to match the card. */
+.proj__card {
+  position: relative;
   display: block;
   width: 100%;
+  aspect-ratio: 4 / 3;
   padding: 0;
   border: 0;
-  background: var(--a-tint);
-  border-radius: var(--a-r-sm);
+  border-radius: var(--a-r);
   overflow: hidden;
-  aspect-ratio: 16 / 11;
+  background: var(--a-tint);
+  text-align: left;
   cursor: zoom-in;
 }
-.proj__media img {
+.proj__card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 700ms var(--ease);
   will-change: transform;
 }
-.proj__media:hover img { transform: scale(1.045); }
-.proj__media:focus-visible { outline-offset: -3px; }
+.proj__card:hover img { transform: scale(1.045); }
+.proj__card:focus-visible { outline-offset: 3px; }
 
-/* The caption has to read as belonging to the image above it, so it sits
-   closer to that than the section does to whatever follows. */
+.proj__caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: block;
+  padding: clamp(16px, 1.5vw, 20px);
+  color: #fff;
+}
+/*
+ * The blur lives on a masked layer rather than on the caption box itself.
+ * `backdrop-filter` on the box would blur everything inside its edges and
+ * nothing outside them, which draws a hard seam across the photograph. Masked,
+ * the same filter ramps in from nothing — so the image goes gradually soft
+ * behind the text instead of hitting a line. The layer starts well above the
+ * text for that ramp to have room.
+ */
+.proj__caption::before {
+  content: '';
+  position: absolute;
+  inset: -110px 0 0 0;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(16px) saturate(1.04);
+  backdrop-filter: blur(16px) saturate(1.04);
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 16, 15, 0) 0%,
+    rgba(10, 16, 15, .2) 42%,
+    rgba(10, 16, 15, .52) 72%,
+    rgba(10, 16, 15, .74) 100%
+  );
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 62%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 62%);
+}
+/* Positioned, so it paints above the absolutely-positioned blur layer. */
+.proj__client,
+.proj__services { position: relative; }
+
 .proj__client {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--a-line-soft);
-  font: 500 12px/1.3 var(--font-sans);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--a-ink);
+  display: block;
+  font: 500 18px/1.25 var(--font-sans);
+  letter-spacing: -.012em;
+  color: #fff;
 }
 .proj__services {
-  margin-top: 7px;
-  font: 400 14px/1.5 var(--font-sans);
-  color: var(--a-ink-2);
+  display: block;
+  margin-top: 6px;
+  font: 400 13.5px/1.5 var(--font-sans);
+  color: rgba(255, 255, 255, .8);
   text-wrap: pretty;
 }
 
@@ -1423,7 +1508,17 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   .sector--flip .sector__media,
   .sector--flip .sector__body { order: 0; }
   .sector__media { min-height: clamp(260px, 62vw, 340px); }
-  .sector__body { padding: 18px 14px 14px; gap: 13px; }
+  /* One column: the copy sits under the photograph, so the seam is horizontal. */
+  .sector__media::after,
+  .sector--flip .sector__media::after {
+    inset: auto 0 0 0;
+    width: auto;
+    height: 24%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--a-card) 88%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 60%);
+    mask-image: linear-gradient(to bottom, transparent, #000 60%);
+  }
+  .sector__body { padding: 4px 18px 20px; gap: 13px; }
   .sector__title { font-size: clamp(22px, 6.4vw, 28px); }
   /* The bottom-pinned proof line leaves a hole once the column is narrow. */
   .sector__proof { margin-top: 4px; }
@@ -1473,7 +1568,7 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   /* The dot rail below supplies the gap here instead. */
   .work__rail { padding-bottom: 0; }
   .proj { flex: 0 0 78%; }
-  .proj__media { aspect-ratio: 4 / 3; }
+  .proj__card { aspect-ratio: 4 / 3; }
 
   .mosaic__rail {
     display: flex;

@@ -1,14 +1,14 @@
 import WorkRail from '@/components/WorkRail';
 
-/** 05 · our work. A rail of project cards, each opening a viewer. */
+/** 03 · featured work. A rail of project cards, each opening a viewer. */
 export default function Work() {
   return (
     <section id="work" className="section section--anchor">
       <div className="sec-head">
         <div>
           <div className="eyebrow">
-            <span className="eyebrow__num reveal">[05]</span>
-            <span className="eyebrow__label reveal">Our work</span>
+            <span className="eyebrow__num reveal">[03]</span>
+            <span className="eyebrow__label reveal">Featured work</span>
           </div>
           <h2 className="sec-head__title line-mask">
             A Ten-Year Archive of the Hardest Locations to Reach

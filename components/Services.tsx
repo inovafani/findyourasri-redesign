@@ -14,7 +14,7 @@ export default function Services() {
       <div className="sec-head">
         <div>
           <div className="eyebrow">
-            <span className="eyebrow__num reveal">[04]</span>
+            <span className="eyebrow__num reveal">[05]</span>
             <span className="eyebrow__label reveal">What we do</span>
           </div>
           <h2 className="sec-head__title line-mask">Four Services, One Growth System</h2>

@@ -3,10 +3,11 @@
  * never touch a component and nothing drifts out of sync with lib/site.ts.
  */
 
+/** Ordered to match the page, so the numbered eyebrows read in sequence. */
 export const navLinks = [
+  { href: '#work', label: 'Work' },
   { href: '#sectors', label: 'Sectors' },
   { href: '#services', label: 'Services' },
-  { href: '#work', label: 'Work' },
   { href: '#process', label: 'Process' },
 ] as const;
 
@@ -206,6 +207,38 @@ export const projects = [
     alt: 'Forested karst rising from a shallow lagoon',
     w: 678,
     h: 1100,
+  },
+  {
+    client: 'Rosewood London',
+    services: 'Photography, social content, website and SEO',
+    src: '/img/w-daybed.jpg',
+    alt: 'A guest reading on a daybed under a canopy',
+    w: 1200,
+    h: 1026,
+  },
+  {
+    client: 'Canon',
+    services: 'Campaign production, photography and motion',
+    src: '/img/w-deck.jpg',
+    alt: 'A long table laid for dinner on an open deck',
+    w: 1200,
+    h: 1125,
+  },
+  {
+    client: 'DJI',
+    services: 'Aerial unit, campaign creative, social content',
+    src: '/img/w-fleet.jpg',
+    alt: 'A fleet of phinisi under tan sails on a calm sea',
+    w: 1200,
+    h: 1125,
+  },
+  {
+    client: 'BluePass',
+    services: 'Brand film, paid media, conversion tracking',
+    src: '/img/w-night.jpg',
+    alt: 'Guests dancing at a night event, lit in deep magenta',
+    w: 1200,
+    h: 1026,
   },
 ] as const;
 
