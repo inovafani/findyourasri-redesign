@@ -1,4 +1,4 @@
-import Counter from '@/components/Counter';
+import Counter from "@/components/Counter";
 
 /**
  * 02 · who we are. The lead paragraph is the page's one scrubbed moment: its
@@ -14,16 +14,16 @@ export default function Statement() {
       </div>
 
       <p className="statement__lead read-through">
-        <span className="lit">A decade of marketing.</span> A decade of running the places{' '}
-        <span className="lit">the marketing is meant to sell.</span>
+        <span className="lit">A decade of marketing.</span> A decade of running
+        the places <span className="lit">the marketing is meant to sell.</span>
       </p>
 
       <div className="statement__grid">
         <div className="card stat-card reveal">
           <p className="stat-card__body">
-            We have stood on the other side of the counter. We know which nights need filling, which
-            margins matter, and which piece of content actually moves a booking rather than just
-            collecting likes.
+            We have stood on the other side of the counter. We know which nights
+            need filling, which margins matter, and which piece of content
+            actually moves a booking rather than just collecting likes.
           </p>
           <div>
             <p className="stat-card__label">Years in the room</p>
@@ -35,19 +35,23 @@ export default function Statement() {
 
         <div className="card card--dark quote-card reveal">
           <p className="quote-card__body">
-            Most agencies pitching you have never had to fill a Tuesday. We have.
+            Most agencies pitching you have never had to fill a Tuesday. We
+            have.
           </p>
           <div className="quote-card__foot">
             <p className="quote-card__kicker">[ WHO WE ARE ]</p>
-            <p className="quote-card__note">Operator instinct, agency machinery.</p>
+            <p className="quote-card__note">
+              Operator instinct, agency machinery.
+            </p>
           </div>
         </div>
 
         <div className="card strip-card reveal">
           <p className="stat-card__body">
-            Between us we have run the floor in luxury hospitality, shot for Corona, Canon, DJI and
-            National Geographic, and spent a decade running a full-service marketing agency:
-            performance media, search, and the sites and funnels underneath them.
+            Between us we have run the floor in luxury hospitality, shot for
+            Corona, Canon, DJI and National Geographic, and spent a decade
+            running a full-service marketing agency: performance media, search,
+            and the sites and funnels underneath them.
           </p>
           <div className="strip-card__media">
             <img
@@ -72,12 +76,13 @@ export default function Statement() {
           </div>
           <div className="photo-card__scrim" aria-hidden="true" />
           <div className="photo-card__body">
-            <p className="kicker">[ FROM BALI ]</p>
             <div>
               <p className="photo-card__figure">
                 <Counter value={300} suffix="+" />
               </p>
-              <p className="photo-card__note">Locations worked on the ground. Built to grow.</p>
+              <p className="photo-card__note">
+                Locations worked on the ground. Built to grow.
+              </p>
             </div>
           </div>
         </div>
