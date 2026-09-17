@@ -42,7 +42,7 @@ export const structuredData = {
     'Content production, performance marketing and creator campaigns for destinations, hospitality groups and global brands.',
   email: site.email,
   telephone: site.phoneHref,
-  areaServed: 'Indonesia',
+  areaServed: 'Worldwide',
   makesOffer: serviceNames.map((name) => ({
     '@type': 'Offer',
     itemOffered: { '@type': 'Service', name },

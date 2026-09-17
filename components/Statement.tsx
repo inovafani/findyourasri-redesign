@@ -46,8 +46,8 @@ export default function Statement() {
 
         <div className="card strip-card reveal">
           <p className="stat-card__body">
-            Between us we have run the floor in luxury hospitality, shot Indonesia for Corona, Canon,
-            DJI and National Geographic, and spent a decade running a full-service marketing agency:
+            Between us we have run the floor in luxury hospitality, shot for Corona, Canon, DJI and
+            National Geographic, and spent a decade running a full-service marketing agency:
             performance media, search, and the sites and funnels underneath them.
           </p>
           <div className="strip-card__media">
@@ -78,7 +78,7 @@ export default function Statement() {
               <p className="photo-card__figure">
                 <Counter value={300} suffix="+" />
               </p>
-              <p className="photo-card__note">Islands worked on the ground. Built to grow.</p>
+              <p className="photo-card__note">Locations worked on the ground. Built to grow.</p>
             </div>
           </div>
         </div>

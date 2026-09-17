@@ -140,7 +140,7 @@ export default function Motion() {
         // The hero frame belongs to the intro timeline and the archive has its
         // own sequenced pass below; everything else is handled here.
         gsap.utils.toArray<HTMLElement>('.clip-reveal').forEach((el) => {
-          if (el.closest('.mosaic') || el.classList.contains('hero__frame')) return;
+          if (el.closest('.work__rail') || el.classList.contains('hero__frame')) return;
 
           const inSector = Boolean(el.closest('.sector'));
           const trigger = { trigger: el, start: 'top 90%', once: true } as const;
@@ -165,13 +165,15 @@ export default function Motion() {
           }
         });
 
-        // ---------- the archive: each frame wipes open over a settling image ----------
-        gsap.utils.toArray<HTMLElement>('.mosaic figure').forEach((figure, i) => {
-          const image = figure.querySelector('img');
-          const trigger = { trigger: figure, start: 'top 92%', once: true };
-          const delay = (i % 4) * 0.08;
+        // ---------- our work: each card wipes open over a settling image ----------
+        // The rail scrolls horizontally, so every card shares a vertical
+        // trigger point — the stagger is what gives them an order.
+        gsap.utils.toArray<HTMLElement>('.work__rail .proj').forEach((card, i) => {
+          const image = card.querySelector('img');
+          const trigger = { trigger: card, start: 'top 92%', once: true };
+          const delay = Math.min(i, 5) * 0.08;
 
-          gsap.to(figure, {
+          gsap.to(card, {
             clipPath: 'inset(0% 0% 0% 0%)',
             duration: 1,
             ease: EASE_LONG,

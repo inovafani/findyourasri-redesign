@@ -184,6 +184,11 @@ html.anim-ready .line-mask       { opacity: 0; }
   color: var(--a-ink-2);
   max-width: 48ch;
   text-wrap: pretty;
+  /* The 48ch measure is narrower than its grid column, so left-aligned the
+     paragraph floated with ~225px of dead space to its right. Anchored to the
+     right edge instead, the same way the hero's aside resolves. */
+  justify-self: end;
+  text-align: right;
 }
 
 /* ---------- pills ---------- */
@@ -310,7 +315,8 @@ html.anim-ready .line-mask       { opacity: 0; }
   min-height: clamp(470px, 58vw, 700px);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* One centred stack, floating in the middle of the photograph. */
+  justify-content: center;
 }
 /* The media sits in its own layer so the parallax tween never touches the
    frame's radius or the content stacked above it. */
@@ -337,77 +343,22 @@ html.anim-ready .line-mask       { opacity: 0; }
   );
 }
 
-.hero__top {
-  position: relative;
-  padding: clamp(18px, 2.2vw, 32px);
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-.hero__eyebrow {
-  font: 500 11px/1 var(--font-mono);
-  letter-spacing: .07em;
-  color: #fff;
-}
-
-.hero__card {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  background: var(--a-card);
-  border-radius: var(--a-r-sm);
-  padding: 14px 16px;
-  min-width: 224px;
-  transition: background-color 180ms var(--ease);
-}
-.hero__card:hover { background: var(--a-tint); color: var(--a-ink); }
-.hero__card-title {
-  display: block;
-  font: 500 14.5px/1.2 var(--font-sans);
-  color: var(--a-ink);
-}
-.hero__card-sub {
-  display: block;
-  margin-top: 5px;
-  font: 400 12.5px/1 var(--font-sans);
-  color: var(--a-ink-2);
-}
-.hero__card-arrow {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 999px;
-  border: 1px solid var(--a-line);
-  font-size: 11px;
-  color: var(--a-ink);
-  flex: none;
-  transition: transform 240ms var(--ease), background-color 240ms var(--ease),
-              color 240ms var(--ease);
-}
-.hero__card:hover .hero__card-arrow {
-  background: var(--a-ink);
-  border-color: var(--a-ink);
-  color: #fff;
-  transform: translate(2px, -2px);
-}
-
 .hero__bottom {
   position: relative;
-  padding: clamp(20px, 2.4vw, 36px);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: clamp(20px, 2.6vw, 48px);
-  align-items: end;
+  padding: clamp(24px, 3vw, 48px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Tight under the headline; the air goes before the buttons instead. */
+  gap: 14px;
 }
 .hero__title {
-  font: 500 clamp(36px, 5.6vw, 80px)/.98 var(--font-sans);
-  letter-spacing: -.035em;
+  font: 500 clamp(34px, 5.4vw, 76px)/1.04 var(--font-sans);
+  letter-spacing: -.04em;
   color: #fff;
+  text-align: center;
+  /* Holds the headline to two balanced lines instead of one long banner. */
+  max-width: 16ch;
   text-wrap: balance;
 }
 .hero__title sup {
@@ -418,21 +369,21 @@ html.anim-ready .line-mask       { opacity: 0; }
 .hero__aside {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 22px;
+  align-items: center;
+  gap: clamp(24px, 3vw, 38px);
 }
 .hero__lede {
   font: 400 clamp(15px, 1.5vw, 17px)/1.6 var(--font-sans);
   color: #fff;
-  max-width: 44ch;
-  text-align: right;
+  max-width: 56ch;
+  text-align: center;
   text-wrap: pretty;
 }
 .hero__actions {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 /* ---------- brand reel ---------- */
@@ -781,79 +732,104 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   text-wrap: pretty;
 }
 
-/* ---------- 05 · the archive ---------- */
-/* Placed by name, not by span. Every template below is a complete rectangle —
-   twelve frames, no leftover cell — so the grid can never end on a hole the way
-   `grid-auto-flow: dense` did. Each name must form a rectangle, or the browser
-   drops the whole template. */
-.mosaic {
-  display: grid;
-  gap: clamp(10px, 1vw, 14px);
-  grid-auto-rows: clamp(130px, 13vw, 180px);
-  /* 6 x 4 */
-  grid-template-areas:
-    'venue  venue  lagoon coast  coast  karst'
-    'venue  venue  lagoon beach  table  karst'
-    'deck   daybed dj     night  sails  sails'
-    'deck   daybed dj     night  fleet  fleet';
+/* ---------- 05 · our work ---------- */
+/* One scroll rail at every width: arrows drive it on a desktop, a swipe drives
+   it on a phone. Cards are deliberately smaller and closer together than the
+   reference — three abreast rather than one-and-a-half. */
+.work__controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-bottom: clamp(16px, 1.8vw, 24px);
 }
+.work__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--a-line);
+  background: transparent;
+  color: var(--a-ink);
+  font: 400 15px/1 var(--font-sans);
+  cursor: pointer;
+  transition: background-color 200ms var(--ease), color 200ms var(--ease),
+              border-color 200ms var(--ease), opacity 200ms var(--ease);
+}
+.work__arrow:hover:not(:disabled) {
+  background: var(--a-ink);
+  border-color: var(--a-ink);
+  color: #fff;
+}
+.work__arrow:disabled { opacity: .3; cursor: default; }
 
-@media (max-width: 1100px) {
-  /* 4 x 6 */
-  .mosaic {
-    grid-template-areas:
-      'venue  venue  lagoon karst'
-      'venue  venue  lagoon karst'
-      'coast  coast  beach  table'
-      'deck   daybed dj     night'
-      'deck   daybed dj     night'
-      'sails  sails  fleet  fleet';
-  }
+.work__rail {
+  display: flex;
+  gap: clamp(12px, 1.3vw, 18px);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* Bleed to the gutters so a card can sit at the screen edge mid-scroll, then
+     pad back in so the first one lines up with the headline. */
+  margin-inline: calc(var(--pad) * -1);
+  padding-inline: var(--pad);
+  scroll-padding-inline: var(--pad);
+  /* The rail ends in a line of text, not an image, so the full-width card that
+     follows needs real separation — 18px read as a collision. */
+  padding-bottom: clamp(30px, 3vw, 44px);
 }
+.work__rail::-webkit-scrollbar { display: none; }
 
-@media (max-width: 640px) {
-  /* 2 x 11 */
-  .mosaic {
-    grid-auto-rows: 22vw;
-    grid-template-areas:
-      'venue  venue'
-      'venue  venue'
-      'lagoon karst'
-      'lagoon karst'
-      'coast  coast'
-      'beach  table'
-      'dj     night'
-      'dj     night'
-      'deck   daybed'
-      'sails  sails'
-      'fleet  fleet';
-  }
+.proj {
+  flex: 0 0 clamp(260px, 31%, 460px);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
 }
-
-.mosaic figure {
-  border-radius: var(--a-r-sm);
-  overflow: hidden;
-  background: var(--a-tint);
-}
-.mosaic__tile {
+.proj__media {
   display: block;
   width: 100%;
-  height: 100%;
   padding: 0;
   border: 0;
-  background: none;
-  cursor: zoom-in;
+  background: var(--a-tint);
+  border-radius: var(--a-r-sm);
   overflow: hidden;
+  aspect-ratio: 16 / 11;
+  cursor: zoom-in;
 }
-.mosaic img {
+.proj__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 700ms var(--ease);
   will-change: transform;
 }
-.mosaic__tile:hover img { transform: scale(1.045); }
-.mosaic__tile:focus-visible { outline-offset: -3px; }
+.proj__media:hover img { transform: scale(1.045); }
+.proj__media:focus-visible { outline-offset: -3px; }
+
+/* The caption has to read as belonging to the image above it, so it sits
+   closer to that than the section does to whatever follows. */
+.proj__client {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--a-line-soft);
+  font: 500 12px/1.3 var(--font-sans);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--a-ink);
+}
+.proj__services {
+  margin-top: 7px;
+  font: 400 14px/1.5 var(--font-sans);
+  color: var(--a-ink-2);
+  text-wrap: pretty;
+}
+
+/* The dot index belongs to the phone, where there are no arrows. */
+.mosaic__rail { display: none; }
 
 /* ---------- image band ---------- */
 .band {
@@ -1352,10 +1328,17 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   gap: clamp(16px, 3vw, 40px);
   padding-top: clamp(10px, 1.4vw, 18px);
 }
-.lb__caption {
+.lb__caption { max-width: 62ch; }
+.lb__client {
+  font: 500 12px/1.3 var(--font-sans);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.lb__services {
+  margin-top: 7px;
   font: 400 14px/1.5 var(--font-sans);
-  color: rgba(255, 255, 255, .8);
-  max-width: 62ch;
+  color: rgba(255, 255, 255, .72);
   text-wrap: pretty;
 }
 .lb__nav { display: flex; gap: 10px; flex: none; }
@@ -1363,7 +1346,7 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
 @media (max-width: 640px) {
   .lb__foot { flex-direction: column; align-items: flex-start; gap: 14px; }
   .lb__nav { align-self: flex-end; }
-  .lb__caption { font-size: 13px; }
+  .lb__services { font-size: 13px; }
 }
 
 /* ============================================================
@@ -1392,40 +1375,27 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
 
   /* ---- hero: give the photograph room, stop the blocks colliding ---- */
   .hero__frame {
-    /* Content alone ran to ~500px, which left the frame with no visible
-       photograph between the two blocks. */
-    min-height: min(86svh, 720px);
+    /* Sized against the centred stack, which is ~330px now that the eyebrow
+       and the location card are gone — 86svh was set for the old ~500px
+       block and left too much dead water below the buttons. */
+    min-height: min(76svh, 640px);
   }
-  .hero__top { padding: 16px; gap: 14px; }
-  /* The eyebrow repeats what the header and the copy already say, and on a
-     phone it only costs the photograph height. */
-  .hero__eyebrow { display: none; }
-  .hero__card {
-    /* Hugs its own text rather than stretching the full frame width — it is a
-       credit line, not a banner. max-width keeps it inside on narrow screens. */
-    min-width: 0;
-    max-width: 100%;
-    align-self: flex-start;
-    gap: 12px;
-    padding: 12px 13px;
+  .hero__bottom { padding: 20px 16px 26px; gap: 12px; }
+  .hero__title {
+    font-size: clamp(30px, 8.6vw, 42px);
+    letter-spacing: -.035em;
+    max-width: 14ch;
   }
-  .hero__card-title { font-size: 13.5px; }
-  .hero__card-sub { font-size: 11.5px; margin-top: 4px; }
-  .hero__card-arrow { width: 24px; height: 24px; }
-
-  .hero__bottom {
-    padding: 18px 16px 20px;
-    gap: 18px;
-  }
-  .hero__title { font-size: clamp(30px, 8.6vw, 40px); letter-spacing: -.03em; }
-  .hero__aside { align-items: flex-start; gap: 18px; width: 100%; }
-  .hero__lede { text-align: left; font-size: 14.5px; max-width: none; }
-  /* One grid column sized to the widest button: every pill then stretches to
-     that same width, and the group stays left-aligned instead of spanning the
-     frame. minmax(0, …) lets it clamp rather than overflow on a narrow phone. */
+  .hero__aside { align-items: center; gap: 24px; width: 100%; }
+  .hero__lede { font-size: 14.5px; max-width: 40ch; }
+  .sec-head__lede { justify-self: start; text-align: left; }
+  /* One grid column sized to the widest button: every pill stretches to that
+     same width, and the column itself centres under the copy.
+     minmax(0, …) lets it clamp rather than overflow on a narrow phone. */
   .hero__actions {
     display: grid;
     grid-template-columns: minmax(0, max-content);
+    justify-content: center;
     gap: 10px;
     width: auto;
   }
@@ -1496,40 +1466,23 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   .footer__bar { justify-content: flex-start; }
 }
 
-/* ---- the archive becomes a slider ---- */
+/* ---- the work rail on a phone ---- */
 @media (max-width: 700px) {
-  .mosaic {
-    display: flex;
-    grid-template-areas: none;
-    gap: 12px;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    /* Bleed to the screen edges, then pad back in, so a slide can sit centre
-       stage with the next one peeking. */
-    margin-inline: calc(var(--pad) * -1);
-    padding-inline: var(--pad);
-  }
-  .mosaic::-webkit-scrollbar { display: none; }
-
-  .mosaic figure {
-    flex: 0 0 78%;
-    aspect-ratio: 4 / 5;
-    scroll-snap-align: center;
-  }
-  .mosaic__tile { cursor: pointer; }
+  /* Arrows need a cursor; a thumb has the rail itself. */
+  .work__controls { display: none; }
+  /* The dot rail below supplies the gap here instead. */
+  .work__rail { padding-bottom: 0; }
+  .proj { flex: 0 0 78%; }
+  .proj__media { aspect-ratio: 4 / 3; }
 
   .mosaic__rail {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    /* The rail belongs to the slider above it, so it sits close to that and
-       well clear of the band below — 16px up, 28px + the section's own 12px
-       down. Evenly spaced, it read as though it belonged to the next card. */
-    padding-top: 16px;
+    /* The rail belongs to the cards above it, so it sits close to those and
+       well clear of the band below. */
+    padding-top: 18px;
     padding-bottom: 28px;
   }
   .mosaic__dots { display: flex; align-items: center; gap: 6px; }

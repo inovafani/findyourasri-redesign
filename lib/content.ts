@@ -27,9 +27,9 @@ export const brands = [
 export const sectors = [
   {
     kicker: 'Destinations & tourism boards',
-    title: 'Seventeen Thousand Islands. The World Can Name Three.',
+    title: 'The World Knows Three of Your Regions. You Have Thirty.',
     body: 'Story-led destination films, regional campaigns and creator programmes built to open a region, not to expire with a quarter.',
-    proof: 'We are not describing Indonesia from a deck. We have filmed in the regions you are trying to open.',
+    proof: 'We are not pitching your region from a deck. We have filmed in the places you are trying to open.',
     img: '/img/v-destinations.jpg',
     alt: 'Aerial view of forested karst islands and turquoise lagoons in Raja Ampat',
     w: 863,
@@ -39,7 +39,7 @@ export const sectors = [
   {
     kicker: 'Hospitality',
     title: 'You Sell a Feeling. Your Marketing Sells a Rate.',
-    body: 'Beach clubs, resorts, villas, hotels and restaurants. Content, campaigns and channel management for Indonesia’s best venues.',
+    body: 'Beach clubs, resorts, villas, hotels and restaurants. Content, campaigns and channel management, wherever the property is.',
     proof: 'One production block, an entire year of content you actually own.',
     img: '/img/v-hospitality.jpg',
     alt: 'Rows of white parasols and daybeds on a beach club terrace',
@@ -51,9 +51,9 @@ export const sectors = [
   },
   {
     kicker: 'Global brands',
-    title: 'Indonesia, Shot Properly, Without the Production Risk.',
-    body: 'Campaign creative and full production service across the archipelago, from scout to master.',
-    proof: 'You are not briefing a fixer and hoping. You are briefing a director who lives here.',
+    title: 'Remote Locations, Shot Properly, Without the Production Risk.',
+    body: 'Campaign creative and full production service on location, from scout to master.',
+    proof: 'You are not briefing a fixer and hoping. You are briefing the director who will be on set.',
     img: '/img/v-brands.jpg',
     alt: 'Aerial view of a surf coastline meeting dense jungle',
     w: 1008,
@@ -62,8 +62,8 @@ export const sectors = [
   },
   {
     kicker: 'Travel & experience operators',
-    title: 'The Best Trip in Indonesia Is Also the Hardest to See Online.',
-    body: 'Liveaboards, phinisi, dive and tour operators. Content, direct-booking campaigns and creator expeditions.',
+    title: 'The Best Trip You Run Is the Hardest One to See Online.',
+    body: 'Liveaboards, charter, dive and tour operators. Content, direct-booking campaigns and creator expeditions.',
     proof: 'Every point of direct share you win is margin you keep, permanently.',
     img: '/img/v-operators.jpg',
     alt: 'A phinisi under black sails with a fleet anchored behind it',
@@ -86,47 +86,48 @@ export const services = [
   {
     name: 'Social Media Management',
     claim: 'Always on.',
-    body: 'Fifteen feed posts, fifteen supporting stories and two or more reels a month, planned against a calendar rather than posted on instinct.',
+    body: 'Fifteen posts, fifteen stories and two reels a month, planned against a calendar.',
     points: [
-      'Monthly content calendar, captions and copywriting.',
-      'Scheduling, publishing and community response.',
-      'Creative direction and repurposing of existing assets.',
-      'Content pillars: product, people, story, campaigns.',
+      'Calendar, captions and copywriting.',
+      'Publishing and community response.',
+      'Creative direction and asset repurposing.',
+      'Pillars: product, people, story, campaigns.',
     ],
     terms: 'Monthly retainer',
   },
   {
     name: 'Website Management & SEO',
     claim: 'Social creates demand. Search captures it.',
-    body: 'The site kept current and the search position built, so the attention social earns has somewhere to land.',
+    body: 'The site kept current, and found in both search and AI answers.',
     points: [
-      'Content, page, product and offer updates.',
-      'Site health, UX and conversion improvements.',
-      'On-page and technical SEO, keyword research, internal linking.',
-      'Search Console, brand and product discovery, monthly reporting.',
+      'Content, page and offer updates.',
+      'Site health, UX and conversion fixes.',
+      'Technical and on-page SEO, keyword research.',
+      'GEO / AI search: cited in AI answers, not just ranked.',
+      'Search Console and monthly reporting.',
     ],
     terms: 'Monthly retainer',
   },
   {
     name: 'Ads Campaign Management',
-    claim: 'Turn attention into measurable growth.',
-    body: 'Meta and Google run as one system, with the tracking underneath it so every number can be traced back to a decision.',
+    claim: 'Every number traced to a decision.',
+    body: 'Meta and Google run as one system, with the tracking underneath it.',
     points: [
-      'Meta: campaign setup, audience strategy, retargeting, creative testing.',
-      'Google: search campaigns, keyword strategy, brand and category demand.',
-      'GA4, GTM and Meta Pixel, conversion tracking and UTM.',
-      'Budget, ceiling and objective agreed before anything goes live.',
+      'Meta: setup, audiences, retargeting, creative testing.',
+      'Google: search, keywords, brand and category demand.',
+      'GA4, GTM and Meta Pixel.',
+      'Budget and objective agreed before launch.',
     ],
     terms: 'Monthly retainer · ad spend excluded',
   },
   {
     name: 'Bespoke Production',
     claim: 'One shoot. Months of content.',
-    body: 'One strategically planned production, built to yield sixty to ninety days of reusable social, advertising and website assets.',
+    body: 'One planned production, built to yield sixty to ninety days of reusable assets.',
     points: [
       'Creative direction, moodboard and shot list.',
       'Campaign concepts and production planning.',
-      'Social and advertising asset requirements scoped up front.',
+      'Asset requirements scoped up front.',
       'Product, lifestyle, motion and hospitality in one block.',
     ],
     terms: 'Per project',
@@ -134,27 +135,78 @@ export const services = [
 ] as const;
 
 /**
- * The archive grid. Each frame is placed by name through `grid-template-areas`
- * (see `.mosaic` in globals.css) rather than by span count: the span-based
- * layout tiled to 20 cells in a 21-cell grid, which is what left the hole in
- * the bottom-right corner. Named areas make the packing exact at every
- * breakpoint instead of leaving it to `grid-auto-flow: dense`.
+ * Featured work.
  *
- * `area` is the placement name; the three templates place all twelve.
+ * ⚠ PLACEHOLDER CONTENT. The client names are real — they are the same ones
+ * already shown in the logo strip — but the **service lines are
+ * invented** to show the layout, and the pairing of a client to a
+ * photograph is arbitrary. Replace every `services` value, and check every `client`, before this goes anywhere near production.
  */
-export const mosaic = [
-  { area: 'venue', src: '/img/w-venue.jpg', alt: 'A clifftop resort with terraced pools above the sea, from the air', w: 1200, h: 675 },
-  { area: 'lagoon', src: '/img/w-lagoon.jpg', alt: 'Karst islands and turquoise channels in Raja Ampat', w: 674, h: 1200 },
-  { area: 'coast', src: '/img/w-coast.jpg', alt: 'Aerial view of a surf coastline meeting dense jungle', w: 1008, h: 630 },
-  { area: 'karst', src: '/img/w-karst.jpg', alt: 'Forested karst rising from a shallow lagoon', w: 678, h: 1100 },
-  { area: 'beach', src: '/img/w-beach.jpg', alt: 'White parasols and daybeds on a beach club terrace', w: 1054, h: 703 },
-  { area: 'table', src: '/img/w-table.jpg', alt: 'Guests dining together in a warm-lit saloon', w: 1200, h: 1125 },
-  { area: 'deck', src: '/img/w-deck.jpg', alt: 'A long table laid for dinner on an open deck', w: 1200, h: 1125 },
-  { area: 'daybed', src: '/img/w-daybed.jpg', alt: 'A guest reading on a daybed under a canopy', w: 1200, h: 1026 },
-  { area: 'dj', src: '/img/w-dj.jpg', alt: 'A DJ performing under magenta stage light', w: 1024, h: 1100 },
-  { area: 'night', src: '/img/w-night.jpg', alt: 'Guests dancing at a night event, lit in deep magenta', w: 1200, h: 1026 },
-  { area: 'sails', src: '/img/w-sails.jpg', alt: 'Two phinisi under full sail on a bright sea', w: 1200, h: 1096 },
-  { area: 'fleet', src: '/img/w-fleet.jpg', alt: 'A fleet of phinisi under tan sails on a calm sea', w: 1200, h: 1125 },
+export const projects = [
+  {
+    client: 'Marriott',
+    services: 'Content production, photography & videography, social content',
+    src: '/img/w-venue.jpg',
+    alt: 'A clifftop resort with terraced pools above the sea, from the air',
+    w: 1200,
+    h: 675,
+  },
+  {
+    client: 'Wonderful Indonesia',
+    services: 'Destination film, creator programme, paid distribution',
+    src: '/img/w-lagoon.jpg',
+    alt: 'Karst islands and turquoise channels seen from the air',
+    w: 674,
+    h: 1200,
+  },
+  {
+    client: 'Corona',
+    services: 'Campaign creative, production service, paid media',
+    src: '/img/w-beach.jpg',
+    alt: 'White parasols and daybeds on a beach club terrace',
+    w: 1054,
+    h: 703,
+  },
+  {
+    client: 'Boattime Yacht Charters',
+    services: 'Website and SEO, direct-booking campaigns',
+    src: '/img/w-sails.jpg',
+    alt: 'Two phinisi under full sail on a bright sea',
+    w: 1200,
+    h: 1096,
+  },
+  {
+    client: 'Jamaica Tourist Board',
+    services: 'Destination film, social content, creator campaign',
+    src: '/img/w-coast.jpg',
+    alt: 'Aerial view of a surf coastline meeting dense jungle',
+    w: 1008,
+    h: 630,
+  },
+  {
+    client: 'Talalla Retreat',
+    services: 'Photography & videography, social media management',
+    src: '/img/w-table.jpg',
+    alt: 'Guests dining together in a warm-lit saloon',
+    w: 1200,
+    h: 1125,
+  },
+  {
+    client: 'Press Play',
+    services: 'Event content, social media management',
+    src: '/img/w-dj.jpg',
+    alt: 'A DJ performing under magenta stage light',
+    w: 1024,
+    h: 1100,
+  },
+  {
+    client: 'National Geographic',
+    services: 'Production service, drone and underwater unit',
+    src: '/img/w-karst.jpg',
+    alt: 'Forested karst rising from a shallow lagoon',
+    w: 678,
+    h: 1100,
+  },
 ] as const;
 
 export const steps = [

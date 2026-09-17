@@ -100,7 +100,7 @@ export default function BrandReel() {
     <section className="reel" aria-label="Brands we have worked with">
       <div className="eyebrow reel__head">
         <span className="eyebrow__num reveal">[01]</span>
-        <span className="eyebrow__label reveal">Worked with</span>
+        <span className="eyebrow__label reveal">Worked with, worldwide</span>
         <span className="eyebrow__rule rule-draw" />
       </div>
       <div className="reel__viewport">

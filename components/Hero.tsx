@@ -1,9 +1,12 @@
 import SmoothLink from '@/components/SmoothLink';
 
 /**
- * The opening frame. Everything inside it is animated from Motion.tsx: the
- * frame wipes open, the headline arrives line by line out of its own mask, and
- * the photograph drifts on scroll from an 8% overscan so no edge is ever shown.
+ * The opening frame. Stripped to three things — headline, one line of copy,
+ * two calls to action — so the photograph carries the rest.
+ *
+ * Everything inside is animated from Motion.tsx: the frame wipes open, the
+ * headline arrives line by line out of its own mask, and the photograph drifts
+ * on scroll from an 8% overscan so no edge is ever shown.
  */
 export default function Hero() {
   return (
@@ -20,24 +23,8 @@ export default function Hero() {
         </div>
         <div className="hero__scrim" aria-hidden="true" />
 
-        <div className="hero__top">
-          <p className="hero__eyebrow reveal">[ MARKETING &amp; PRODUCTION ]</p>
-
-          <SmoothLink href="#work" className="hero__card reveal">
-            <span>
-              <span className="hero__card-title">Raja Ampat, Indonesia</span>
-              <span className="hero__card-sub">Destination film &#183; Shot by Asri</span>
-            </span>
-            <span className="hero__card-arrow" aria-hidden="true">
-              &#8599;
-            </span>
-          </SmoothLink>
-        </div>
-
         <div className="hero__bottom">
-          <h1 className="hero__title line-mask">
-            Operators and Marketers in the Same Room<sup>&#174;</sup>
-          </h1>
+          <h1 className="hero__title line-mask">Make it beautiful. Make it book.</h1>
 
           <div className="hero__aside">
             <p className="hero__lede reveal">

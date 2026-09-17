@@ -4,42 +4,107 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { EASE, gsap, initGsap, motionIsOff } from '@/lib/gsap';
-import { mosaic } from '@/lib/content';
+import { projects } from '@/lib/content';
 
 /**
- * The archive grid and its lightbox.
+ * Featured work: a horizontal rail of project cards, each opening a viewer.
  *
- * The grid itself is placed by name (see `.mosaic` in globals.css) so it tiles
- * exactly. Each frame opens a viewer that can be stepped with the buttons, the
- * arrow keys or a swipe, and closed with the button, Escape or the backdrop.
+ * The rail is one scroll container at every width — arrows drive it on desktop,
+ * a swipe drives it on a phone — so there is a single layout to reason about
+ * rather than a grid that becomes a slider.
  *
- * The viewer is a portal on <body>: it must not inherit the grid's `overflow:
- * hidden`, and it should sit above the sticky header.
+ * The viewer is a portal on <body>: it must not inherit the rail's
+ * `overflow: hidden`, and it has to sit above the sticky header.
  */
-export default function Gallery() {
+export default function WorkRail() {
   const [index, setIndex] = useState<number | null>(null);
   const [closing, setClosing] = useState(false);
-  // Which slide is centred, for the rail under the phone slider.
   const [slide, setSlide] = useState(0);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = useState({ start: true, end: false });
 
+  const trackRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const openerRef = useRef<HTMLButtonElement | null>(null);
-  // Which way the last step went, so the incoming frame enters from that side.
   const directionRef = useRef(1);
 
   const isOpen = index !== null;
-  const item = index === null ? null : mosaic[index];
+  const item = index === null ? null : projects[index];
 
+  /* ---------- the rail ---------- */
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    let frame = 0;
+    const read = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const middle = track.scrollLeft + track.clientWidth / 2;
+        let nearest = 0;
+        let best = Infinity;
+        Array.from(track.children).forEach((child, i) => {
+          const el = child as HTMLElement;
+          const gap = Math.abs(el.offsetLeft + el.offsetWidth / 2 - middle);
+          if (gap < best) {
+            best = gap;
+            nearest = i;
+          }
+        });
+        setSlide(nearest);
+        // A one-pixel tolerance: fractional scroll widths never land exactly.
+        setEdges({
+          start: track.scrollLeft <= 1,
+          end: track.scrollLeft + track.clientWidth >= track.scrollWidth - 1,
+        });
+      });
+    };
+
+    read();
+    track.addEventListener('scroll', read, { passive: true });
+    window.addEventListener('resize', read);
+    return () => {
+      track.removeEventListener('scroll', read);
+      window.removeEventListener('resize', read);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const scrollToCard = (i: number) => {
+    const track = trackRef.current;
+    const target = track?.children[i] as HTMLElement | undefined;
+    if (!track || !target) return;
+    track.scrollTo({
+      left: target.offsetLeft,
+      behavior: motionIsOff() ? 'auto' : 'smooth',
+    });
+  };
+
+  /**
+   * Arrows move exactly one card. Deliberately a relative `scrollBy` rather
+   * than a jump to `slide + delta`: `slide` is the card nearest the centre of
+   * the viewport, which with three cards on screen is already the second one —
+   * so index arithmetic skipped a card on every press. Snap settles the rest.
+   */
+  const nudge = (delta: number) => {
+    const track = trackRef.current;
+    const card = track?.firstElementChild as HTMLElement | null;
+    if (!track || !card) return;
+    const gap = parseFloat(getComputedStyle(track).columnGap || '0') || 0;
+    track.scrollBy({
+      left: delta * (card.offsetWidth + gap),
+      behavior: motionIsOff() ? 'auto' : 'smooth',
+    });
+  };
+
+  /* ---------- the viewer ---------- */
   const close = useCallback(() => {
     if (motionIsOff()) {
       setIndex(null);
       return;
     }
-    // Play the exit, then unmount — `closing` keeps the node alive until the
-    // tween is done.
     setClosing(true);
     initGsap();
     gsap.to(rootRef.current, {
@@ -56,11 +121,10 @@ export default function Gallery() {
   const step = useCallback((delta: number) => {
     directionRef.current = delta;
     setIndex((current) =>
-      current === null ? current : (current + delta + mosaic.length) % mosaic.length,
+      current === null ? current : (current + delta + projects.length) % projects.length,
     );
   }, []);
 
-  /* ---------- while open: keys, scroll lock, focus ---------- */
   useEffect(() => {
     if (!isOpen) return;
 
@@ -72,7 +136,6 @@ export default function Gallery() {
       } else if (event.key === 'ArrowLeft') {
         step(-1);
       } else if (event.key === 'Tab') {
-        // Keep focus inside the viewer for as long as it is open.
         const focusable = rootRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled)');
         if (!focusable?.length) return;
         const first = focusable[0];
@@ -105,11 +168,10 @@ export default function Gallery() {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = previous.overflow;
       document.body.style.paddingRight = previous.paddingRight;
-      opener?.focus();
+      opener?.focus({ preventScroll: true });
     };
   }, [isOpen, close, step]);
 
-  /* ---------- entrance ---------- */
   useEffect(() => {
     if (!isOpen || motionIsOff()) return;
     initGsap();
@@ -128,7 +190,6 @@ export default function Gallery() {
     // on every step through the frames.
   }, [isOpen]);
 
-  /* ---------- each frame, including the first ---------- */
   useEffect(() => {
     if (index === null || motionIsOff()) return;
     const el = imageRef.current;
@@ -145,62 +206,14 @@ export default function Gallery() {
     };
   }, [index]);
 
-  /* ---------- keep the neighbours warm ---------- */
   useEffect(() => {
     if (index === null) return;
     [1, -1].forEach((delta) => {
       const preload = new window.Image();
-      preload.src = mosaic[(index + delta + mosaic.length) % mosaic.length].src;
+      preload.src = projects[(index + delta + projects.length) % projects.length].src;
     });
   }, [index]);
 
-  /* ---------- phone slider: which frame is centred ---------- */
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    let frame = 0;
-    const read = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        // Above the slider breakpoint the grid does not scroll, so this is a
-        // no-op rather than a branch on window width.
-        const middle = track.scrollLeft + track.clientWidth / 2;
-        let nearest = 0;
-        let best = Infinity;
-        Array.from(track.children).forEach((child, i) => {
-          const el = child as HTMLElement;
-          const centre = el.offsetLeft + el.offsetWidth / 2;
-          const gap = Math.abs(centre - middle);
-          if (gap < best) {
-            best = gap;
-            nearest = i;
-          }
-        });
-        setSlide(nearest);
-      });
-    };
-
-    read();
-    track.addEventListener('scroll', read, { passive: true });
-    return () => {
-      track.removeEventListener('scroll', read);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, []);
-
-  const goToSlide = (i: number) => {
-    const track = trackRef.current;
-    const target = track?.children[i] as HTMLElement | undefined;
-    if (!track || !target) return;
-    track.scrollTo({
-      left: target.offsetLeft - (track.clientWidth - target.offsetWidth) / 2,
-      behavior: motionIsOff() ? 'auto' : 'smooth',
-    });
-  };
-
-  /* ---------- swipe ---------- */
   const swipeRef = useRef<{ x: number; y: number } | null>(null);
   const onPointerDown = (event: React.PointerEvent) => {
     swipeRef.current = { x: event.clientX, y: event.clientY };
@@ -210,49 +223,78 @@ export default function Gallery() {
     swipeRef.current = null;
     if (!start) return;
     const dx = event.clientX - start.x;
-    // Ignore anything that reads as a vertical drag rather than a swipe.
     if (Math.abs(dx) < 48 || Math.abs(event.clientY - start.y) > Math.abs(dx)) return;
     step(dx < 0 ? 1 : -1);
   };
 
   return (
     <>
-      <div className="mosaic" ref={trackRef}>
-        {mosaic.map((frame, i) => (
-          <figure key={frame.src} className="clip-reveal" style={{ gridArea: frame.area }}>
+      <div className="work__controls">
+        <button
+          type="button"
+          className="work__arrow"
+          onClick={() => nudge(-1)}
+          disabled={edges.start}
+          aria-label="Previous projects"
+        >
+          <span aria-hidden="true">&#8592;</span>
+        </button>
+        <button
+          type="button"
+          className="work__arrow"
+          onClick={() => nudge(1)}
+          disabled={edges.end}
+          aria-label="Next projects"
+        >
+          <span aria-hidden="true">&#8594;</span>
+        </button>
+      </div>
+
+      <div className="work__rail" ref={trackRef}>
+        {projects.map((project, i) => (
+          <article key={project.src} className="proj clip-reveal">
             <button
               type="button"
-              className="mosaic__tile"
-              aria-label={`Open image ${i + 1} of ${mosaic.length}: ${frame.alt}`}
+              className="proj__media"
+              aria-label={`Open ${project.client}: ${project.alt}`}
               onClick={(event) => {
                 openerRef.current = event.currentTarget;
                 directionRef.current = 1;
                 setIndex(i);
               }}
             >
-              <img src={frame.src} alt={frame.alt} width={frame.w} height={frame.h} loading="lazy" />
+              <img
+                src={project.src}
+                alt={project.alt}
+                width={project.w}
+                height={project.h}
+                loading="lazy"
+              />
             </button>
-          </figure>
+
+            <p className="proj__client">{project.client}</p>
+            <p className="proj__services">{project.services}</p>
+          </article>
         ))}
       </div>
 
       {/* Phone only: the rail is display:none above the slider breakpoint. */}
       <div className="mosaic__rail">
-        <div className="mosaic__dots" role="tablist" aria-label="Archive frames">
-          {mosaic.map((frame, i) => (
+        <div className="mosaic__dots" role="tablist" aria-label="Projects">
+          {projects.map((project, i) => (
             <button
-              key={frame.src}
+              key={project.src}
               type="button"
               role="tab"
               aria-selected={i === slide}
-              aria-label={`Go to frame ${i + 1}`}
+              aria-label={`Go to ${project.client}`}
               className={`mosaic__dot${i === slide ? ' is-on' : ''}`}
-              onClick={() => goToSlide(i)}
+              onClick={() => scrollToCard(i)}
             />
           ))}
         </div>
         <p className="mosaic__pos">
-          {String(slide + 1).padStart(2, '0')} / {String(mosaic.length).padStart(2, '0')}
+          {String(slide + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
         </p>
       </div>
 
@@ -264,13 +306,14 @@ export default function Gallery() {
             ref={rootRef}
             role="dialog"
             aria-modal="true"
-            aria-label="Archive image viewer"
+            aria-label="Project viewer"
           >
             <button className="lb__scrim" type="button" aria-label="Close viewer" onClick={close} />
 
             <div className="lb__bar">
               <p className="lb__count">
-                {String((index ?? 0) + 1).padStart(2, '0')} / {String(mosaic.length).padStart(2, '0')}
+                {String((index ?? 0) + 1).padStart(2, '0')} /{' '}
+                {String(projects.length).padStart(2, '0')}
               </p>
               <button
                 type="button"
@@ -297,13 +340,16 @@ export default function Gallery() {
             </div>
 
             <div className="lb__foot">
-              <p className="lb__caption">{item.alt}</p>
+              <div className="lb__caption">
+                <p className="lb__client">{item.client}</p>
+                <p className="lb__services">{item.services}</p>
+              </div>
               <div className="lb__nav">
                 <button
                   type="button"
                   className="lb__btn"
                   onClick={() => step(-1)}
-                  aria-label="Previous image"
+                  aria-label="Previous project"
                 >
                   <span aria-hidden="true">&#8592;</span>
                 </button>
@@ -311,7 +357,7 @@ export default function Gallery() {
                   type="button"
                   className="lb__btn"
                   onClick={() => step(1)}
-                  aria-label="Next image"
+                  aria-label="Next project"
                 >
                   <span aria-hidden="true">&#8594;</span>
                 </button>

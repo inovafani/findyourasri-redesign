@@ -65,14 +65,14 @@ export default function Footer() {
               <a href={`tel:${site.phoneHref}`}>{site.phone}</a>
             </li>
             <li className="reveal">Bali, Indonesia</li>
-            <li className="reveal">Mon &#8211; Fri &#183; 09.00 &#8211; 17.00 WITA</li>
+            <li className="reveal">Mon &#8211; Fri &#183; 09.00 &#8211; 17.00 GMT+8</li>
           </ul>
         </div>
       </div>
 
       <div className="footer__bar">
         <p className="footer__fine reveal">
-          &#169; 2026 Asri. All photography shot in Indonesia by Asri.
+          &#169; 2026 Asri. All photography shot by Asri.
         </p>
         <div className="footer__sign">
           <ToTop />

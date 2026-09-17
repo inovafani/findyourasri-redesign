@@ -1,6 +1,6 @@
-import Gallery from '@/components/Gallery';
+import WorkRail from '@/components/WorkRail';
 
-/** 05 · the archive. Twelve frames, each wiping open, each opening a viewer. */
+/** 05 · our work. A rail of project cards, each opening a viewer. */
 export default function Work() {
   return (
     <section id="work" className="section section--anchor">
@@ -8,19 +8,19 @@ export default function Work() {
         <div>
           <div className="eyebrow">
             <span className="eyebrow__num reveal">[05]</span>
-            <span className="eyebrow__label reveal">The archive</span>
+            <span className="eyebrow__label reveal">Our work</span>
           </div>
           <h2 className="sec-head__title line-mask">
-            A Ten-Year Archive of Indonesia&#8217;s Rarest Locations
+            A Ten-Year Archive of the Hardest Locations to Reach
           </h2>
         </div>
         <p className="sec-head__lede reveal">
-          Three hundred islands worked on the ground, not scouted from a deck. Everything here was
+          Three hundred locations worked on the ground, not scouted from a deck. Everything here was
           shot by the same crew that would shoot yours.
         </p>
       </div>
 
-      <Gallery />
+      <WorkRail />
     </section>
   );
 }
