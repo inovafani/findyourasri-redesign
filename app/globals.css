@@ -826,9 +826,11 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   margin-inline: calc(var(--pad) * -1);
   padding-inline: var(--pad);
   scroll-padding-inline: var(--pad);
-  /* The rail ends in a line of text, not an image, so the full-width card that
-     follows needs real separation — 18px read as a collision. */
-  padding-bottom: clamp(30px, 3vw, 44px);
+  /* No bottom padding. This carried 44px from when the caption sat below the
+     image as loose text on the canvas; the caption lives inside the card now,
+     so the rail ends on a card edge and the next section's own `--sec` is the
+     whole gap — the two together made this the widest break on the page. */
+  padding-bottom: 0;
 }
 .work__rail::-webkit-scrollbar { display: none; }
 
@@ -1565,8 +1567,6 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
 @media (max-width: 700px) {
   /* Arrows need a cursor; a thumb has the rail itself. */
   .work__controls { display: none; }
-  /* The dot rail below supplies the gap here instead. */
-  .work__rail { padding-bottom: 0; }
   .proj { flex: 0 0 78%; }
   .proj__card { aspect-ratio: 4 / 3; }
 
@@ -1575,10 +1575,10 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    /* The rail belongs to the cards above it, so it sits close to those and
-       well clear of the band below. */
+    /* Close to the cards it indexes. No bottom padding: the next section's own
+       `--sec` is the whole gap, and the two together ran 87px against the 56px
+       every other transition on the page uses. */
     padding-top: 18px;
-    padding-bottom: 28px;
   }
   .mosaic__dots { display: flex; align-items: center; gap: 6px; }
   .mosaic__dot {
