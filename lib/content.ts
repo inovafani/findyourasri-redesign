@@ -283,7 +283,7 @@ export const projects = [
     logoW: 19,
     logoH: 28,
     services: "Brand film, paid media, conversion tracking",
-    src: "/img/w-night.jpg",
+    src: "/img/whitsundays-1.jpg",
     alt: "Guests dancing at a night event, lit in deep magenta",
     w: 1200,
     h: 1026,
