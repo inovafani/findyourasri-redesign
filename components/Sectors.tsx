@@ -1,22 +1,17 @@
+import SectionHead from '@/components/SectionHead';
 import { sectors } from '@/lib/content';
 
 /** 03 · who we work with. Four alternating rows, each with its own slow parallax. */
-export default function Sectors() {
+export default function Sectors({ num, heading }: { num?: string; heading?: 'h1' | 'h2' }) {
   return (
     <section id="sectors" className="section section--anchor">
-      <div className="sec-head">
-        <div>
-          <div className="eyebrow">
-            <span className="eyebrow__num reveal">[04]</span>
-            <span className="eyebrow__label reveal">Who we work with</span>
-          </div>
-          <h2 className="sec-head__title line-mask">Four Kinds of Client, One Way of Working</h2>
-        </div>
-        <p className="sec-head__lede reveal">
-          Destinations, hospitality, global brands and experience operators. Same crew, same system,
-          four different problems.
-        </p>
-      </div>
+      <SectionHead
+        num={num}
+        heading={heading}
+        label="Who we work with"
+        title="Four Kinds of Client, One Way of Working"
+        lede="Destinations, hospitality, global brands and experience operators. Same crew, same system, four different problems."
+      />
 
       <div className="sectors__list">
         {sectors.map((s) => (

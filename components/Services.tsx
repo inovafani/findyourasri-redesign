@@ -1,3 +1,4 @@
+import SectionHead from '@/components/SectionHead';
 import { services, stages } from '@/lib/content';
 
 /**
@@ -8,22 +9,16 @@ import { services, stages } from '@/lib/content';
 const SHOW_HOW_WE_SHOOT = false;
 
 /** 04 · what we do. The stage chips, the four service cards, the production note. */
-export default function Services() {
+export default function Services({ num, heading }: { num?: string; heading?: 'h1' | 'h2' }) {
   return (
     <section id="services" className="section section--anchor">
-      <div className="sec-head">
-        <div>
-          <div className="eyebrow">
-            <span className="eyebrow__num reveal">[05]</span>
-            <span className="eyebrow__label reveal">What we do</span>
-          </div>
-          <h2 className="sec-head__title line-mask">Four Services, One Growth System</h2>
-        </div>
-        <p className="sec-head__lede reveal">
-          We do not simply fill a content calendar. We connect creative, search, paid media and data
-          into one growth system.
-        </p>
-      </div>
+      <SectionHead
+        num={num}
+        heading={heading}
+        label="What we do"
+        title="Four Services, One Growth System"
+        lede="We do not simply fill a content calendar. We connect creative, search, paid media and data into one growth system."
+      />
 
       <ol className="stages">
         {stages.map((label, i) => (

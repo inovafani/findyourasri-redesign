@@ -1,22 +1,17 @@
+import SectionHead from '@/components/SectionHead';
 import { steps } from '@/lib/content';
 
 /** 06 · how we work. Each step's rail draws itself before the card arrives. */
-export default function Process() {
+export default function Process({ num, heading }: { num?: string; heading?: 'h1' | 'h2' }) {
   return (
     <section id="process" className="section section--anchor">
-      <div className="sec-head">
-        <div>
-          <div className="eyebrow">
-            <span className="eyebrow__num reveal">[06]</span>
-            <span className="eyebrow__label reveal">How we work</span>
-          </div>
-          <h2 className="sec-head__title line-mask">Build. Launch. Learn. Scale.</h2>
-        </div>
-        <p className="sec-head__lede reveal">
-          Every cycle ends where the next one starts: data, then learnings, then the next ninety
-          days.
-        </p>
-      </div>
+      <SectionHead
+        num={num}
+        heading={heading}
+        label="How we work"
+        title="Build. Launch. Learn. Scale."
+        lede="Every cycle ends where the next one starts: data, then learnings, then the next ninety days."
+      />
 
       <ol className="steps">
         {steps.map((step, i) => (

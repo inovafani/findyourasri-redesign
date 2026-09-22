@@ -1,16 +1,17 @@
 import { site } from '@/lib/site';
 
 /** 08 · next step. */
-export default function Contact() {
+export default function Contact({ num, heading = 'h1' }: { num?: string; heading?: 'h1' | 'h2' }) {
+  const Title = heading;
   return (
     <section id="contact" className="section--anchor" style={{ paddingTop: 'var(--gap)' }}>
       <div className="contact">
         <div className="contact__body">
           <div className="eyebrow">
-            <span className="eyebrow__num reveal">[08]</span>
+            {num ? <span className="eyebrow__num reveal">{num}</span> : null}
             <span className="eyebrow__label reveal">Next step</span>
           </div>
-          <h2 className="contact__title line-mask">Come and See It With Us</h2>
+          <Title className="contact__title line-mask">Come and See It With Us</Title>
           <p className="contact__lede reveal">
             The first step is a day on site. We walk the property with your team, see it the way a
             guest sees it, and come back with a plan and a number, before you have committed to

@@ -1,4 +1,5 @@
 import HeroMedia from '@/components/HeroMedia';
+import Link from 'next/link';
 import SmoothLink from '@/components/SmoothLink';
 
 /**
@@ -27,12 +28,12 @@ export default function Hero() {
               hospitality groups and global brands.
             </p>
             <div className="hero__actions">
-              <SmoothLink href="#contact" className="pill pill--light reveal magnetic">
+              <Link href="/contact" className="pill pill--light reveal magnetic">
                 Start a conversation
                 <span className="pill__arrow" aria-hidden="true">
                   &#8599;
                 </span>
-              </SmoothLink>
+              </Link>
               <SmoothLink href="#work" className="pill pill--ghost reveal magnetic">
                 See the work
               </SmoothLink>

@@ -5,10 +5,10 @@
 
 /** Ordered to match the page, so the numbered eyebrows read in sequence. */
 export const navLinks = [
-  { href: "#work", label: "Work" },
-  { href: "#sectors", label: "Sectors" },
-  { href: "#services", label: "Services" },
-  { href: "#process", label: "Process" },
+  { href: '/work', label: 'Work' },
+  { href: '/sectors', label: 'Sectors' },
+  { href: '/services', label: 'Services' },
+  { href: '/process', label: 'Process' },
 ] as const;
 
 export const brands = [
@@ -89,8 +89,10 @@ export const sectors = [
     alt: "Rows of white parasols and daybeds on a beach club terrace",
     w: 1054,
     h: 703,
-    // The terrace sits low in the frame; the design pulls the crop down to it.
+    // The terrace sits low in the frame, so both crops pull downward — the
+    // portrait tile harder still, or it fills with sky.
     pos: "50% 70%",
+    tilePos: "50% 88%",
     flip: true,
   },
   {
@@ -191,6 +193,7 @@ export const services = [
 export const projects = [
   {
     client: "Canon",
+    sector: "Global brands",
     logo: "/img/logo-canon.png",
     logoW: 81,
     logoH: 17,
@@ -202,6 +205,7 @@ export const projects = [
   },
   {
     client: "DJI",
+    sector: "Global brands",
     logo: "/img/logo-dji.png",
     logoW: 35,
     logoH: 20,
@@ -213,6 +217,7 @@ export const projects = [
   },
   {
     client: "National Geographic",
+    sector: "Global brands",
     logo: "/img/logo-natgeo.png",
     logoW: 95,
     logoH: 28,
@@ -224,6 +229,7 @@ export const projects = [
   },
   {
     client: "Jamaica Tourist Board",
+    sector: "Destinations & tourism boards",
     logo: "/img/logo-jamaica.png",
     logoW: 70,
     logoH: 24,
@@ -235,6 +241,7 @@ export const projects = [
   },
   {
     client: "Corona",
+    sector: "Global brands",
     logo: "/img/logo-corona.png",
     logoW: 69,
     logoH: 28,
@@ -246,6 +253,7 @@ export const projects = [
   },
   {
     client: "Rosewood London",
+    sector: "Hospitality",
     logo: "/img/logo-rosewood.png",
     logoW: 143,
     logoH: 14,
@@ -257,6 +265,7 @@ export const projects = [
   },
   {
     client: "Boattime Yacht Charters",
+    sector: "Travel & experience operators",
     logo: "/img/logo-boattime.png",
     logoW: 53,
     logoH: 30,
@@ -268,6 +277,7 @@ export const projects = [
   },
   {
     client: "Wonderful Indonesia",
+    sector: "Destinations & tourism boards",
     logo: "/img/logo-indonesia.png",
     logoW: 70,
     logoH: 28,
@@ -279,6 +289,7 @@ export const projects = [
   },
   {
     client: "BluePass",
+    sector: "Travel & experience operators",
     logo: "/img/logo-bluepass.png",
     logoW: 19,
     logoH: 28,
@@ -290,6 +301,7 @@ export const projects = [
   },
   {
     client: "Press Play",
+    sector: "Hospitality",
     logo: "/img/logo-pressplay.png",
     logoW: 50,
     logoH: 28,

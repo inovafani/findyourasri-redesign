@@ -5,11 +5,11 @@ import Counter from "@/components/Counter";
  * words resolve from muted to ink as the section crosses the viewport, so the
  * sentence is literally read into focus.
  */
-export default function Statement() {
+export default function Statement({ num }: { num?: string }) {
   return (
     <section className="section">
       <div className="eyebrow" style={{ marginBottom: 20 }}>
-        <span className="eyebrow__num reveal">[02]</span>
+        {num ? <span className="eyebrow__num reveal">{num}</span> : null}
         <span className="eyebrow__label reveal">Who we are</span>
       </div>
 

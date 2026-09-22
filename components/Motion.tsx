@@ -1,6 +1,7 @@
 'use client';
 
 import { useLayoutEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 import {
   EASE,
@@ -51,6 +52,12 @@ const GROUPS = [
 ].join(', ');
 
 export default function Motion() {
+  // Layouts survive navigation in the App Router, so an effect keyed on [] would
+  // run once for the whole site and every page after the first would arrive with
+  // its elements stuck at their hidden resting state. Keying on the path tears
+  // the old triggers down and builds the new page's.
+  const pathname = usePathname();
+
   useLayoutEffect(() => {
     initGsap();
     if (motionIsOff()) return;
@@ -343,8 +350,11 @@ export default function Motion() {
     return () => {
       cancelled = true;
       contexts.forEach((ctx) => ctx.revert());
+      // Contexts own their own triggers, but a stale one left behind would keep
+      // measuring a page that no longer exists.
+      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }

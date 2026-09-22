@@ -1,4 +1,4 @@
-import SmoothLink from '@/components/SmoothLink';
+import Link from 'next/link';
 import ToTop from '@/components/ToTop';
 import { navLinks, services } from '@/lib/content';
 import { site } from '@/lib/site';
@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer__top">
-        <SmoothLink href="#top" className="footer__mark" aria-label="Asri, back to top">
+        <Link href="/" className="footer__mark" aria-label="Asri, home">
           <img
             className="mark-rise"
             src="/img/asri-white.png"
@@ -18,7 +18,7 @@ export default function Footer() {
             loading="lazy"
           />
           <sup className="reveal">&#174;</sup>
-        </SmoothLink>
+        </Link>
 
         <div className="footer__year">
           <p className="reveal">&#169; 20&#8202;&#8211;&#8202;26&#176;</p>
@@ -39,9 +39,9 @@ export default function Footer() {
         <div>
           <p className="footer__label reveal">Navigation</p>
           <ul className="footer__list">
-            {[...navLinks, { href: '#contact', label: 'Contact' }].map((link) => (
+            {[...navLinks, { href: '/contact', label: 'Contact' }].map((link) => (
               <li key={link.href} className="reveal">
-                <SmoothLink href={link.href}>{link.label}</SmoothLink>
+                <Link href={link.href}>{link.label}</Link>
               </li>
             ))}
           </ul>
@@ -52,7 +52,7 @@ export default function Footer() {
           <ul className="footer__list">
             {services.map((s) => (
               <li key={s.name} className="reveal">
-                <SmoothLink href="#services">{s.name}</SmoothLink>
+                <Link href="/services">{s.name}</Link>
               </li>
             ))}
           </ul>

@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useRouter } from 'next/navigation';
 
-import { EASE, EASE_LONG, gsap, initGsap, motionIsOff, scrollToTarget } from '@/lib/gsap';
+import { EASE, EASE_LONG, gsap, initGsap, motionIsOff } from '@/lib/gsap';
 import { navLinks } from '@/lib/content';
 import { site } from '@/lib/site';
 
@@ -16,6 +17,7 @@ import { site } from '@/lib/site';
  */
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const sheetRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -105,17 +107,9 @@ export default function MobileMenu() {
   }, [open]);
 
   const go = (href: string) => {
-    pending.current = () => {
-      const target = document.querySelector(href);
-      if (!target) return;
-      history.replaceState(null, '', href);
-      if (motionIsOff()) {
-        target.scrollIntoView();
-        return;
-      }
-      initGsap();
-      scrollToTarget(href === '#top' ? 0 : target);
-    };
+    // Still deferred to the close: navigating while the sheet is mid-exit
+    // leaves the body scroll-locked on the page that arrives.
+    pending.current = () => router.push(href);
     close();
   };
 
@@ -138,7 +132,7 @@ export default function MobileMenu() {
           <div className="sheet" ref={sheetRef} role="dialog" aria-modal="true" aria-label="Menu">
             <div className="sheet__panel">
               <nav className="sheet__nav" aria-label="Primary">
-                {[...navLinks, { href: '#contact', label: 'Contact' }].map((link, i) => (
+                {[...navLinks, { href: '/contact', label: 'Contact' }].map((link, i) => (
                   <button
                     key={link.href}
                     type="button"
@@ -160,7 +154,7 @@ export default function MobileMenu() {
                 <a href={`tel:${site.phoneHref}`} className="sheet__phone">
                   {site.phone}
                 </a>
-                <button type="button" className="pill pill--ink" onClick={() => go('#contact')}>
+                <button type="button" className="pill pill--ink" onClick={() => go('/contact')}>
                   Start a conversation
                   <span className="pill__arrow" aria-hidden="true">
                     &#8599;

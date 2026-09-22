@@ -1,9 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { Fragment, useEffect, useRef } from 'react';
 
 import MobileMenu from '@/components/MobileMenu';
-import SmoothLink from '@/components/SmoothLink';
 import { navLinks } from '@/lib/content';
 
 /**
@@ -38,16 +38,10 @@ export default function Header() {
   return (
     <header ref={ref} className="header">
       <div className="header__row">
-        <SmoothLink href="#top" className="header__logo" aria-label="Asri, home">
-          <img
-            className="hdr-item"
-            src="/img/asri-white.png"
-            alt="Asri"
-            width={1171}
-            height={320}
-          />
-          <sup className="hdr-item">&#174;</sup>
-        </SmoothLink>
+        <Link href="/" className="header__logo hdr-item" aria-label="Asri, home">
+          <img src="/img/asri-white.png" alt="Asri" width={1171} height={320} />
+          <sup>&#174;</sup>
+        </Link>
 
         <nav className="nav" aria-label="Primary">
           {navLinks.map((link, i) => (
@@ -57,19 +51,19 @@ export default function Header() {
                   +
                 </span>
               )}
-              <SmoothLink href={link.href} className="hdr-item">
+              <Link href={link.href} className="hdr-item">
                 {link.label}
-              </SmoothLink>
+              </Link>
             </Fragment>
           ))}
         </nav>
 
-        <SmoothLink href="#contact" className="pill pill--ink pill--sm hdr-item magnetic header__cta">
+        <Link href="/contact" className="pill pill--ink pill--sm hdr-item magnetic header__cta">
           Start a conversation
           <span className="pill__arrow" aria-hidden="true">
             &#8599;
           </span>
-        </SmoothLink>
+        </Link>
 
         <MobileMenu />
       </div>

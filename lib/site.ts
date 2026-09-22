@@ -48,3 +48,37 @@ export const structuredData = {
     itemOffered: { '@type': 'Service', name },
   })),
 };
+
+
+/**
+ * Per-route metadata. Split pages only earn their keep if each one targets its
+ * own query — one page can realistically rank for one cluster, four can rank
+ * for four.
+ */
+export const pageMeta = {
+  work: {
+    title: 'Work — Asri',
+    description:
+      'Selected campaigns, destination films and production for Canon, DJI, National Geographic, Corona, Rosewood London and more.',
+  },
+  sectors: {
+    title: 'Sectors — Asri',
+    description:
+      'Marketing and production for destinations and tourism boards, hospitality, global brands, and travel and experience operators.',
+  },
+  services: {
+    title: 'Services — Asri',
+    description:
+      'Social media management, website management and SEO including GEO, ads campaign management, and bespoke production.',
+  },
+  process: {
+    title: 'How We Work — Asri',
+    description:
+      'A ninety-day cycle: foundation, distribution, optimisation — and the commercial numbers we report against every month.',
+  },
+  contact: {
+    title: 'Contact — Asri',
+    description:
+      'Start a conversation. The first step is a day on site, then a plan and a number before you commit to anything.',
+  },
+} as const;

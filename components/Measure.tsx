@@ -1,13 +1,13 @@
 import { measures } from '@/lib/content';
 
 /** 07 · accountability. The two lists of numbers the work is judged on. */
-export default function Measure() {
+export default function Measure({ num }: { num?: string }) {
   return (
     <section className="section">
       <div className="measure">
         <div>
           <div className="eyebrow">
-            <span className="eyebrow__num reveal">[07]</span>
+            {num ? <span className="eyebrow__num reveal">{num}</span> : null}
             <span className="eyebrow__label reveal">Accountability</span>
           </div>
           <h2 className="measure__title line-mask">What We Ask to Be Measured On</h2>
