@@ -272,15 +272,23 @@ export default function WorkRail() {
                 height={project.h}
                 loading="lazy"
               />
-              {/* Decorative: the caption below already names the client, so a
-                  screen reader should not hear it twice. */}
-              <img
+              {/*
+                A masked block, not an <img>: the mark has to render white over
+                the photograph, and the `filter: invert()` that used to do that
+                is silently dropped by Safari once the CSS minifier rewrites
+                `invert(1)` to its argument-less form. Masking a white box has
+                no such ambiguity. Decorative — the caption names the client, so
+                a screen reader should not hear it twice.
+              */}
+              <span
                 className="proj__logo"
-                src={project.logo}
-                alt=""
                 aria-hidden="true"
-                loading="lazy"
-                style={{ height: project.logoH }}
+                style={{
+                  width: project.logoW,
+                  height: project.logoH,
+                  WebkitMaskImage: `url(${project.logo})`,
+                  maskImage: `url(${project.logo})`,
+                }}
               />
               <span className="proj__caption">
                 <span className="proj__client">{project.client}</span>

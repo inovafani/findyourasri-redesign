@@ -867,17 +867,28 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
 .proj__card:hover > img:first-child { transform: scale(1.045); }
 
 /*
- * The client mark, top-left over the photograph. The source files are dark, so
- * they are forced to white; the drop-shadow is what keeps them legible when a
- * frame happens to be bright behind them, without needing a plate or a scrim.
+ * The client mark, top-left over the photograph. It is a white box masked by
+ * the logo file rather than the logo recoloured with `filter: invert()` —
+ * the minifier rewrites `invert(1)` to `invert()`, which Safari rejects, and a
+ * single invalid function voids the whole filter, leaving the mark its
+ * original black. Masking has no optional argument to lose.
+ *
+ * `drop-shadow` stays: it takes required arguments, so it survives minifying,
+ * and it is what keeps the mark legible over a bright frame without a plate.
  */
 .proj__card .proj__logo {
   position: absolute;
   top: clamp(14px, 1.4vw, 18px);
   left: clamp(14px, 1.4vw, 18px);
-  width: auto;
+  background-color: #fff;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
   opacity: .95;
-  filter: brightness(0) invert(1) drop-shadow(0 1px 6px rgba(8, 14, 13, .55));
+  filter: drop-shadow(0 1px 6px rgba(8, 14, 13, .55));
   pointer-events: none;
 }
 .proj__card:focus-visible { outline-offset: 3px; }

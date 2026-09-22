@@ -192,6 +192,7 @@ export const projects = [
   {
     client: "Canon",
     logo: "/img/logo-canon.png",
+    logoW: 81,
     logoH: 17,
     services: "Campaign production, photography and motion",
     src: "/img/w-deck.jpg",
@@ -202,6 +203,7 @@ export const projects = [
   {
     client: "DJI",
     logo: "/img/logo-dji.png",
+    logoW: 35,
     logoH: 20,
     services: "Aerial unit, campaign creative, social content",
     src: "/img/w-fleet.jpg",
@@ -212,6 +214,7 @@ export const projects = [
   {
     client: "National Geographic",
     logo: "/img/logo-natgeo.png",
+    logoW: 95,
     logoH: 28,
     services: "Production service, drone and underwater unit",
     src: "/img/w-karst.jpg",
@@ -222,6 +225,7 @@ export const projects = [
   {
     client: "Jamaica Tourist Board",
     logo: "/img/logo-jamaica.png",
+    logoW: 70,
     logoH: 24,
     services: "Destination film, social content, creator campaign",
     src: "/img/w-coast.jpg",
@@ -232,6 +236,7 @@ export const projects = [
   {
     client: "Corona",
     logo: "/img/logo-corona.png",
+    logoW: 69,
     logoH: 28,
     services: "Campaign creative, production service, paid media",
     src: "/img/w-beach.jpg",
@@ -242,6 +247,7 @@ export const projects = [
   {
     client: "Rosewood London",
     logo: "/img/logo-rosewood.png",
+    logoW: 143,
     logoH: 14,
     services: "Photography, social content, website and SEO",
     src: "/img/w-daybed.jpg",
@@ -252,6 +258,7 @@ export const projects = [
   {
     client: "Boattime Yacht Charters",
     logo: "/img/logo-boattime.png",
+    logoW: 53,
     logoH: 30,
     services: "Website and SEO, direct-booking campaigns",
     src: "/img/w-sails.jpg",
@@ -262,6 +269,7 @@ export const projects = [
   {
     client: "Wonderful Indonesia",
     logo: "/img/logo-indonesia.png",
+    logoW: 70,
     logoH: 28,
     services: "Destination film, creator programme, paid distribution",
     src: "/img/w-lagoon.jpg",
@@ -272,6 +280,7 @@ export const projects = [
   {
     client: "BluePass",
     logo: "/img/logo-bluepass.png",
+    logoW: 19,
     logoH: 28,
     services: "Brand film, paid media, conversion tracking",
     src: "/img/w-night.jpg",
@@ -282,6 +291,7 @@ export const projects = [
   {
     client: "Press Play",
     logo: "/img/logo-pressplay.png",
+    logoW: 50,
     logoH: 28,
     services: "Event content, social media management",
     src: "/img/w-dj.jpg",
