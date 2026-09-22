@@ -272,6 +272,16 @@ export default function WorkRail() {
                 height={project.h}
                 loading="lazy"
               />
+              {/* Decorative: the caption below already names the client, so a
+                  screen reader should not hear it twice. */}
+              <img
+                className="proj__logo"
+                src={project.logo}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                style={{ height: project.logoH }}
+              />
               <span className="proj__caption">
                 <span className="proj__client">{project.client}</span>
                 <span className="proj__services">{project.services}</span>
