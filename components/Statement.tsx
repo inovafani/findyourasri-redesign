@@ -39,7 +39,6 @@ export default function Statement({ num }: { num?: string }) {
             have.
           </p>
           <div className="quote-card__foot">
-            <p className="quote-card__kicker">[ WHO WE ARE ]</p>
             <p className="quote-card__note">
               Operator instinct, agency machinery.
             </p>
