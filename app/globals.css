@@ -250,23 +250,53 @@ html.anim-ready .line-mask       { opacity: 0; }
   /* Above the menu sheet (80) so the burger stays reachable while the sheet is
      open, below the lightbox (120) so a viewed frame covers everything. */
   z-index: 100;
-  background: var(--a-canvas);
+  /* The bar itself is glass; the plate below paints it. */
+  background: transparent;
   padding: 18px 0 14px;
-  transition: padding 260ms var(--ease), background-color 260ms var(--ease);
+  transition: padding 260ms var(--ease);
 }
-.header::after {
+/*
+ * The frosted bar.
+ *
+ * It is a plate rather than a background on the header because the header
+ * lives inside `.wrap` — capped at `--wrap` and inset by the gutter — so its
+ * own background would stop short of the screen and let the page show through
+ * the margins. `calc(50% - 50vw)` pushes the plate back out to the viewport
+ * edges from wherever the wrap has placed it, at any width. Anything past the
+ * edge is clipped by `body { overflow-x: hidden }`.
+ *
+ * Flat tint, hard bottom edge: content is meant to meet the bar at a line and
+ * stop. Negative z-index keeps the plate behind the logo and nav while staying
+ * inside the header's stacking context, so it still covers the page beneath.
+ */
+.header::before {
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
+  top: 0;
   bottom: 0;
-  height: 1px;
-  background: var(--a-line-soft);
-  opacity: 0;
-  transition: opacity 260ms var(--ease);
+  left: calc(50% - 50vw);
+  width: 100vw;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  /* 86% is the balance point. Lower and the bar stops reading as canvas — it
+     takes the colour of whatever video is behind it and the black logo sits on
+     dirty grey. Higher and the blur stops showing at all. */
+  background: color-mix(in srgb, var(--a-canvas) 86%, transparent);
+  /* Inset rather than a real border: a border would add a pixel to the box and
+     nudge the bar's height as the line fades in. */
+  box-shadow: inset 0 -1px 0 transparent;
+  transition: box-shadow 260ms var(--ease);
 }
 .header.is-stuck { padding: 11px 0 10px; }
-.header.is-stuck::after { opacity: 1; }
+.header.is-stuck::before { box-shadow: inset 0 -1px 0 var(--a-line); }
+
+/* Without a live backdrop the tint alone reads as a washed-out veil over the
+   page, so the plate goes opaque and the bar behaves as it did before. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .header::before { background: var(--a-canvas); }
+}
 
 .header__row {
   display: flex;
@@ -297,7 +327,34 @@ html.anim-ready .line-mask       { opacity: 0; }
   gap: 18px;
   font: 400 14.5px/1 var(--font-sans);
 }
-.nav a { letter-spacing: -.1px; position: relative; }
+.nav a {
+  letter-spacing: -.1px;
+  position: relative;
+  /* Column so the width-reserver below can sit above the label without
+     pushing it sideways. */
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+/*
+ * An invisible copy of the label, already at the current-page weight and size.
+ * It is what fixes the row's width, so a link claims the same space whether it
+ * is the current page or not — otherwise every navigation would re-measure the
+ * nav and nudge the whole group sideways. Zero height keeps it out of the
+ * vertical flow; `visibility: hidden` keeps it out of the accessibility tree,
+ * so the label is not announced twice.
+ */
+.nav a::before {
+  content: attr(data-label);
+  /* These two must stay in lockstep with `.nav a.is-current` below — that is
+     the whole point of the reserver. */
+  font-weight: 600;
+  font-size: 16.5px;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
 /* The underline grows from the left on hover — the only chrome flourish. */
 .nav a::after {
   content: '';
@@ -313,6 +370,19 @@ html.anim-ready .line-mask       { opacity: 0; }
 }
 .nav a:hover { color: var(--a-accent); }
 .nav a:hover::after { transform: scaleX(1); }
+/* The page you are on is the heavier, slightly larger label — no rule, no
+   colour shift. The reserver above has already paid for the extra width. */
+.nav a.is-current {
+  font-weight: 600;
+  font-size: 16.5px;
+  color: var(--a-green);
+}
+/* The current page keeps its green on hover. The teal hover is a promise of
+   somewhere to go, and this link goes nowhere new. */
+.nav a.is-current:hover { color: var(--a-green); }
+/* ...and no underline under it: the weight is the whole signal, and a rule as
+   well would read as a permanent hover. */
+.nav a.is-current::after { content: none; }
 .nav__sep {
   color: var(--a-ink-3);
   font: 400 12px/1 var(--font-sans);
@@ -1533,10 +1603,20 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   transition: color 200ms var(--ease);
 }
 .sheet__row:hover span { color: var(--a-accent); }
+/* Same answer on the phone sheet, in the same language as the desktop bar:
+   the current page's row is the heavier, larger one rather than a coloured
+   one. Each row is its own centred line, so the wider label just re-centres. */
+.sheet__row.is-current span {
+  font-weight: 600;
+  font-size: clamp(34px, 10.2vw, 46px);
+  color: var(--a-green);
+}
+.sheet__row.is-current:hover span { color: var(--a-green); }
 .sheet__row i {
   font: 500 11px/1 var(--font-mono);
   font-style: normal;
   color: var(--a-ink-3);
+  transition: color 200ms var(--ease);
 }
 
 .sheet__foot {

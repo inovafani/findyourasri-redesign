@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Fragment, useEffect, useRef } from 'react';
 
 import MobileMenu from '@/components/MobileMenu';
 import { navLinks } from '@/lib/content';
+import { isActivePath } from '@/lib/nav';
 
 /**
  * The one pinned element on the page. Past the first screen it condenses and
@@ -13,6 +15,7 @@ import { navLinks } from '@/lib/content';
  */
 export default function Header() {
   const ref = useRef<HTMLElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const el = ref.current;
@@ -44,21 +47,35 @@ export default function Header() {
         </Link>
 
         <nav className="nav" aria-label="Primary">
-          {navLinks.map((link, i) => (
-            <Fragment key={link.href}>
-              {i > 0 && (
-                <span className="nav__sep hdr-item" aria-hidden="true">
-                  +
-                </span>
-              )}
-              <Link href={link.href} className="hdr-item">
-                {link.label}
-              </Link>
-            </Fragment>
-          ))}
+          {navLinks.map((link, i) => {
+            const current = isActivePath(pathname, link.href);
+            return (
+              <Fragment key={link.href}>
+                {i > 0 && (
+                  <span className="nav__sep hdr-item" aria-hidden="true">
+                    +
+                  </span>
+                )}
+                <Link
+                  href={link.href}
+                  className={`hdr-item${current ? ' is-current' : ''}`}
+                  aria-current={current ? 'page' : undefined}
+                  /* Feeds .nav a::before, which reserves the current-page
+                     width so the row does not shift between pages. */
+                  data-label={link.label}
+                >
+                  {link.label}
+                </Link>
+              </Fragment>
+            );
+          })}
         </nav>
 
-        <Link href="/contact" className="pill pill--ink pill--sm hdr-item magnetic header__cta">
+        <Link
+          href="/contact"
+          className="pill pill--ink pill--sm hdr-item magnetic header__cta"
+          aria-current={isActivePath(pathname, '/contact') ? 'page' : undefined}
+        >
           Start a conversation
           <span className="pill__arrow" aria-hidden="true">
             &#8599;

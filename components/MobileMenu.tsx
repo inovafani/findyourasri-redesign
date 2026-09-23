@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { EASE, EASE_LONG, gsap, initGsap, motionIsOff } from '@/lib/gsap';
 import { navLinks } from '@/lib/content';
+import { isActivePath } from '@/lib/nav';
 import { site } from '@/lib/site';
 
 /**
@@ -18,6 +19,7 @@ import { site } from '@/lib/site';
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   const sheetRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -132,19 +134,23 @@ export default function MobileMenu() {
           <div className="sheet" ref={sheetRef} role="dialog" aria-modal="true" aria-label="Menu">
             <div className="sheet__panel">
               <nav className="sheet__nav" aria-label="Primary">
-                {[...navLinks, { href: '/contact', label: 'Contact' }].map((link, i) => (
-                  <button
-                    key={link.href}
-                    type="button"
-                    className="sheet__row"
-                    onClick={() => go(link.href)}
-                  >
-                    <span>
-                      <i aria-hidden="true">{String(i + 1).padStart(2, '0')}</i>
-                      {link.label}
-                    </span>
-                  </button>
-                ))}
+                {[...navLinks, { href: '/contact', label: 'Contact' }].map((link, i) => {
+                  const current = isActivePath(pathname, link.href);
+                  return (
+                    <button
+                      key={link.href}
+                      type="button"
+                      className={`sheet__row${current ? ' is-current' : ''}`}
+                      aria-current={current ? 'page' : undefined}
+                      onClick={() => go(link.href)}
+                    >
+                      <span>
+                        <i aria-hidden="true">{String(i + 1).padStart(2, '0')}</i>
+                        {link.label}
+                      </span>
+                    </button>
+                  );
+                })}
               </nav>
 
               <div className="sheet__foot">
