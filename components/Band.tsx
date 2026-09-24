@@ -4,7 +4,7 @@ export default function Band() {
     <section className="section section--band" aria-label="Our standard">
       <div className="band">
         <div className="band__media parallax-media">
-          <img src="/img/band-wake.jpg" alt="" width={986} height={1600} loading="lazy" />
+          <img src="/img/band-close.jpg" alt="" width={843} height={1500} loading="lazy" />
         </div>
         <div className="band__scrim" aria-hidden="true" />
         <div className="band__body">

@@ -1,3 +1,4 @@
+import ContactMedia from '@/components/ContactMedia';
 import { site } from '@/lib/site';
 
 /** 08 · next step. */
@@ -34,15 +35,7 @@ export default function Contact({ num, heading = 'h1' }: { num?: string; heading
         </div>
 
         <div className="contact__media">
-          <div className="parallax-media">
-            <img
-              src="/img/band-close.jpg"
-              alt="A phinisi at anchor in still water at the end of the day"
-              width={843}
-              height={1500}
-              loading="lazy"
-            />
-          </div>
+          <ContactMedia />
         </div>
       </div>
     </section>

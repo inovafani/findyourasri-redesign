@@ -1234,7 +1234,7 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 40%;
+  object-position: 50% 56%;
 }
 .band__scrim {
   position: absolute;
@@ -1395,7 +1395,8 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   background: var(--a-tint);
 }
 .contact__media > div { position: absolute; inset: -8% 0; will-change: transform; }
-.contact__media img { width: 100%; height: 100%; object-fit: cover; }
+.contact__media img,
+.contact__media video { width: 100%; height: 100%; object-fit: cover; background: var(--a-tint); }
 
 /* ---------- footer ---------- */
 .footer {
