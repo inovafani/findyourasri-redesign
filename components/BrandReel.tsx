@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
-import { ScrollTrigger, gsap, initGsap, motionIsOff } from '@/lib/gsap';
-import { brands } from '@/lib/content';
+import { ScrollTrigger, gsap, initGsap, motionIsOff } from "@/lib/gsap";
+import { brands } from "@/lib/content";
 
 /**
  * The logo band. GSAP drives the loop rather than a CSS keyframe so scrolling
@@ -27,7 +27,7 @@ export default function BrandReel() {
       const loop = gsap.to(el, {
         xPercent: -50,
         duration: 46,
-        ease: 'none',
+        ease: "none",
         repeat: -1,
       });
 
@@ -50,7 +50,11 @@ export default function BrandReel() {
         onUpdate: (self) => {
           // Clamped, so a flick of the wheel nudges the strip rather than
           // launching it.
-          const boost = gsap.utils.clamp(1, 4.5, 1 + Math.abs(self.getVelocity()) / 900);
+          const boost = gsap.utils.clamp(
+            1,
+            4.5,
+            1 + Math.abs(self.getVelocity()) / 900,
+          );
           target = Math.max(target, resting * boost);
         },
       });
@@ -62,14 +66,14 @@ export default function BrandReel() {
       const leave = () => {
         resting = 1;
       };
-      el.addEventListener('pointerenter', enter);
-      el.addEventListener('pointerleave', leave);
+      el.addEventListener("pointerenter", enter);
+      el.addEventListener("pointerleave", leave);
 
       return () => {
         gsap.ticker.remove(sync);
         velocity.kill();
-        el.removeEventListener('pointerenter', enter);
-        el.removeEventListener('pointerleave', leave);
+        el.removeEventListener("pointerenter", enter);
+        el.removeEventListener("pointerleave", leave);
       };
     }, el);
 
@@ -82,7 +86,7 @@ export default function BrandReel() {
         <li key={b.alt}>
           <img
             src={b.src}
-            alt={hidden ? '' : b.alt}
+            alt={hidden ? "" : b.alt}
             width={b.w}
             height={b.h}
             style={{ height: b.size }}
@@ -90,19 +94,23 @@ export default function BrandReel() {
         </li>
       ))}
       <li className="reel__wordmark">
-        <img src="/img/logo-bluepass.png" alt="" width={82} height={120} style={{ height: 20 }} />
+        <img
+          src="/img/logo-bluepass.png"
+          alt=""
+          width={82}
+          height={120}
+          style={{ height: 20 }}
+        />
         <span>BluePass</span>
       </li>
     </ul>
   );
 
   return (
-    <section className="reel" aria-label="Brands we have worked with">
-      <div className="eyebrow reel__head">
-        <span className="eyebrow__num reveal">[01]</span>
-        <span className="eyebrow__label reveal">Worked with, worldwide</span>
-        <span className="eyebrow__rule rule-draw" />
-      </div>
+    <section className="reel" aria-labelledby="reel-title">
+      <h2 id="reel-title" className="reel__title reveal">
+        Worked with, worldwide.
+      </h2>
       <div className="reel__viewport">
         <div className="reel__track" ref={track}>
           {row(false)}

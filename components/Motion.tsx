@@ -33,22 +33,28 @@ import {
 /* Containers whose `.reveal` children should arrive as one sequence. Ordered
    innermost-last is irrelevant — `closest()` already picks the nearest. */
 const GROUPS = [
-  '.eyebrow',
   '.footer__list',
-  '.measure__list',
   '.hero__actions',
-  '.contact__actions',
-  '.sec-head',
+  '.hero__copy',
+  '.head2',
+  '.stack',
+  '.split',
   '.sector__body',
-  '.statement__grid',
   '.stages',
-  '.services__grid',
   '.steps',
-  '.measure__cols',
+  '.tiles',
+  '.frames',
+  '.cards',
+  '.plans',
+  '.people',
+  '.mlist',
+  '.ticks',
+  '.chips',
   '.footer__cols',
   '.footer__bar',
   '.production',
-  '.contact__body',
+  '.split-hero__body',
+  '.cta-line',
 ].join(', ');
 
 export default function Motion() {
@@ -147,7 +153,7 @@ export default function Motion() {
         // The hero frame belongs to the intro timeline and the archive has its
         // own sequenced pass below; everything else is handled here.
         gsap.utils.toArray<HTMLElement>('.clip-reveal').forEach((el) => {
-          if (el.closest('.work__rail') || el.classList.contains('hero__frame')) return;
+          if (el.classList.contains('hero__frame')) return;
 
           const inSector = Boolean(el.closest('.sector'));
           const trigger = { trigger: el, start: 'top 90%', once: true } as const;
@@ -170,39 +176,6 @@ export default function Motion() {
               { scale: 1, duration: 2.6, ease: EASE_LONG, scrollTrigger: trigger },
             );
           }
-        });
-
-        // ---------- our work: each card wipes open over a settling image ----------
-        // The rail scrolls horizontally, so every card shares a vertical
-        // trigger point — the stagger is what gives them an order.
-        gsap.utils.toArray<HTMLElement>('.work__rail .proj').forEach((card, i) => {
-          const image = card.querySelector('img');
-          const trigger = { trigger: card, start: 'top 92%', once: true };
-          const delay = Math.min(i, 5) * 0.08;
-
-          gsap.to(card, {
-            clipPath: 'inset(0% 0% 0% 0%)',
-            duration: 1,
-            ease: EASE_LONG,
-            delay,
-            scrollTrigger: trigger,
-          });
-
-          if (!image) return;
-          gsap.fromTo(
-            image,
-            { scale: 1.12 },
-            {
-              scale: 1,
-              duration: 1.4,
-              ease: EASE_LONG,
-              delay,
-              scrollTrigger: trigger,
-              // Hand the image back to CSS so the hover zoom is not fighting an
-              // inline transform GSAP left behind.
-              onComplete: () => gsap.set(image, { clearProps: 'transform' }),
-            },
-          );
         });
 
         // ---------- parallax ----------

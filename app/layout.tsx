@@ -1,10 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
-import Footer from '@/components/Footer';
-import Header from '@/components/Header';
 import Motion from '@/components/Motion';
-import { site, structuredData } from '@/lib/site';
+import Tracking from '@/components/Tracking';
+import { site } from '@/lib/site';
 
 import './globals.css';
 
@@ -28,26 +27,11 @@ const mono = Geist_Mono({
   display: 'swap',
 });
 
+/** Defaults only. Every page sets its own title, description and canonical via pageMetadata(). */
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: site.title,
   description: site.description,
-  alternates: { canonical: '/' },
-  openGraph: {
-    siteName: site.name,
-    title: site.title,
-    description: site.socialDescription,
-    type: 'website',
-    url: `${site.url}/`,
-    locale: site.locale,
-    images: [site.ogImage],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: site.title,
-    description: site.socialDescription,
-    images: [site.ogImage.url],
-  },
   icons: {
     icon: [
       { url: '/img/favicon-32.png', sizes: '32x32', type: 'image/png' },
@@ -78,6 +62,21 @@ const boot = `(function(){try{var d=document.documentElement,s=new URLSearchPara
 if(s!==null){var o=parseInt(s,10);if(o>0)document.documentElement.style.scrollBehavior='auto',addEventListener('DOMContentLoaded',function(){scrollTo(0,o)});return;}
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('anim-ready');}catch(e){}})();`;
 
+/**
+ * Google Tag Manager, behind W11: nothing loads until NEXT_PUBLIC_GTM_ID is
+ * set at build time. Consent Mode v2 defaults are declared before GTM, denied
+ * for EEA and UK visitors and granted elsewhere. GA4 and the Meta pixel are
+ * configured inside the container, not here.
+ */
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
+const EEA_UK = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IS','IE','IT','LV','LI','LT','LU','MT','NL','NO','PL','PT','RO','SK','SI','ES','SE','GB'];
+const gtm = GTM_ID
+  ? `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',region:${JSON.stringify(EEA_UK)}});
+gtag('consent','default',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'});
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',${JSON.stringify(GTM_ID)});`
+  : '';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     // The boot script below stamps `anim-ready` on <html> before hydration, so
@@ -85,10 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: boot }} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
+        {gtm ? <script dangerouslySetInnerHTML={{ __html: gtm }} /> : null}
 
         {/* The phone header hands navigation to a JS-driven sheet, so without
             JS there would be no nav at all. Fall back to the inline links. */}
@@ -104,13 +100,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
 
-        <div className="wrap">
-          <Header />
-          <main id="main">{children}</main>
-          <Footer />
-        </div>
+        {children}
 
         <Motion />
+        <Tracking />
       </body>
     </html>
   );

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Fragment, useEffect, useRef } from 'react';
 
 import MobileMenu from '@/components/MobileMenu';
+import NavMenu from '@/components/NavMenu';
 import { navLinks } from '@/lib/content';
 import { isActivePath } from '@/lib/nav';
 
@@ -16,6 +17,7 @@ import { isActivePath } from '@/lib/nav';
 export default function Header() {
   const ref = useRef<HTMLElement>(null);
   const pathname = usePathname();
+  const onContact = isActivePath(pathname, '/contact/');
 
   useEffect(() => {
     const el = ref.current;
@@ -43,7 +45,6 @@ export default function Header() {
       <div className="header__row">
         <Link href="/" className="header__logo hdr-item" aria-label="Asri, home">
           <img src="/img/asri-white.png" alt="Asri" width={1171} height={320} />
-          <sup>&#174;</sup>
         </Link>
 
         <nav className="nav" aria-label="Primary">
@@ -56,31 +57,41 @@ export default function Header() {
                     +
                   </span>
                 )}
-                <Link
-                  href={link.href}
-                  className={`hdr-item${current ? ' is-current' : ''}`}
-                  aria-current={current ? 'page' : undefined}
-                  /* Feeds .nav a::before, which reserves the current-page
-                     width so the row does not shift between pages. */
-                  data-label={link.label}
-                >
-                  {link.label}
-                </Link>
+                {link.children ? (
+                  <NavMenu label={link.label} items={link.children} />
+                ) : (
+                  <Link
+                    href={link.href}
+                    className={`hdr-item${current ? ' is-current' : ''}`}
+                    aria-current={current ? 'page' : undefined}
+                    /* Feeds .nav a::before, which reserves the current-page
+                       width so the row does not shift between pages. */
+                    data-label={link.label}
+                    data-track="cta_click"
+                    data-cta-location="nav"
+                  >
+                    {link.label}
+                  </Link>
+                )}
               </Fragment>
             );
           })}
         </nav>
 
-        <Link
-          href="/contact"
-          className="pill pill--ink pill--sm hdr-item magnetic header__cta"
-          aria-current={isActivePath(pathname, '/contact') ? 'page' : undefined}
-        >
-          Start a conversation
-          <span className="pill__arrow" aria-hidden="true">
-            &#8599;
-          </span>
-        </Link>
+        {/* Hidden on /contact/ itself, where the form is already the page. */}
+        {!onContact && (
+          <Link
+            href="/contact/"
+            className="pill pill--ink pill--sm hdr-item magnetic header__cta"
+            data-track="cta_click"
+            data-cta-location="nav"
+          >
+            Start a conversation
+            <span className="pill__arrow" aria-hidden="true">
+              &#8599;
+            </span>
+          </Link>
+        )}
 
         <MobileMenu />
       </div>

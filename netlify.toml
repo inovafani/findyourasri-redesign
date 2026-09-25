@@ -22,3 +22,54 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Frame-Options = "SAMEORIGIN"
+
+# Hidden pages: noindex in the page metadata and in the header. Add one block
+# per entry in hiddenPages (lib/content.ts); scripts/check-build.mjs fails the
+# build if one is missing.
+[[headers]]
+  for = "/marine/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+# Legacy leather-goods store: send people to the page that exists.
+[[redirects]]
+  from = "/products/*"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/collections/*"
+  to = "/"
+  status = 301
+
+# Typical store paths, not yet verified against the old site. Confirm them
+# against Search Console's page list before enabling (crawl finding 1).
+# [[redirects]]
+#   from = "/pages/*"
+#   to = "/"
+#   status = 301
+# [[redirects]]
+#   from = "/blogs/*"
+#   to = "/"
+#   status = 301
+# [[redirects]]
+#   from = "/cart"
+#   to = "/"
+#   status = 301
+# [[redirects]]
+#   from = "/account/*"
+#   to = "/"
+#   status = 301
+
+# The old /process page moved into /services/.
+[[redirects]]
+  from = "/process/*"
+  to = "/services/#process"
+  status = 301
+
+# The Netlify alias serves the whole site: one host only.
+[[redirects]]
+  from = "https://findyourasri.netlify.app/*"
+  to = "https://findyourasri.com/:splat"
+  status = 301
+  force = true

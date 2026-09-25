@@ -2,10 +2,10 @@
   "name": "findyourasri-redesign",
   "version": "1.0.0",
   "private": true,
-  "description": "Asri — Marketing & Production. Redesign of findyourasri.com.",
+  "description": "Asri, marketing and production. Redesign of findyourasri.com.",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/check-build.mjs",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit"

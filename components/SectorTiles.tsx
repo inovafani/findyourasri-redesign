@@ -1,52 +1,61 @@
 import Link from 'next/link';
+import { Fragment } from 'react';
 
-import SectionHead from '@/components/SectionHead';
-import { sectors } from '@/lib/content';
+import ArrowButton from '@/components/ArrowButton';
+import { frames, getSector, marketPlaces, marketsLead, type FrameId } from '@/lib/content';
 
 /**
- * The homepage's take on the sectors: four photographs with a name on them.
- *
- * The full rows — body copy, the proof line, the alternating layout — live on
- * /sectors. Showing both would be the same content twice, and the homepage's
- * job here is to make you want the page, not to be it.
+ * Home: four tiles, each one link to its sector page: the frame, then the
+ * name and who it covers, with a round arrow button beside them. The numbers each is measured on
+ * live on the sector pages. Hidden pages such as /marine/ never appear here.
  */
-export default function SectorTiles({ num }: { num?: string }) {
-  return (
-    <section className="section">
-      <SectionHead
-        num={num}
-        label="Who we work with"
-        title="Four Kinds of Client, One Way of Working"
-        lede="Destinations, hospitality, global brands and experience operators. Same crew, same system, four different problems."
-      />
+export default function SectorTiles() {
+  const order = ['hospitality', 'operators', 'brands', 'destinations'] as const;
 
-      <div className="tiles">
-        {sectors.map((s) => (
-          <Link key={s.kicker} href="/sectors" className="tile clip-reveal">
-            <img
-              className="parallax-media"
-              src={s.img}
-              alt={s.alt}
-              width={s.w}
-              height={s.h}
-              loading="lazy"
-              style={'tilePos' in s ? { objectPosition: s.tilePos } : undefined}
-            />
-            <span className="tile__body">
-              <span className="tile__name">{s.kicker}</span>
-            </span>
-          </Link>
-        ))}
+  return (
+    <section className="section" data-section-view="sectors">
+      <div className="stack stack--head">
+        <h2 className="sec-title line-mask">Four Kinds of Client</h2>
+        {/* Two-tone, like the original statement: the places carry the
+            weight, the words between them step back. */}
+        <p className="markets reveal">
+          {marketsLead}{' '}
+          {marketPlaces.map((place, i) => (
+            <Fragment key={place}>
+              <b>{place}</b>
+              {i < marketPlaces.length - 2 ? ', ' : i === marketPlaces.length - 2 ? ' and ' : '.'}
+            </Fragment>
+          ))}
+        </p>
       </div>
 
-      <p className="section__more">
-        <Link href="/sectors" className="pill pill--outline magnetic">
-          How we work with each
-          <span className="pill__arrow" aria-hidden="true">
-            &#8599;
-          </span>
-        </Link>
-      </p>
+      <div className="tiles">
+        {order.map((slug) => {
+          const s = getSector(slug);
+          const f = frames[s.frame as FrameId];
+          return (
+            <Link key={s.slug} href={`/sectors/${s.slug}/`} className="tile reveal">
+              <span className="tile__media">
+                <img
+                  src={f.src}
+                  alt=""
+                  width={f.w}
+                  height={f.h}
+                  loading="lazy"
+                  style={'pos' in f ? { objectPosition: f.pos } : undefined}
+                />
+              </span>
+              <span className="tile__meta">
+                <span className="tile__text">
+                  <span className="tile__name">{s.name}</span>
+                  <span className="tile__covers">{s.covers}</span>
+                </span>
+                <ArrowButton />
+              </span>
+            </Link>
+          );
+        })}
+      </div>
     </section>
   );
 }

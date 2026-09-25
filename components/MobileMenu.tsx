@@ -1,13 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { EASE, EASE_LONG, gsap, initGsap, motionIsOff } from '@/lib/gsap';
 import { navLinks } from '@/lib/content';
 import { isActivePath } from '@/lib/nav';
-import { site } from '@/lib/site';
+import { mailto, site } from '@/lib/site';
 
 /**
  * The phone navigation: a bar button that opens a full-height sheet.
@@ -18,6 +18,8 @@ import { site } from '@/lib/site';
  */
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
+  // The Work row's own dropdown inside the sheet.
+  const [subOpen, setSubOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -123,7 +125,12 @@ export default function MobileMenu() {
         className={`burger${open ? ' is-open' : ''}`}
         aria-expanded={open}
         aria-label={open ? 'Close menu' : 'Open menu'}
-        onClick={() => (open ? close() : setOpen(true))}
+        onClick={() => {
+          if (open) return close();
+          // Opens expanded when you are already somewhere inside Work.
+          setSubOpen(navLinks.some((l) => l.children?.some((c) => isActivePath(pathname, c.href))));
+          setOpen(true);
+        }}
       >
         <span className="burger__bar" />
         <span className="burger__bar" />
@@ -134,33 +141,85 @@ export default function MobileMenu() {
           <div className="sheet" ref={sheetRef} role="dialog" aria-modal="true" aria-label="Menu">
             <div className="sheet__panel">
               <nav className="sheet__nav" aria-label="Primary">
-                {[...navLinks, { href: '/contact', label: 'Contact' }].map((link, i) => {
+                {[...navLinks, { href: '/contact/', label: 'Contact' }].map((link, i) => {
                   const current = isActivePath(pathname, link.href);
                   return (
-                    <button
-                      key={link.href}
-                      type="button"
-                      className={`sheet__row${current ? ' is-current' : ''}`}
-                      aria-current={current ? 'page' : undefined}
-                      onClick={() => go(link.href)}
-                    >
-                      <span>
-                        <i aria-hidden="true">{String(i + 1).padStart(2, '0')}</i>
-                        {link.label}
-                      </span>
-                    </button>
+                    <Fragment key={link.href}>
+                      {'children' in link && link.children ? (
+                        // A menu, not a page: the row opens its categories
+                        // and only they navigate.
+                        <button
+                          type="button"
+                          className={`sheet__row sheet__row--menu${current ? ' is-current' : ''}${subOpen ? ' is-open' : ''}`}
+                          aria-expanded={subOpen}
+                          aria-controls="sheet-sub-work"
+                          onClick={() => setSubOpen((v) => !v)}
+                        >
+                          <span>
+                            <i aria-hidden="true">{String(i + 1).padStart(2, '0')}</i>
+                            {link.label}
+                            <svg className="sheet__chev" viewBox="0 0 10 6" width="16" height="10" aria-hidden="true">
+                              <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className={`sheet__row${current ? ' is-current' : ''}`}
+                          aria-current={current ? 'page' : undefined}
+                          onClick={() => go(link.href)}
+                        >
+                          <span>
+                            <i aria-hidden="true">{String(i + 1).padStart(2, '0')}</i>
+                            {link.label}
+                          </span>
+                        </button>
+                      )}
+                      {'children' in link && link.children ? (
+                        <div
+                          id="sheet-sub-work"
+                          className={`sheet__sub${subOpen ? ' is-open' : ''}`}
+                          aria-hidden={!subOpen}
+                        >
+                          <div className="sheet__sub-inner">
+                            {link.children.map((child) => (
+                              <button
+                                key={child.href}
+                                type="button"
+                                tabIndex={subOpen ? undefined : -1}
+                                className={isActivePath(pathname, child.href) ? 'is-here' : undefined}
+                                onClick={() => go(child.href)}
+                              >
+                                {child.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
+                    </Fragment>
                   );
                 })}
               </nav>
 
-              <div className="sheet__foot">
-                <a href={`mailto:${site.email}`} className="sheet__email">
+              <div className="sheet__foot" data-link-location="menu">
+                <a href={mailto} className="sheet__email">
                   {site.email}
                 </a>
-                <a href={`tel:${site.phoneHref}`} className="sheet__phone">
+                <a
+                  href={`tel:${site.phoneHref}`}
+                  className="sheet__phone"
+                  data-phone-country={site.phoneCountry}
+                >
                   {site.phone}
                 </a>
-                <button type="button" className="pill pill--ink" onClick={() => go('/contact')}>
+                <button
+                  type="button"
+                  className="pill pill--ink"
+                  onClick={() => go('/contact/')}
+                  data-track="cta_click"
+                  data-cta-location="menu"
+                >
                   Start a conversation
                   <span className="pill__arrow" aria-hidden="true">
                     &#8599;

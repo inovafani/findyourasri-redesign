@@ -1,41 +1,45 @@
-import SectionHead from '@/components/SectionHead';
-import { sectors } from '@/lib/content';
+import Link from 'next/link';
 
-/** 03 · who we work with. Four alternating rows, each with its own slow parallax. */
-export default function Sectors({ num, heading }: { num?: string; heading?: 'h1' | 'h2' }) {
+import { frames, getSector, type FrameId } from '@/lib/content';
+
+/** The wireframe's order: destinations, hospitality, then brands and operators. */
+const order = ['destinations', 'hospitality', 'brands', 'operators'] as const;
+
+/** The /sectors/ rows: four alternating rows, each with its own slow parallax and a link to its page. */
+export default function Sectors() {
   return (
-    <section id="sectors" className="section section--anchor">
-      <SectionHead
-        num={num}
-        heading={heading}
-        label="Who we work with"
-        title="Four Kinds of Client, One Way of Working"
-        lede="Destinations, hospitality, global brands and experience operators. Same crew, same system, four different problems."
-      />
-
-      <div className="sectors__list">
-        {sectors.map((s) => (
-          <article key={s.kicker} className={`sector${s.flip ? ' sector--flip' : ''}`}>
+    <div className="sectors__list">
+      {order.map((slug, i) => {
+        const s = getSector(slug);
+        const f = frames[s.frame as FrameId];
+        return (
+          <article key={s.slug} className={`sector${i % 2 ? ' sector--flip' : ''}`}>
             <div className="sector__media clip-reveal">
               <img
                 className="parallax-media"
-                src={s.img}
-                alt={s.alt}
-                width={s.w}
-                height={s.h}
+                src={f.src}
+                alt={f.alt}
+                width={f.w}
+                height={f.h}
                 loading="lazy"
-                style={'pos' in s ? { objectPosition: s.pos } : undefined}
+                style={'pos' in f ? { objectPosition: f.pos } : undefined}
               />
             </div>
             <div className="sector__body">
-              <p className="sector__kicker reveal">{s.kicker}</p>
-              <h3 className="sector__title reveal">{s.title}</h3>
+              <h2 className="sector__title reveal">{s.title}</h2>
               <p className="sector__body-text reveal">{s.body}</p>
-              <p className="sector__proof reveal">{s.proof}</p>
+              <p className="sector__proof reveal">
+                <Link href={`/sectors/${s.slug}/`} className="pill pill--outline pill--sm magnetic">
+                  How we work with {s.name === 'Global brands' ? 'brands' : s.name.toLowerCase()}
+                  <span className="pill__arrow" aria-hidden="true">
+                    &#8599;
+                  </span>
+                </Link>
+              </p>
             </div>
           </article>
-        ))}
-      </div>
-    </section>
+        );
+      })}
+    </div>
   );
 }

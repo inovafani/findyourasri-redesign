@@ -6,8 +6,8 @@ import { createPortal } from 'react-dom';
 import { EASE, gsap, initGsap, motionIsOff } from '@/lib/gsap';
 
 export type LightboxItem = {
-  readonly client: string;
-  readonly services: string;
+  readonly title: string;
+  readonly caption?: string;
   readonly src: string;
   readonly alt: string;
   readonly w: number;
@@ -211,8 +211,8 @@ export default function Lightbox({
 
       <div className="lb__foot">
         <div className="lb__caption">
-          <p className="lb__client">{item.client}</p>
-          <p className="lb__services">{item.services}</p>
+          <p className="lb__client">{item.title}</p>
+          {item.caption ? <p className="lb__services">{item.caption}</p> : null}
         </div>
         <div className="lb__nav">
           <button
