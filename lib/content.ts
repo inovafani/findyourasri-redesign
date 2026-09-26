@@ -375,6 +375,80 @@ export const frames = {
     subject: 'Pool beneath the palms',
     sectors: ['destinations'],
   },
+  travelBhutan: {
+    id: 'travelBhutan',
+    src: '/img/travel/bhutan.jpg',
+    alt: 'A young monk in red robes crossing a covered wooden bridge',
+    w: 2400,
+    h: 1500,
+    subject: 'A monk crossing the bridge',
+    sectors: ['destinations'],
+  },
+  travelIndia: {
+    id: 'travelIndia',
+    src: '/img/travel/india.jpg',
+    alt: 'A holy man in an orange turban and prayer beads at dusk by the river',
+    w: 2400,
+    h: 1600,
+    subject: 'A sadhu at dusk',
+    sectors: ['destinations'],
+    pos: '66% 40%',
+  },
+  travelMantas: {
+    id: 'travelMantas',
+    src: '/img/travel/mantas.jpg',
+    alt: 'A manta ray gliding over a reef among schools of small fish',
+    w: 1600,
+    h: 2000,
+    subject: 'A manta over the reef',
+    sectors: ['destinations'],
+  },
+  travelNepal: {
+    id: 'travelNepal',
+    src: '/img/travel/nepal.jpg',
+    alt: 'Three young monks seated before a golden Buddha in a temple',
+    w: 1600,
+    h: 2000,
+    subject: 'Young monks at the temple',
+    sectors: ['destinations'],
+  },
+  travelSanMarzano: {
+    id: 'travelSanMarzano',
+    src: '/img/travel/san-marzano.jpg',
+    alt: 'A fleet of phinisi on still water under a rising sun',
+    w: 2400,
+    h: 1350,
+    subject: 'Phinisi fleet at sunrise',
+    sectors: ['destinations'],
+    pos: '56% 50%',
+  },
+  travelVietnam: {
+    id: 'travelVietnam',
+    src: '/img/travel/vietnam.jpg',
+    alt: 'A man on a bicycle loaded with woven bamboo fish traps',
+    w: 1080,
+    h: 1350,
+    subject: 'A basket seller on his bicycle',
+    sectors: ['destinations'],
+  },
+  travelAfrica: {
+    id: 'travelAfrica',
+    src: '/img/travel/africa.jpg',
+    alt: 'A rider on a pale horse before a tall waterfall',
+    w: 1600,
+    h: 2000,
+    subject: 'A rider below the falls',
+    sectors: ['destinations'],
+  },
+  travelIndonesia: {
+    id: 'travelIndonesia',
+    src: '/img/travel/indonesia.jpg',
+    alt: 'A procession in white ceremonial dress walking up a jungle path',
+    w: 1600,
+    h: 2000,
+    subject: 'A temple procession',
+    sectors: ['destinations'],
+  },
 } as const satisfies Record<string, Frame>;
 
 export type FrameId = keyof typeof frames;
@@ -494,25 +568,27 @@ export function getWorkCategory(slug: WorkCategorySlug) {
 }
 
 export const workPieces: WorkPiece[] = [
-  // Production · Travel: one tile per place.
-  { id: 't1', title: 'Phinisi fleet', meta: '{Place}', category: 'production', tab: 'travel', frame: 'fleet' },
-  { id: 't2', title: 'Karst lagoon', meta: '{Place}', category: 'production', tab: 'travel', frame: 'karst' },
-  { id: 't3', title: 'Under full sail', meta: '{Place}', category: 'production', tab: 'travel', frame: 'sails' },
-  { id: 't4', title: 'Island channels', meta: '{Place}', category: 'production', tab: 'travel', frame: 'lagoon' },
-  { id: 't5', title: 'Forested islands', meta: '{Place}', category: 'production', tab: 'travel', frame: 'islands' },
-  { id: 't6', title: 'Black sails', meta: '{Place}', category: 'production', tab: 'travel', frame: 'blackSails' },
-  { id: 't7', title: 'Fleet at sunset', meta: '{Place}', category: 'production', tab: 'travel', frame: 'sunset' },
-  { id: 't8', title: 'Lunch on deck', meta: '{Place}', category: 'production', tab: 'travel', frame: 'deck' },
-  // Production · Client: one tile per approved client campaign.
-  { id: 'c1', title: '{Client}', meta: '{Campaign}', category: 'production', tab: 'client', frame: 'deck' },
-  { id: 'c2', title: '{Client}', meta: '{Campaign}', category: 'production', tab: 'client', frame: 'sails' },
-  { id: 'c3', title: '{Client}', meta: '{Campaign}', category: 'production', tab: 'client', frame: 'blackSails' },
-  { id: 'c4', title: '{Client}', meta: '{Campaign}', category: 'production', tab: 'client', frame: 'fleet' },
-  // Production · Films
+  // Production · Travel: one tile per place, from Cam's travel frames in
+  // public/img/travel.
+  { id: 't1', title: 'Bhutan', meta: 'A monk crossing the bridge', category: 'production', tab: 'travel', frame: 'travelBhutan' },
+  { id: 't2', title: 'India', meta: 'A sadhu at dusk', category: 'production', tab: 'travel', frame: 'travelIndia' },
+  { id: 't3', title: 'Mantas', meta: 'A manta over the reef', category: 'production', tab: 'travel', frame: 'travelMantas' },
+  { id: 't4', title: 'Nepal', meta: 'Young monks at the temple', category: 'production', tab: 'travel', frame: 'travelNepal' },
+  { id: 't5', title: 'San Marzano', meta: 'Phinisi fleet at sunrise', category: 'production', tab: 'travel', frame: 'travelSanMarzano' },
+  { id: 't6', title: 'Vietnam', meta: 'A basket seller on his bicycle', category: 'production', tab: 'travel', frame: 'travelVietnam' },
+  { id: 't7', title: 'Indonesia', meta: 'A temple procession', category: 'production', tab: 'travel', frame: 'travelIndonesia' },
+  { id: 't8', title: 'Africa', meta: 'A rider below the falls', category: 'production', tab: 'travel', frame: 'travelAfrica' },
+  // Production · Client: one tile per approved client campaign. DUMMY titles
+  // until Cam sends the real ones; no real client is named here.
+  { id: 'c1', title: 'A Table at Sea', meta: 'Sample client · Hospitality', category: 'production', tab: 'client', frame: 'deck' },
+  { id: 'c2', title: 'Under Full Sail', meta: 'Sample client · Charter', category: 'production', tab: 'client', frame: 'sails' },
+  { id: 'c3', title: 'The Black Sails Launch', meta: 'Sample client · Operator', category: 'production', tab: 'client', frame: 'blackSails' },
+  { id: 'c4', title: 'Fleet Week', meta: 'Sample client · Destination', category: 'production', tab: 'client', frame: 'fleet' },
+  // Production · Films: DUMMY titles until Cam names the films.
   {
     id: 'f1',
-    title: '{Film title}',
-    meta: '{Client or place}',
+    title: 'Nets at First Light',
+    meta: 'Brand film · 1 min 12',
     category: 'production',
     tab: 'films',
     frame: 'fleet',
@@ -524,8 +600,8 @@ export const workPieces: WorkPiece[] = [
   },
   {
     id: 'f2',
-    title: '{Film title}',
-    meta: '{Client or place}',
+    title: 'Seven Days, One Sea',
+    meta: 'Expedition film · 2 min 21',
     category: 'production',
     tab: 'films',
     frame: 'islands',

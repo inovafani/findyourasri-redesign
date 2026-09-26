@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { EASE, EASE_LONG, gsap, initGsap, motionIsOff } from '@/lib/gsap';
 import { navLinks } from '@/lib/content';
+import { followLink } from '@/components/NavGuard';
 import { isActivePath } from '@/lib/nav';
 import { mailto, site } from '@/lib/site';
 
@@ -113,7 +114,10 @@ export default function MobileMenu() {
   const go = (href: string) => {
     // Still deferred to the close: navigating while the sheet is mid-exit
     // leaves the body scroll-locked on the page that arrives.
-    pending.current = () => router.push(href);
+    pending.current = () => {
+      followLink(href);
+      router.push(href);
+    };
     close();
   };
 

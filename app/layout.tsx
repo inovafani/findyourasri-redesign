@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
 import Motion from '@/components/Motion';
+import NavGuard from '@/components/NavGuard';
 import Tracking from '@/components/Tracking';
 import { site } from '@/lib/site';
 
@@ -104,6 +105,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <Motion />
         <Tracking />
+        <NavGuard />
       </body>
     </html>
   );

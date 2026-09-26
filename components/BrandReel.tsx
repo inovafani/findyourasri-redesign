@@ -90,6 +90,10 @@ export default function BrandReel() {
             width={b.w}
             height={b.h}
             style={{ height: b.size }}
+            // Lazy, so React does not hoist a preload for every logo into the
+            // head, where twelve of them used to queue ahead of the JavaScript.
+            loading="lazy"
+            decoding="async"
           />
         </li>
       ))}
@@ -100,6 +104,8 @@ export default function BrandReel() {
           width={82}
           height={120}
           style={{ height: 20 }}
+          loading="lazy"
+          decoding="async"
         />
         <span>BluePass</span>
       </li>
