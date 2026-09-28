@@ -13,7 +13,7 @@ import { motionIsOff } from '@/lib/gsap';
  */
 
 const POSTER = '/video/contact-poster.jpg';
-const ALT = 'A phinisi under sail between the karst islands of Raja Ampat';
+const ALT = 'A floating breakfast on the water of a private villa pool, seen from above';
 
 function pickSource() {
   if (motionIsOff()) return '';

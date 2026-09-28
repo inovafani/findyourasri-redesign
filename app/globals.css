@@ -1791,8 +1791,8 @@ a.chip:hover { border-color: var(--a-ocean); color: var(--a-ocean); }
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to right, rgba(8, 14, 13, .72) 0%, rgba(8, 14, 13, .5) 55%, rgba(8, 14, 13, .38) 100%),
-    linear-gradient(to top, rgba(8, 14, 13, .35), rgba(8, 14, 13, 0) 40%);
+    linear-gradient(to right, rgba(8, 14, 13, .82) 0%, rgba(8, 14, 13, .64) 55%, rgba(8, 14, 13, .5) 100%),
+    linear-gradient(to top, rgba(8, 14, 13, .4), rgba(8, 14, 13, .12) 45%);
 }
 .contact-hero__body {
   position: relative;
@@ -1833,7 +1833,7 @@ a.chip:hover { border-color: var(--a-ocean); color: var(--a-ocean); }
     grid-template-rows: auto;
     grid-template-areas: 'head' 'form' 'aside';
   }
-  .contact-hero__scrim { background: rgba(8, 14, 13, .6); }
+  .contact-hero__scrim { background: rgba(8, 14, 13, .68); }
 }
 
 /* ---------- work: the showreel ---------- */
