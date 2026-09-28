@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 import Breadcrumbs from '@/components/Breadcrumbs';
 import Contours from '@/components/Contours';
@@ -8,7 +9,7 @@ import WorkGrid from '@/components/WorkGrid';
 import WorkTabs from '@/components/WorkTabs';
 import {
   getWorkCategory,
-  workCategories,
+  liveWorkCategories,
   workFor,
   type WorkCategorySlug,
   type WorkTabSlug,
@@ -33,6 +34,8 @@ export default function WorkCategoryView({
   tab?: WorkTabSlug;
 }) {
   const category = getWorkCategory(slug);
+  // Off until its work exists: the route stays built but answers 404.
+  if (!liveWorkCategories.includes(category)) notFound();
   const activeTab = tab ?? category.tabs?.[0]?.slug;
   const tabLabel = category.tabs?.find((t) => t.slug === activeTab)?.label;
   const here = categoryHref(slug, activeTab);
@@ -61,8 +64,9 @@ export default function WorkCategoryView({
           <Contours name={category.pattern} />
           <h1 className="page-title line-mask">{category.name}</h1>
           <p className="text reveal">{category.line}</p>
+          {liveWorkCategories.length > 1 ? (
           <nav className="work-switch" aria-label="Work categories">
-            {workCategories.map((c) => (
+            {liveWorkCategories.map((c) => (
               <Link
                 key={c.slug}
                 href={`/work/${c.slug}/`}
@@ -73,6 +77,7 @@ export default function WorkCategoryView({
               </Link>
             ))}
           </nav>
+          ) : null}
         </div>
 
         {category.tabs ? (

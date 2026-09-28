@@ -8,7 +8,7 @@ import CtaLine from '@/components/CtaLine';
 import JsonLd from '@/components/JsonLd';
 import CenteredHead from '@/components/CenteredHead';
 import Showreel from '@/components/Showreel';
-import { frames, workCategories } from '@/lib/content';
+import { frames, liveWorkCategories } from '@/lib/content';
 import { pageMetadata, pages, site } from '@/lib/site';
 
 export const metadata: Metadata = pageMetadata(pages.work);
@@ -36,8 +36,11 @@ export default function WorkPage() {
         <Showreel />
       </section>
       <section className="section">
-        <div className="tiles tiles--3">
-          {workCategories.map((c) => {
+        <div
+          className={`tiles tiles--3${liveWorkCategories.length === 1 ? ' tiles--solo' : ''}`}
+          style={{ '--cols': liveWorkCategories.length } as React.CSSProperties}
+        >
+          {liveWorkCategories.map((c) => {
             const f = frames[c.cover];
             return (
               <Link key={c.slug} href={`/work/${c.slug}/`} className="tile reveal">

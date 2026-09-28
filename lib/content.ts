@@ -138,6 +138,16 @@ export type HiddenPage = {
    Navigation
    ============================================================ */
 
+/**
+ * The Work categories that are on the site.
+ *
+ * Marketing and Social Media are off until their work exists (Anthony,
+ * 28 Sep: nothing half-finished while people are looking at the site). Add a
+ * slug back here and it returns to the Work menu, the /work/ tiles, the
+ * category switch and the sitemap, and its page stops answering 404.
+ */
+export const liveWorkSlugs: WorkCategorySlug[] = ['production'];
+
 /** The header's page links. The call to action to /contact/ sits beside them. */
 export const navLinks: {
   href: string;
@@ -147,11 +157,13 @@ export const navLinks: {
   {
     href: '/work/',
     label: 'Work',
-    children: [
-      { href: '/work/production/', label: 'Production' },
-      { href: '/work/marketing/', label: 'Marketing' },
-      { href: '/work/social-media/', label: 'Social Media' },
-    ],
+    children: (
+      [
+        { slug: 'production', href: '/work/production/', label: 'Production' },
+        { slug: 'marketing', href: '/work/marketing/', label: 'Marketing' },
+        { slug: 'social-media', href: '/work/social-media/', label: 'Social Media' },
+      ] as const
+    ).filter((c) => liveWorkSlugs.includes(c.slug)),
   },
   { href: '/sectors/', label: 'Sectors' },
   { href: '/services/', label: 'Services' },
@@ -569,6 +581,8 @@ export const workCategories: WorkCategory[] = [
     pattern: 'drops',
   },
 ];
+
+export const liveWorkCategories = workCategories.filter((c) => liveWorkSlugs.includes(c.slug));
 
 export function getWorkCategory(slug: WorkCategorySlug) {
   return workCategories.find((c) => c.slug === slug)!;
@@ -1037,12 +1051,13 @@ export const markets = `${marketsLead} ${marketPlaces.slice(0, -1).join(', ')} a
  * to false to take someone off both pages.
  */
 export const people: Person[] = [
-  { name: 'Anthony', fullName: 'Anthony Cargill', role: 'GTM & Performance Director', line: 'A decade of performance marketing: paid search, social and SEO.', show: true },
-  { name: 'Hannah', fullName: 'Hannah', role: 'Marketing Director', show: true },
-  { name: 'Brandon', fullName: 'Brandon Vaughne', role: 'Business Director', line: 'Founding partner in Boatique Charters, a Singapore charter company.', show: true },
-  { name: 'Cam', fullName: 'Cam Vaughne', role: 'Production and Content Director', line: '10+ years as photographer, cinematographer and director, commissioned by Corona, Canon, DJI and National Geographic.', show: true },
-  { name: 'Daffa', fullName: 'Daffa', role: 'Marketing Manager', show: true },
-  { name: 'Inov', fullName: 'Inov', role: 'Web and Software Developer', show: true },
+  { name: 'Anthony', fullName: 'Anthony Cargill', role: 'GTM & Performance Director', line: 'A decade of performance marketing: paid search, social and SEO.', photo: '/img/people/anthony.jpg', show: true },
+  { name: 'Hannah', fullName: 'Hannah', role: 'Marketing Director', photo: '/img/people/hannah.jpg', show: true },
+  { name: 'Brandon', fullName: 'Brandon Vaughne', role: 'Business Director', line: 'Founding partner in Boatique Charters, a Singapore charter company.', photo: '/img/people/brandon.jpg', show: true },
+  { name: 'Cam', fullName: 'Cam Vaughne', role: 'Production and Content Director', line: '10+ years as photographer, cinematographer and director, commissioned by Corona, Canon, DJI and National Geographic.', photo: '/img/people/cam.jpg', show: true },
+  { name: 'Daffa', fullName: 'Daffa', role: 'Marketing Manager', photo: '/img/people/daffa.jpg', show: true },
+  { name: 'Inov', fullName: 'Inov', role: 'Web and Software Developer', photo: '/img/people/inov.jpg', show: true },
+  // Yoga has not sent a photo yet, so his frame stays empty.
   { name: 'Yoga', fullName: 'Yoga', role: 'Social Media Manager', show: true },
 ];
 

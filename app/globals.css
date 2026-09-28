@@ -2384,3 +2384,11 @@ a.chip.is-on:hover { color: #fff; }
   .work-tile__logo { top: 12px; left: 12px; transform: scale(.85); transform-origin: top left; }
 }
 
+
+/* /work/ holds one column per live category; a lone category runs wide. */
+.tiles--3 { grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); }
+.tiles--solo .tile__media { aspect-ratio: 21 / 9; }
+@media (max-width: 860px) {
+  .tiles--3 { grid-template-columns: minmax(0, 1fr); }
+  .tiles--solo .tile__media { aspect-ratio: 4 / 3; }
+}
