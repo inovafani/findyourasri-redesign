@@ -449,6 +449,11 @@ export const frames = {
     subject: 'A temple procession',
     sectors: ['destinations'],
   },
+  clientCoast: { id: 'clientCoast', src: '/img/w-coast.jpg', alt: 'Aerial view of a surf coastline meeting dense jungle', w: 1008, h: 630, subject: 'Surf coast from the air', sectors: ['destinations'] },
+  clientBeach: { id: 'clientBeach', src: '/img/w-beach.jpg', alt: 'White parasols and daybeds on a beach club terrace', w: 1054, h: 703, subject: 'Beach club terrace', sectors: ['brands'], pos: '50% 80%' },
+  clientDaybed: { id: 'clientDaybed', src: '/img/w-daybed.jpg', alt: 'A guest reading on a daybed under a canopy', w: 1200, h: 1026, subject: 'A daybed under the canopy', sectors: ['hospitality'] },
+  clientNight: { id: 'clientNight', src: '/img/whitsundays-1.jpg', alt: 'Guests dancing at a night event, lit in deep magenta', w: 1200, h: 1026, subject: 'A night event', sectors: ['operators'] },
+  clientDj: { id: 'clientDj', src: '/img/w-dj.jpg', alt: 'A DJ performing under magenta stage light', w: 1024, h: 1100, subject: 'A DJ set', sectors: ['hospitality'] },
 } as const satisfies Record<string, Frame>;
 
 export type FrameId = keyof typeof frames;
@@ -510,7 +515,7 @@ export type WorkCategory = {
   cover: FrameId;
   /** Tabs inside the category; the first is the category's own page. */
   tabs?: { slug: WorkTabSlug; label: string }[];
-  /** The tile shape for this category's grid. */
+  /** The tile shape for this category's grid: 2:3 in every category, so the pages match. */
   ratio: string;
   /** The chart motif behind the category's opening. */
   pattern: 'swell' | 'isobars' | 'drops';
@@ -524,6 +529,8 @@ export type WorkPiece = {
   category: WorkCategorySlug;
   tab?: WorkTabSlug;
   frame: FrameId;
+  /** A client's mark, drawn white in the tile's corner. */
+  logo?: { src: string; w: number; h: number };
   /**
    * Films play in place; everything else opens the viewer. `srcSm` is the
    * 720p cut phones get; both are web encodes of the masters in _src/video.
@@ -550,7 +557,7 @@ export const workCategories: WorkCategory[] = [
     name: 'Marketing',
     line: 'Campaigns built to fill rooms, boats and dates.',
     cover: 'deck',
-    ratio: '4 / 5',
+    ratio: '2 / 3',
     pattern: 'isobars',
   },
   {
@@ -558,7 +565,7 @@ export const workCategories: WorkCategory[] = [
     name: 'Social Media',
     line: 'Always-on content, planned ahead and posted on schedule.',
     cover: 'islands',
-    ratio: '9 / 16',
+    ratio: '2 / 3',
     pattern: 'drops',
   },
 ];
@@ -578,12 +585,19 @@ export const workPieces: WorkPiece[] = [
   { id: 't6', title: 'Vietnam', meta: 'A basket seller on his bicycle', category: 'production', tab: 'travel', frame: 'travelVietnam' },
   { id: 't7', title: 'Indonesia', meta: 'A temple procession', category: 'production', tab: 'travel', frame: 'travelIndonesia' },
   { id: 't8', title: 'Africa', meta: 'A rider below the falls', category: 'production', tab: 'travel', frame: 'travelAfrica' },
-  // Production · Client: one tile per approved client campaign. DUMMY titles
-  // until Cam sends the real ones; no real client is named here.
-  { id: 'c1', title: 'A Table at Sea', meta: 'Sample client · Hospitality', category: 'production', tab: 'client', frame: 'deck' },
-  { id: 'c2', title: 'Under Full Sail', meta: 'Sample client · Charter', category: 'production', tab: 'client', frame: 'sails' },
-  { id: 'c3', title: 'The Black Sails Launch', meta: 'Sample client · Operator', category: 'production', tab: 'client', frame: 'blackSails' },
-  { id: 'c4', title: 'Fleet Week', meta: 'Sample client · Destination', category: 'production', tab: 'client', frame: 'fleet' },
+  // Production · Client: the client cards from the original design, each with
+  // its logo. The line under each name is the sector, not the invented service
+  // lines the first build carried.
+  { id: 'c1', title: 'Canon', meta: 'Global brands', category: 'production', tab: 'client', frame: 'deck', logo: { src: '/img/logo-canon.png', w: 81, h: 17 } },
+  { id: 'c2', title: 'DJI', meta: 'Global brands', category: 'production', tab: 'client', frame: 'fleet', logo: { src: '/img/logo-dji.png', w: 35, h: 20 } },
+  { id: 'c3', title: 'National Geographic', meta: 'Global brands', category: 'production', tab: 'client', frame: 'karst', logo: { src: '/img/logo-natgeo.png', w: 95, h: 28 } },
+  { id: 'c4', title: 'Jamaica Tourist Board', meta: 'Destinations & tourism boards', category: 'production', tab: 'client', frame: 'clientCoast', logo: { src: '/img/logo-jamaica.png', w: 70, h: 24 } },
+  { id: 'c5', title: 'Corona', meta: 'Global brands', category: 'production', tab: 'client', frame: 'clientBeach', logo: { src: '/img/logo-corona.png', w: 69, h: 28 } },
+  { id: 'c6', title: 'Rosewood London', meta: 'Hospitality', category: 'production', tab: 'client', frame: 'clientDaybed', logo: { src: '/img/logo-rosewood.png', w: 143, h: 14 } },
+  { id: 'c7', title: 'Boattime Yacht Charters', meta: 'Travel & experience operators', category: 'production', tab: 'client', frame: 'sails', logo: { src: '/img/logo-boattime.png', w: 53, h: 30 } },
+  { id: 'c8', title: 'Wonderful Indonesia', meta: 'Destinations & tourism boards', category: 'production', tab: 'client', frame: 'lagoon', logo: { src: '/img/logo-indonesia.png', w: 70, h: 28 } },
+  { id: 'c9', title: 'BluePass', meta: 'Travel & experience operators', category: 'production', tab: 'client', frame: 'clientNight', logo: { src: '/img/logo-bluepass.png', w: 19, h: 28 } },
+  { id: 'c10', title: 'Press Play', meta: 'Hospitality', category: 'production', tab: 'client', frame: 'clientDj', logo: { src: '/img/logo-pressplay.png', w: 50, h: 28 } },
   // Production · Films: DUMMY titles until Cam names the films.
   {
     id: 'f1',
@@ -1030,7 +1044,7 @@ export const markets = `${marketsLead} ${marketPlaces.slice(0, -1).join(', ')} a
  * to false to take someone off both pages.
  */
 export const people: Person[] = [
-  { name: 'Anthony', fullName: 'Anthony Cargill', role: 'Marketing Director', line: 'A decade of performance marketing: paid search, social and SEO.', show: true },
+  { name: 'Anthony', fullName: 'Anthony Cargill', role: 'GTM & Performance Director', line: 'A decade of performance marketing: paid search, social and SEO.', show: true },
   { name: 'Hannah', fullName: 'Hannah', role: 'Marketing Director', show: true },
   { name: 'Brandon', fullName: 'Brandon Vaughne', role: 'Business Director', line: 'Founding partner in Boatique Charters, a Singapore charter company.', show: true },
   { name: 'Cam', fullName: 'Cam Vaughne', role: 'Production and Content Director', line: '10+ years as photographer, cinematographer and director, commissioned by Corona, Canon, DJI and National Geographic.', show: true },
@@ -1040,14 +1054,14 @@ export const people: Person[] = [
 ];
 
 /**
- * "Why Asri exists": Cam and Anthony's founder story (C11). Placeholder until
- * they write it; the block renders the placeholder so the page reads as the
- * wireframe draws it.
+ * "Why Asri exists": the founder story (C11), as supplied on 28 Sep.
  */
 export const whyAsri = {
   title: 'Why Asri Exists',
   paragraphs: [
-    '{Cam and Anthony\'s founder story, in their own words: where Asri started, and why operators and marketers belong in the same room.}',
+    'Cam spent a decade behind the camera, commissioned by Corona, Canon, DJI and National Geographic. Brandon spent a decade in luxury hospitality, running the floor, the sales and the teams. Between them, they had made the work and run the places the marketing is meant to sell.',
+    'Anthony and Hannah are the marketing. Anthony ran a full-service agency for a decade and leads performance and go-to-market. Hannah is our Marketing Director.',
+    'Operators and marketers rarely sit in the same room. At Asri they do, and one team answers for the result.',
   ],
 };
 

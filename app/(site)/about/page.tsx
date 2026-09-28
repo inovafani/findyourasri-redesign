@@ -67,11 +67,11 @@ export default function AboutPage() {
       <section className="section">
         <div className="stack stack--prose">
           <h2 className="sec-title line-mask">{whyAsri.title}</h2>
-            {whyAsri.paragraphs.map((p) => (
-              <p key={p} className="text reveal">
-                {p}
-              </p>
-            ))}
+          {whyAsri.paragraphs.map((p) => (
+            <p key={p} className="text reveal">
+              {p}
+            </p>
+          ))}
         </div>
       </section>
 

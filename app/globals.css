@@ -2355,3 +2355,32 @@ a.chip.is-on:hover { color: #fff; }
   animation: nav-progress 4s cubic-bezier(.1, .7, .2, 1) forwards;
 }
 @keyframes nav-progress { from { transform: scaleX(0); } to { transform: scaleX(.92); } }
+
+/* A client's mark in the tile's top-left corner, white over a soft shade. */
+.work-tile__logo {
+  position: absolute;
+  z-index: 1;
+  top: clamp(14px, 1.4vw, 20px);
+  left: clamp(14px, 1.4vw, 20px);
+  background-color: #fff;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: left center;
+  mask-position: left center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  filter: drop-shadow(0 1px 6px rgba(0, 0, 0, .35));
+}
+.work-tile:has(.work-tile__logo)::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0 0 auto 0;
+  height: 30%;
+  background: linear-gradient(to bottom, rgba(8, 14, 13, .45), rgba(8, 14, 13, 0));
+  pointer-events: none;
+}
+@media (max-width: 860px) {
+  .work-tile__logo { top: 12px; left: 12px; transform: scale(.85); transform-origin: top left; }
+}
+
