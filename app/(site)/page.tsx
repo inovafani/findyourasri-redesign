@@ -11,6 +11,8 @@ import SectorTiles from '@/components/SectorTiles';
 import { featured, frames } from '@/lib/content';
 import { homeGraph, pageMetadata, pages } from '@/lib/site';
 
+const SHOW_CAMPAIGNS = false;
+
 export const metadata: Metadata = pageMetadata(pages.home);
 
 /**
@@ -27,6 +29,9 @@ export default function Home() {
       <BrandReel />
       <SectorTiles />
 
+      {/* Selected Campaigns: off until real campaigns replace the archive frames
+          (Anthony, 28 Sep: no placeholder content on the live site). */}
+      {SHOW_CAMPAIGNS ? (
       <section className="section" data-section-view="work">
         <PageHead
           heading="h2"
@@ -44,6 +49,7 @@ export default function Home() {
         />
         <FrameGrid items={featured.map((id) => frames[id])} slide />
       </section>
+      ) : null}
 
       <ContactModule
         variant="full"

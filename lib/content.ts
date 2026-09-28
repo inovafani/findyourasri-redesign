@@ -625,16 +625,9 @@ export const workPieces: WorkPiece[] = [
       poster: media('film-san-mazarno-poster.jpg'),
     },
   },
-  // Marketing
-  { id: 'm1', title: '{Campaign}', meta: '{Client or sector}', category: 'marketing', frame: 'deck' },
-  { id: 'm2', title: '{Campaign}', meta: '{Client or sector}', category: 'marketing', frame: 'blackSails' },
-  { id: 'm3', title: '{Campaign}', meta: '{Client or sector}', category: 'marketing', frame: 'lagoon' },
-  { id: 'm4', title: '{Campaign}', meta: '{Client or sector}', category: 'marketing', frame: 'sails' },
-  // Social Media
-  { id: 's1', title: '{Account}', meta: '{Format}', category: 'social-media', frame: 'islands' },
-  { id: 's2', title: '{Account}', meta: '{Format}', category: 'social-media', frame: 'sunset' },
-  { id: 's3', title: '{Account}', meta: '{Format}', category: 'social-media', frame: 'karst' },
-  { id: 's4', title: '{Account}', meta: '{Format}', category: 'social-media', frame: 'lagoon' },
+  // Marketing: empty until the real campaigns land (Anthony, 28 Sep: no
+  // placeholder content on the live site).
+  // Social Media: empty for the same reason.
 ];
 
 export function workFor(category: WorkCategorySlug, tab?: WorkTabSlug) {
