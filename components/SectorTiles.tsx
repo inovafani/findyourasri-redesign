@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { Fragment } from 'react';
 
 import ArrowButton from '@/components/ArrowButton';
-import { frames, getSector, marketPlaces, marketsLead, type FrameId } from '@/lib/content';
+import Markets from '@/components/Markets';
+import { frames, getSector, type FrameId } from '@/lib/content';
 
 /**
  * Home: four tiles, each one link to its sector page: the frame, then the
@@ -16,17 +16,7 @@ export default function SectorTiles() {
     <section className="section" data-section-view="sectors">
       <div className="stack stack--head">
         <h2 className="sec-title line-mask">Four Kinds of Client</h2>
-        {/* Two-tone, like the original statement: the places carry the
-            weight, the words between them step back. */}
-        <p className="markets reveal">
-          {marketsLead}{' '}
-          {marketPlaces.map((place, i) => (
-            <Fragment key={place}>
-              <b>{place}</b>
-              {i < marketPlaces.length - 2 ? ', ' : i === marketPlaces.length - 2 ? ' and ' : '.'}
-            </Fragment>
-          ))}
-        </p>
+        <Markets />
       </div>
 
       <div className="tiles">

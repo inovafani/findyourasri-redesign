@@ -82,7 +82,7 @@ export default async function HiddenPage({ params }: Props) {
           smooth: (
             <SmoothLink
               href="#start"
-              className="pill pill--ink pill--lg magnetic"
+              className="pill pill--ink magnetic"
               data-track="cta_click"
               data-cta-location="vertical_page"
             >

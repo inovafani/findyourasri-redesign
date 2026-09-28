@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Fragment, useEffect, useRef } from 'react';
 
+import HeaderCta, { HeaderCtaLabel } from '@/components/HeaderCta';
 import MobileMenu from '@/components/MobileMenu';
 import NavMenu from '@/components/NavMenu';
 import { navLinks } from '@/lib/content';
@@ -80,17 +81,16 @@ export default function Header() {
 
         {/* Hidden on /contact/ itself, where the form is already the page. */}
         {!onContact && (
-          <Link
-            href="/contact/"
-            className="pill pill--ink pill--sm hdr-item magnetic header__cta"
-            data-track="cta_click"
-            data-cta-location="nav"
-          >
-            Start a conversation
-            <span className="pill__arrow" aria-hidden="true">
-              &#8599;
-            </span>
-          </Link>
+          <HeaderCta className="header__cta">
+            <Link
+              href="/contact/"
+              className="pill pill--ink cta-dot"
+              data-track="cta_click"
+              data-cta-location="nav"
+            >
+              <HeaderCtaLabel />
+            </Link>
+          </HeaderCta>
         )}
 
         <MobileMenu />

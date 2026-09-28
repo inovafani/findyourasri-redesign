@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import HeaderCta, { HeaderCtaLabel } from '@/components/HeaderCta';
 import SmoothLink from '@/components/SmoothLink';
 
 /**
@@ -14,17 +15,16 @@ export default function FocusHeader({ location = 'vertical_page' }: { location?:
         <Link href="/" className="header__logo hdr-item" aria-label="Asri, home">
           <img src="/img/asri-white.png" alt="Asri" width={1171} height={320} />
         </Link>
-        <SmoothLink
-          href="#start"
-          className="pill pill--ink pill--sm hdr-item magnetic"
-          data-track="cta_click"
-          data-cta-location={location}
-        >
-          Start a conversation
-          <span className="pill__arrow" aria-hidden="true">
-            &#8599;
-          </span>
-        </SmoothLink>
+        <HeaderCta>
+          <SmoothLink
+            href="#start"
+            className="pill pill--ink cta-dot"
+            data-track="cta_click"
+            data-cta-location={location}
+          >
+            <HeaderCtaLabel />
+          </SmoothLink>
+        </HeaderCta>
       </div>
     </header>
   );

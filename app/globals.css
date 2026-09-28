@@ -159,11 +159,11 @@ html.anim-ready .line-mask       { opacity: 0; }
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  height: 48px;
-  padding: 0 22px;
+  height: 40px;
+  padding: 0 18px;
   border-radius: 999px;
   border: 1px solid transparent;
-  font: 500 14.5px/1 var(--font-sans);
+  font: 500 14px/1 var(--font-sans);
   letter-spacing: -.1px;
   white-space: nowrap;
   cursor: pointer;
@@ -184,8 +184,12 @@ html.anim-ready .line-mask       { opacity: 0; }
 .pill--outline { border-color: var(--a-line); color: var(--a-ink); }
 .pill--outline:hover { background: var(--a-tint); border-color: var(--a-ink); color: var(--a-ink); }
 
-.pill--sm { height: 40px; padding: 0 18px; font-size: 14px; }
-.pill--lg { height: 50px; padding: 0 24px; font-size: 15px; gap: 10px; }
+/*
+ * One size for every button, so two of them on a screen can never differ by
+ * an amount that reads as a mistake. The header's is the same size as the
+ * body's; it only starts closed (see .cta-dot below). Phones take a taller
+ * pill further down, to hold the 44px tap target.
+ */
 
 /* ---------- header ---------- */
 .header {
@@ -1108,6 +1112,9 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
    ============================================================ */
 
 @media (max-width: 860px) {
+  /* A thumb needs more than 40px: the acceptance list asks for 44 at least. */
+  .pill { height: 46px; padding: 0 20px; }
+
   /* ---- header becomes logo + burger ---- */
   .nav,
   .header__cta { display: none; }
@@ -1150,7 +1157,7 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
     gap: 10px;
     width: auto;
   }
-  .hero__actions .pill { justify-content: center; height: 46px; }
+  .hero__actions .pill { justify-content: center; }
 
   .steps { gap: 10px; }
 
@@ -1594,13 +1601,22 @@ a.chip:hover { border-color: var(--a-ocean); color: var(--a-ocean); }
   height: 116%;
   object-fit: cover;
 }
+/* Flex, not grid, so a short last row centres itself rather than sitting
+   against the left edge. --per-row sets how many fit before it wraps. */
 .people {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  --per-row: 4;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: clamp(20px, 2.4vw, 32px) var(--gap);
 }
-.people--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.person { display: grid; gap: 6px; align-content: start; }
+.people--3 { --per-row: 3; }
+.person {
+  flex: 0 1 calc((100% - (var(--per-row) - 1) * var(--gap)) / var(--per-row));
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
 .person__name { font: 500 clamp(17px, 1.4vw, 19px)/1.25 var(--font-sans); letter-spacing: -.012em; }
 .person__role { font: 400 13px/1.45 var(--font-sans); color: var(--a-ink-3); }
 .people__note { margin-top: clamp(20px, 2.4vw, 32px); }
@@ -1709,13 +1725,13 @@ a.chip:hover { border-color: var(--a-ocean); color: var(--a-ocean); }
   .contact-grid,
   .split-hero,
   .plans,
-  .people--3,
   .footer__slim { grid-template-columns: minmax(0, 1fr); }
   .footer__slim { flex-direction: column; align-items: flex-start; }
   .tiles,
   .cards,
-  .people,
   .footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .people,
+  .people--3 { --per-row: 2; }
   .cards--auto { grid-template-columns: minmax(0, 1fr); }
   .frames { grid-template-columns: minmax(0, 1fr); }
   .frames--keep3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
@@ -2327,7 +2343,7 @@ a.chip.is-on:hover { color: #fff; }
   border-radius: 0;
   align-content: center;
 }
-.contact-card__form .form__send .pill { width: 100%; justify-content: center; height: 52px; }
+.contact-card__form .form__send .pill { width: 100%; justify-content: center; }
 .contact-card__form .form__fine { text-align: center; }
 
 @media (max-width: 860px) {
@@ -2391,4 +2407,101 @@ a.chip.is-on:hover { color: #fff; }
 @media (max-width: 860px) {
   .tiles--3 { grid-template-columns: minmax(0, 1fr); }
   .tiles--solo .tile__media { aspect-ratio: 4 / 3; }
+}
+
+/* ---------- about: the record ---------- */
+/* One block, six cells, three across: the reach line and the five credentials
+   fill it exactly. The 1px gap over a hairline ground draws the dividers. */
+.record {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--a-line-soft);
+  border: 1px solid var(--a-line-soft);
+  border-radius: var(--a-r);
+  overflow: hidden;
+}
+.record__cell {
+  /* The mark sits above the line, at the cell's top left. */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(16px, 1.6vw, 22px);
+  padding: clamp(22px, 2.4vw, 34px);
+  background: var(--a-card);
+  font: 400 clamp(15.5px, 1.2vw, 17px)/1.55 var(--font-sans);
+  color: var(--a-ink);
+  text-wrap: pretty;
+}
+.record__icon {
+  flex: none;
+  color: var(--a-ink);
+}
+.record__markets { color: var(--a-ink-3); }
+.record__markets b { font-weight: 500; color: var(--a-ink); white-space: nowrap; }
+@media (max-width: 860px) {
+  .record { grid-template-columns: minmax(0, 1fr); }
+  .record__cell { padding: 18px 20px; }
+}
+
+/* ---------- the header's call to action ----------
+   A dot with an arrow that opens into the full pill on hover or keyboard
+   focus. The slot holds a fixed 40px, and the pill is absolute inside it, so
+   opening grows leftwards and the nav never shifts. */
+.cta-dot-slot {
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 40px;
+}
+.cta-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  /* Closed it is a 40px circle with the arrow centred in it. */
+  min-width: 40px;
+  justify-content: center;
+  gap: 0;
+  padding: 0;
+  transition: padding 380ms var(--ease), background-color 180ms var(--ease);
+}
+/* max-width, not a grid track: inside a flex row a 0fr/1fr track has no free
+   space to resolve against, so the label never opened to its full width. */
+.cta-dot__label {
+  display: block;
+  max-width: 0;
+  overflow: hidden;
+  transition: max-width 380ms var(--ease);
+}
+.cta-dot__label > span {
+  display: block;
+  width: max-content;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 200ms var(--ease);
+}
+.cta-dot .pill__arrow { transition: transform 360ms var(--ease); }
+.cta-dot:hover,
+.cta-dot:focus-visible {
+  padding: 0 16px 0 18px;
+}
+.cta-dot:focus-visible { outline-offset: 3px; }
+.cta-dot:hover .cta-dot__label,
+.cta-dot:focus-visible .cta-dot__label {
+  /* A cap, not a width: the label stops at its own text. */
+  max-width: 220px;
+}
+.cta-dot:hover .cta-dot__label > span,
+.cta-dot:focus-visible .cta-dot__label > span {
+  opacity: 1;
+  padding-right: 9px;
+  transition: opacity 260ms var(--ease) 80ms;
+}
+.cta-dot:hover .pill__arrow,
+.cta-dot:focus-visible .pill__arrow { transform: translate(1px, -1px); }
+/* Reduced motion: it opens, it just does not animate. */
+@media (prefers-reduced-motion: reduce) {
+  .cta-dot__label,
+  .cta-dot__label > span,
+  .cta-dot .pill__arrow { transition: none; }
 }

@@ -30,7 +30,7 @@ export default function SplitHero({
           {cta.smooth ?? (
             <Link
               href={cta.href}
-              className="pill pill--ink pill--lg magnetic"
+              className="pill pill--ink magnetic"
               data-track="cta_click"
               data-cta-location={cta.location}
             >

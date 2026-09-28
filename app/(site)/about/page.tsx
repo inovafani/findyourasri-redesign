@@ -5,7 +5,9 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import Contours from '@/components/Contours';
 import CtaLine from '@/components/CtaLine';
 import JsonLd from '@/components/JsonLd';
-import { frames, markets, people, record, whyAsri } from '@/lib/content';
+import Markets from '@/components/Markets';
+import RecordIcon from '@/components/RecordIcon';
+import { frames, people, record, whyAsri } from '@/lib/content';
 import { orgId, pageMetadata, pages, site } from '@/lib/site';
 
 export const metadata: Metadata = pageMetadata(pages.about);
@@ -96,15 +98,22 @@ export default function AboutPage() {
       ) : null}
 
       <section className="section">
-        <div className="split split--top">
-          <h2 className="sec-title line-mask">The Record</h2>
-          <ul className="mlist">
-            {[markets, ...record].map((line) => (
-              <li key={line} className="reveal">
-                {line}
-              </li>
+        <div className="stack">
+          <h2 className="sec-title sec-title--gap line-mask">The Record</h2>
+          {/* Six cells, three across: the reach line and the five credentials
+              fill the grid exactly, so nothing is left ragged. */}
+          <div className="record">
+            <div className="record__cell reveal">
+              <RecordIcon name="globe" />
+              <Markets className="record__markets" />
+            </div>
+            {record.map((item) => (
+              <div key={item.text} className="record__cell reveal">
+                <RecordIcon name={item.icon} />
+                <span>{item.text}</span>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 

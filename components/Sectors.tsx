@@ -29,7 +29,7 @@ export default function Sectors() {
               <h2 className="sector__title reveal">{s.title}</h2>
               <p className="sector__body-text reveal">{s.body}</p>
               <p className="sector__proof reveal">
-                <Link href={`/sectors/${s.slug}/`} className="pill pill--outline pill--sm magnetic">
+                <Link href={`/sectors/${s.slug}/`} className="pill pill--outline magnetic">
                   How we work with {s.name === 'Global brands' ? 'brands' : s.name.toLowerCase()}
                   <span className="pill__arrow" aria-hidden="true">
                     &#8599;

@@ -1,3 +1,5 @@
+import type { RecordIconName } from '@/components/RecordIcon';
+
 /**
  * Every string on the site, as data. Sections stay layout-only, so copy edits
  * never touch a component and nothing drifts out of sync with lib/site.ts.
@@ -1057,8 +1059,7 @@ export const people: Person[] = [
   { name: 'Cam', fullName: 'Cam Vaughne', role: 'Production and Content Director', line: '10+ years as photographer, cinematographer and director, commissioned by Corona, Canon, DJI and National Geographic.', photo: '/img/people/cam.jpg', show: true },
   { name: 'Daffa', fullName: 'Daffa', role: 'Marketing Manager', photo: '/img/people/daffa.jpg', show: true },
   { name: 'Inov', fullName: 'Inov', role: 'Web and Software Developer', photo: '/img/people/inov.jpg', show: true },
-  // Yoga has not sent a photo yet, so his frame stays empty.
-  { name: 'Yoga', fullName: 'Yoga', role: 'Social Media Manager', show: true },
+  { name: 'Yoga', fullName: 'Yoga', role: 'Social Media Manager', photo: '/img/people/yoga.jpg', show: true },
 ];
 
 /**
@@ -1074,12 +1075,15 @@ export const whyAsri = {
 };
 
 /** From the allowed list. "14+ years" (C1) and anything delivered for Corona (B10) are barred. */
-export const record = [
-  '300+ islands worked on the ground.',
-  'A ten-year photo and video archive.',
-  'Commissioned by Corona, Canon, DJI, National Geographic and Indonesian tourism boards.',
-  'Vessel access at favourable rates through Boatique Charters.',
-  'A multi-phinisi flagship event.',
+export const record: { icon: RecordIconName; text: string }[] = [
+  { icon: 'islands', text: '300+ islands worked on the ground.' },
+  { icon: 'archive', text: 'A ten-year photo and video archive.' },
+  {
+    icon: 'seal',
+    text: 'Commissioned by Corona, Canon, DJI, National Geographic and Indonesian tourism boards.',
+  },
+  { icon: 'anchor', text: 'Vessel access at favourable rates through Boatique Charters.' },
+  { icon: 'sails', text: 'A multi-phinisi flagship event.' },
 ];
 
 /* ============================================================

@@ -130,7 +130,7 @@ export default async function ServicePage({ params }: Props) {
           <p className="blk__title">Part of a partnership</p>
           <p className="text">{withNames(service.inPartnership)}</p>
           <p>
-            <Link href="/services/#partnerships" className="pill pill--outline pill--sm magnetic">
+            <Link href="/services/#partnerships" className="pill pill--outline magnetic">
               Compare partnerships
               <span className="pill__arrow" aria-hidden="true">
                 &#8599;
