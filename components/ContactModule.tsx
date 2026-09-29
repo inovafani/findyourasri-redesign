@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 
-import BookSiteDay from '@/components/BookSiteDay';
 import ContactForm from '@/components/ContactForm';
 import ContactMedia from '@/components/ContactMedia';
 import Contours from '@/components/Contours';
@@ -100,30 +99,33 @@ export default function ContactModule({
       data-section-view={variant === 'full' ? 'contact' : undefined}
     >
       {variant === 'full' ? (
-        // The contact film runs behind the whole block, under a scrim. The
-        // copy and the site day share the left column, top and bottom, and
-        // the form fills the right, so both columns end together.
+        // Split in two: the contact film fills the left half on its own, with
+        // the logo and direct lines over it; the heading and form sit on a
+        // solid panel to the right, so neither covers the other.
         <div className="contact-hero">
-          <div className="contact-hero__media" aria-hidden="true">
-            <ContactMedia />
+          <div className="contact-hero__visual">
+            <div className="contact-hero__media" aria-hidden="true">
+              <ContactMedia />
+            </div>
+            <div className="contact-hero__scrim" aria-hidden="true" />
+            <div className="contact-hero__copy">
+              <img
+                className="contact-hero__logo reveal"
+                src="/img/asri-white.png"
+                alt="Asri"
+                width={1171}
+                height={320}
+                loading="lazy"
+              />
+              <DirectLines location="contact" />
+            </div>
           </div>
-          <div className="contact-hero__scrim" aria-hidden="true" />
-          <div className="contact-hero__body">
+          <div className="contact-hero__form">
             <div className="contact-hero__head stack">
               <h2 className="sec-title line-mask">{title}</h2>
               {lede ? <p className="text reveal">{lede}</p> : null}
             </div>
-            <div className="contact-hero__form">{form}</div>
-            <div className="contact-hero__aside stack">
-              <div className="blk">
-                <p className="blk__title">The Site Day</p>
-                <p className="text">No pitch theatre. A plan you can say no to.</p>
-                <p className="btn-row btn-row--tight">
-                  <BookSiteDay />
-                </p>
-              </div>
-              <DirectLines location="contact" />
-            </div>
+            {form}
           </div>
         </div>
       ) : (

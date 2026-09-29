@@ -1732,7 +1732,7 @@ a.chip:hover { border-color: var(--a-ocean); color: var(--a-ocean); }
 .field textarea:focus {
   outline: none;
   border-color: var(--a-ocean);
-  background: var(--a-card);
+  background-color: var(--a-card);
   box-shadow: 0 0 0 3px rgba(13, 107, 114, .16);
 }
 .field.is-invalid input { border-color: #B3261E; }
@@ -1838,11 +1838,20 @@ a.chip:hover { border-color: var(--a-ocean); color: var(--a-ocean); }
 .btn-row--tight { margin-top: 4px; }
 .form { scroll-margin-top: 100px; }
 
-/* ---------- home: next step, over the contact film ---------- */
+/* ---------- home: next step, film left and form right ---------- */
+/* Split so neither covers the other: the contact film fills the left half
+   with the copy and direct lines over it; the form sits on a solid panel. */
 .contact-hero {
-  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   overflow: hidden;
   border-radius: var(--a-r-lg);
+  border: 1px solid var(--a-line-soft);
+  background: var(--a-card);
+}
+.contact-hero__visual {
+  position: relative;
+  overflow: hidden;
   background: var(--a-black);
   color: #fff;
 }
@@ -1850,53 +1859,65 @@ a.chip:hover { border-color: var(--a-ocean); color: var(--a-ocean); }
 .contact-hero__media > div { position: absolute; inset: -8% 0; will-change: transform; }
 .contact-hero__media img,
 .contact-hero__media video { width: 100%; height: 100%; object-fit: cover; }
+/* Dark only where the copy sits, top and bottom; the middle stays clear. */
 .contact-hero__scrim {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(to right, rgba(8, 14, 13, .82) 0%, rgba(8, 14, 13, .64) 55%, rgba(8, 14, 13, .5) 100%),
-    linear-gradient(to top, rgba(8, 14, 13, .4), rgba(8, 14, 13, .12) 45%);
+  background: linear-gradient(
+    to bottom,
+    rgba(8, 14, 13, .66) 0%,
+    rgba(8, 14, 13, .12) 38%,
+    rgba(8, 14, 13, .12) 58%,
+    rgba(8, 14, 13, .72) 100%
+  );
 }
-.contact-hero__body {
+.contact-hero__copy {
   position: relative;
-  padding: clamp(22px, 3.4vw, 52px);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
-  grid-template-areas: 'head form' 'aside form';
-  gap: clamp(20px, 2.6vw, 40px) clamp(24px, 4vw, 64px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  height: 100%;
+  min-height: 340px;
+  padding: clamp(20px, 2.2vw, 32px);
 }
-.contact-hero__head { grid-area: head; }
-.contact-hero__form { grid-area: form; align-self: start; }
-.contact-hero__aside { grid-area: aside; align-self: end; }
+.contact-hero__form {
+  align-self: center;
+  padding: clamp(20px, 2.2vw, 32px);
+}
+/* Kept short: the four short fields pair up two by two (the .form__row
+   wrapper steps aside so Name/Email and Company/Sector share one grid),
+   and only the message, the button and the fine print run full width. */
+.contact-hero__form .form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+.contact-hero__form .form__row { display: contents; }
+.contact-hero__form .field:has(textarea),
+.contact-hero__form .form__send,
+.contact-hero__form .form__fine,
+.contact-hero__form .form__failed { grid-column: 1 / -1; }
+.contact-hero__head { margin-bottom: 18px; gap: 8px; }
+.contact-hero__logo {
+  width: clamp(100px, 9vw, 140px);
+  height: auto;
+}
 .contact-hero .text { max-width: 44ch; }
-.contact-hero .field textarea { min-height: 88px; }
-.contact-hero .sec-title { color: #fff; }
-.contact-hero__head .text { color: rgba(255, 255, 255, .82); }
-.contact-hero .blk {
-  background: rgba(255, 255, 255, .12);
-  border: 1px solid rgba(255, 255, 255, .18);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-}
-.contact-hero .blk__title { color: #fff; }
-.contact-hero .blk .text { color: rgba(255, 255, 255, .8); }
-.contact-hero .blk .pill--ink { background: #fff; color: var(--a-ink); }
-.contact-hero .blk .pill--ink:hover { background: var(--a-tint); color: var(--a-ink); }
-.contact-hero .lines > div { border-color: rgba(255, 255, 255, .22); }
-.contact-hero .lines > div:last-child { border-bottom: 1px solid rgba(255, 255, 255, .22); }
-.contact-hero .lines dt { color: rgba(255, 255, 255, .6); }
+.contact-hero .field textarea { min-height: 72px; height: 84px; }
+.contact-hero .lines > div { border-color: rgba(255, 255, 255, .26); }
+.contact-hero .lines > div:last-child { border-bottom: 1px solid rgba(255, 255, 255, .26); }
+.contact-hero .lines dt { color: rgba(255, 255, 255, .66); }
 .contact-hero .lines dd,
 .contact-hero .lines a { color: #fff; }
 .contact-hero .lines a:hover { color: var(--a-aqua); }
 @media (max-width: 860px) {
-  .contact-hero__body {
-    padding: 20px 14px;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto;
-    grid-template-areas: 'head' 'form' 'aside';
-  }
-  .contact-hero__scrim { background: rgba(8, 14, 13, .68); }
+  .contact-hero { grid-template-columns: minmax(0, 1fr); }
+  .contact-hero__copy { min-height: 300px; padding: 20px 16px; }
+  .contact-hero__form { padding: 20px 16px; }
+  .contact-hero__form .form { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ---------- work: the showreel ---------- */
@@ -2272,7 +2293,6 @@ a.chip.is-on:hover { color: #fff; }
 /* Home next step on a phone: the site-day button and the direct lines centre
    in the column, matching the full-width Send above them. */
 @media (max-width: 860px) {
-  .contact-hero .blk .btn-row { justify-content: center; }
   .contact-hero .lines > div { flex-direction: column; align-items: center; gap: 4px; text-align: center; }
   .contact-hero .lines dd { text-align: center; }
 }
