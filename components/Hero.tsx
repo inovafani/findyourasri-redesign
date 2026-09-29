@@ -71,7 +71,7 @@ export default function Hero() {
                 </span>
               </Link>
               <Link
-                href="/work/"
+                href="/work/production/"
                 className="pill pill--ghost reveal magnetic"
                 data-track="cta_click"
                 data-cta-location="hero"
