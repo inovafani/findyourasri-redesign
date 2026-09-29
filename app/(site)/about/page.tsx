@@ -17,8 +17,11 @@ export const metadata: Metadata = pageMetadata(pages.about);
  * the people, the record, the standard, then the CTA line. The founder story
  * (C11) and the portraits are placeholders until they are written and shot.
  */
+/** Off until told otherwise. Flip to true to bring The People section back. */
+const showPeopleSection = false;
+
 export default function AboutPage() {
-  const shown = people.filter((p) => p.show);
+  const shown = showPeopleSection ? people.filter((p) => p.show) : [];
   const hero = frames.about;
 
   return (

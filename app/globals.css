@@ -2168,7 +2168,7 @@ a.chip.is-on:hover { color: #fff; }
 .person__line { margin-top: 4px; font: 400 14px/1.5 var(--font-sans); color: var(--a-ink-2); text-wrap: pretty; }
 
 /* A closing strip, not a second hero: 3:1, capped so it never fills the screen. */
-.band { aspect-ratio: 3 / 1; min-height: 300px; max-height: 60vh; }
+.band { width: 100%; aspect-ratio: 3 / 1; min-height: 300px; max-height: 60vh; }
 .band__scrim {
   position: absolute;
   inset: 0;
