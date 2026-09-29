@@ -18,7 +18,6 @@ import { isActivePath } from '@/lib/nav';
 export default function Header() {
   const ref = useRef<HTMLElement>(null);
   const pathname = usePathname();
-  const onContact = isActivePath(pathname, '/contact/');
 
   useEffect(() => {
     const el = ref.current;
@@ -79,19 +78,16 @@ export default function Header() {
           })}
         </nav>
 
-        {/* Hidden on /contact/ itself, where the form is already the page. */}
-        {!onContact && (
-          <HeaderCta className="header__cta">
-            <Link
-              href="/contact/"
-              className="pill pill--ink cta-dot"
-              data-track="cta_click"
-              data-cta-location="nav"
-            >
-              <HeaderCtaLabel />
-            </Link>
-          </HeaderCta>
-        )}
+        <HeaderCta className="header__cta">
+          <Link
+            href="/contact/"
+            className="pill pill--ink cta-dot"
+            data-track="cta_click"
+            data-cta-location="nav"
+          >
+            <HeaderCtaLabel />
+          </Link>
+        </HeaderCta>
 
         <MobileMenu />
       </div>

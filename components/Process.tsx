@@ -1,5 +1,5 @@
-import PageHead from '@/components/PageHead';
-import { steps } from '@/lib/content';
+import PageHead from "@/components/PageHead";
+import { steps } from "@/lib/content";
 
 /** How a partnership runs: three months, one cycle. Each step's rail draws itself before the card arrives. */
 export default function Process() {
@@ -8,7 +8,7 @@ export default function Process() {
       <PageHead
         heading="h2"
         title="The First Ninety Days"
-        lede="Every cycle ends where the next one starts: data, then what it taught us, then the next ninety days."
+        lede="Every 90 days, we evaluate and adjust. Our team stays on top of marketing trends and strategy developments"
       />
 
       <ol className="steps">

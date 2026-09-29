@@ -14,9 +14,9 @@ export default function Band() {
         </div>
         <div className="band__scrim" aria-hidden="true" />
         <div className="band__center">
-          <p className="band__label reveal">Our standard</p>
           <p className="band__line line-mask">
-            We would rather be judged on your numbers than on our showreel.
+            Where the Aesthetic and Numbers Come Together to Tell Your Story and
+            Grow Your Business.
           </p>
         </div>
       </div>

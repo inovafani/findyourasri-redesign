@@ -55,8 +55,8 @@ export default function ServicesPage() {
       <section className="section section--first">
         <CenteredHead
           pattern="ripples"
-          title="Every Service Feeds the Next"
-          lede="Take these together as a partnership, or on their own."
+          title="Full-House Media and Marketing Services"
+          lede="Strategies Working Together to Tell Your Story and Convert Your Audience"
         />
       </section>
       <section className="section section--tight">
@@ -64,11 +64,13 @@ export default function ServicesPage() {
       </section>
 
       <section id="partnerships" className="section section--anchor">
-        <div className="stack stack--head">
-          <h2 className="sec-title line-mask">Two Ways to Run the Chain</h2>
+        <div className="stack stack--head stack--head-center">
+          <h2 className="sec-title line-mask">
+            Packages Tiered to Fit Your Goals
+          </h2>
           <p className="text reveal">
-            Run separately, these are line items. Run together, they are one
-            engine, and we answer for all of it.
+            Don't fit the mold? We also do custom marketing plans tailored to
+            you.
           </p>
         </div>
 
@@ -82,6 +84,7 @@ export default function ServicesPage() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+              {p.note ? <p className="small">{p.note}</p> : null}
               <p className="terms">
                 <span>{p.term}</span>
                 <span>{price(p.price)}</span>
@@ -110,7 +113,7 @@ export default function ServicesPage() {
           and join the sentence once D2 applies the rate card. */}
 
       <section className="section">
-        <h2 className="sec-title sec-title--gap line-mask">
+        <h2 className="sec-title sec-title--gap sec-title--center line-mask">
           Or One Service at a Time
         </h2>
         <ServiceCards
@@ -122,7 +125,7 @@ export default function ServicesPage() {
 
       <CtaLine
         location="services_index"
-        line="Send us the number that matters, and we will scope it."
+        line="We get to know you, your goals, and become and extension of your team"
         label="Tell us what needs to move"
       />
     </>

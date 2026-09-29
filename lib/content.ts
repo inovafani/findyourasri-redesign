@@ -97,6 +97,8 @@ export type Partnership = {
   name: string;
   line: string;
   includes: string[];
+  /** Fine print under the checklist, e.g. a caveat on one of the `includes`. */
+  note?: string;
   term: string;
   reporting: string;
   price: PriceKey;
@@ -781,8 +783,8 @@ export const services: Service[] = [
   {
     slug: 'web-and-seo',
     name: 'Website Management & SEO',
-    claim: 'Social creates demand. Search captures it.',
-    title: 'Social Creates Demand. Search Captures It.',
+    claim: 'Your site is your digital identity. Search finds your clients.',
+    title: 'Your Site Is Your Digital Identity. Search Finds Your Clients.',
     body: 'The site kept current, and found in both search and AI answers.',
     points: [
       'Content, page and offer updates.',
@@ -823,8 +825,8 @@ export const services: Service[] = [
   {
     slug: 'production',
     name: 'Bespoke Production',
-    claim: 'One shoot. Months of content.',
-    title: 'One Shoot. Months of Content.',
+    claim: 'One shoot. Months of extraordinary content.',
+    title: 'One Shoot. Months of Extraordinary Content.',
     body: 'One planned production, built to yield sixty to ninety days of reusable assets.',
     points: [
       'Creative direction, moodboard and shot list.',
@@ -897,11 +899,13 @@ export const partnerships: Partnership[] = [
     line: 'Social, search and paid media, fed by shoots included in the scope.',
     includes: [
       'Social media management',
-      'Meta and Google campaigns',
+      'SEO and GEO (AI search)',
+      'Paid ads',
       'Event and product shoots',
       'A monthly report',
     ],
-    term: 'Six-month minimum',
+    note: 'Shoots outside Indonesia may need a local crew hired in — travel costs add to the price.',
+    term: 'Six-month minimum · ad spend excluded',
     reporting: 'Monthly',
     price: 'growth',
   },
@@ -913,10 +917,10 @@ export const partnerships: Partnership[] = [
       'Everything in Growth',
       'Website management and conversion optimisation',
       'Creator campaigns',
-      'A fortnightly report',
+      'A monthly report',
     ],
-    term: 'Six-month minimum',
-    reporting: 'Fortnightly',
+    term: 'Six-month minimum · ad spend excluded',
+    reporting: 'Monthly',
     price: 'performance',
   },
 ];
@@ -940,7 +944,7 @@ export const sectors: Sector[] = [
       { slug: 'social-media', line: 'Planned ahead, in your voice, on schedule.' },
       { slug: 'web-and-seo', line: 'The site kept current. The search position built.' },
       { slug: 'paid-media', line: 'Meta and Google, pointed at direct bookings.' },
-      { slug: 'production', line: 'One shoot. Months of content.' },
+      { slug: 'production', line: 'One shoot. Months of extraordinary content.' },
     ],
     measures: [
       'Direct bookings, and direct share against OTA.',
@@ -969,7 +973,7 @@ export const sectors: Sector[] = [
     proof: 'Every point of direct share you win is margin you keep, permanently.',
     frame: 'operatorsSunset',
     services: [
-      { slug: 'production', line: 'One shoot. Months of content.' },
+      { slug: 'production', line: 'One shoot. Months of extraordinary content.' },
       { slug: 'paid-media', line: 'Meta and Google pointed at direct enquiries.' },
       { slug: 'creator-campaigns', line: 'Creator expeditions on your vessels and routes.' },
       { slug: 'web-and-seo', line: 'Your booking funnel, kept current and built for search.' },
@@ -1045,11 +1049,6 @@ export const leadSectors: { value: LeadSector; label: string }[] = [
    About
    ============================================================ */
 
-/** Anthony, 24 Sep. Verify first: the brief's older line says the EU, not the UK. */
-export const marketPlaces = ['Indonesia', 'Australia', 'South Africa', 'Sri Lanka', 'the UK', 'the United States'];
-export const marketsLead = 'Our team has worked with companies in';
-export const markets = `${marketsLead} ${marketPlaces.slice(0, -1).join(', ')} and ${marketPlaces.at(-1)}.`;
-
 /**
  * The only names on the public site, with /marine/. First names on the page,
  * full names in Person schema only. W3 still decides who stays: set `show`
@@ -1069,17 +1068,21 @@ export const people: Person[] = [
  * "Why Asri exists": the founder story (C11), as supplied on 28 Sep.
  */
 export const whyAsri = {
-  title: 'Why Asri Exists',
+  title: 'How the Asri Agency Was Born',
   paragraphs: [
-    'Cam spent a decade behind the camera, commissioned by Corona, Canon, DJI and National Geographic. Brandon spent a decade in luxury hospitality, running the floor, the sales and the teams. Between them, they had made the work and run the places the marketing is meant to sell.',
-    'Anthony and Hannah are the marketing. Anthony ran a full-service agency for a decade and leads performance and go-to-market. Hannah is our Marketing Director.',
-    'Operators and marketers rarely sit in the same room. At Asri they do, and one team answers for the result.',
+    'Operators and strategists rarely sit in the same room. At Asri they do, and one team answers for the result.',
+    'Cam spent a decade behind the camera, commissioned by Corona, Canon, DJI and National Geographic.',
+    'Brandon spent a decade in luxury hospitality, running the floor, the sales and the teams. Between them, they had made the work and run the places the marketing is meant to sell.',
+    'Anthony and Hannah ran their own full-service agencies independently for a decade. They pushed growth and performance for a multitude of different brands and businesses from start-ups to enterprises.',
+    'Four different experts from different corners of the globe.',
+    'They sat down and had a chat, and realized there was an opportunity. So they searched... and Asri was found.',
   ],
 };
 
 /** From the allowed list. "14+ years" (C1) and anything delivered for Corona (B10) are barred. */
 export const record: { icon: RecordIconName; text: string }[] = [
-  { icon: 'islands', text: '300+ islands worked on the ground.' },
+  { icon: 'globe', text: 'Our team has worked with different businesses and industries across 100+ countries.' },
+  { icon: 'islands', text: 'Our team worked with a multitude of industries, and together landed on their passion for travel, hospitality, and community.' },
   { icon: 'archive', text: 'A ten-year photo and video archive.' },
   {
     icon: 'seal',
@@ -1124,7 +1127,7 @@ export const hiddenPages: HiddenPage[] = [
     },
     frames: ['fleet', 'sails', 'blackSails'],
     services: [
-      { slug: 'production', line: 'One shoot. Months of content.' },
+      { slug: 'production', line: 'One shoot. Months of extraordinary content.' },
       { slug: 'paid-media', line: 'Meta and Google pointed at direct enquiries.' },
       { slug: 'creator-campaigns', line: 'Creator expeditions on your vessels and routes.' },
       { slug: 'web-and-seo', line: 'Your booking funnel, kept current and built for search.' },

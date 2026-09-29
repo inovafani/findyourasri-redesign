@@ -778,6 +778,11 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
 }
 
 /* ---------- 06 · process ---------- */
+/* Services page only: PageHead is normally a two-column grid (title beside an
+   aside), but this section has no aside, so centre its single column instead
+   of leaving it pinned to the left ~62% track. */
+#process .head2 { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+#process .head2__main { justify-items: center; text-align: center; }
 .steps {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -1293,6 +1298,8 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   text-wrap: balance;
 }
 .sec-title--gap { margin-bottom: clamp(20px, 2.4vw, 32px); }
+.sec-title--center { margin-inline: auto; text-align: center; }
+.stack--head-center { justify-items: center; text-align: center; }
 .text {
   font: 400 clamp(15px, 1.15vw, 16.5px)/1.6 var(--font-sans);
   color: var(--a-ink-2);
@@ -2367,6 +2374,14 @@ a.chip.is-on:hover { color: #fff; }
 /* A heading with running text under it, held to a reading measure. */
 .stack--prose { max-width: 820px; }
 
+/* The founder story: the reading measure centred on the page, heading and
+   paragraphs centred within it, instead of the prose block's usual left edge. */
+.about-story {
+  margin-inline: auto;
+  justify-items: center;
+  text-align: center;
+}
+
 /* ---------- contact card (compact module) ---------- */
 .contact-card {
   display: grid;
@@ -2432,6 +2447,63 @@ a.chip.is-on:hover { color: #fff; }
   .contact-card__form .form { padding: 14px 6px 8px; }
 }
 
+/* ---------- /contact/: a bento of colour instead of one dark panel ---------- */
+.contact-split {
+  display: grid;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  gap: clamp(12px, 1.4vw, 18px);
+}
+/* The form is plainer and usually shorter than the bento beside it. The grid
+   already stretches it to match that height (default align-items: stretch);
+   this centres its rows within the extra height instead of leaving them
+   clinging to the top with dead air underneath. */
+.contact-split .form { align-content: center; }
+.bento {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 1.2vw, 16px);
+}
+.bento-cell {
+  position: relative;
+  border-radius: var(--a-r);
+  padding: clamp(20px, 2.4vw, 30px);
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+.bento-cell--hero { grid-column: 1 / -1; background: var(--a-green); color: #fff; gap: 14px; }
+.bento-cell--hero .up { color: rgba(255, 255, 255, .65); }
+.bento-cell--hero .sec-title { color: #fff; max-width: 26ch; }
+.bento-cell--hero .text { color: rgba(255, 255, 255, .78); }
+
+/* Reach us and Good to know rarely hold the same number of rows (no WhatsApp
+   number yet means only two), so the row list itself stretches and spaces
+   its rows out evenly rather than clumping at the top with a bare gap below. */
+.bento-cell--ocean,
+.bento-cell--aqua { grid-template-rows: auto 1fr; }
+.bento-cell--ocean .lines,
+.bento-cell--aqua .lines { align-content: space-between; }
+
+.bento-cell--ocean { background: var(--a-ocean); color: #fff; }
+.bento-cell--ocean .blk__title { color: #fff; }
+.bento-cell--ocean .lines > div { border-color: rgba(255, 255, 255, .22); }
+.bento-cell--ocean .lines > div:last-child { border-bottom: 1px solid rgba(255, 255, 255, .22); }
+.bento-cell--ocean .lines dt { color: rgba(255, 255, 255, .6); }
+.bento-cell--ocean .lines dd,
+.bento-cell--ocean .lines a { color: #fff; }
+.bento-cell--ocean .lines a:hover { color: var(--a-aqua); }
+
+.bento-cell--aqua { background: var(--a-aqua); color: var(--a-ink); }
+.bento-cell--aqua .lines > div { border-color: rgba(14, 18, 17, .18); }
+.bento-cell--aqua .lines > div:last-child { border-bottom: 1px solid rgba(14, 18, 17, .18); }
+.bento-cell--aqua .lines dt { color: rgba(14, 18, 17, .55); }
+
+@media (max-width: 860px) {
+  .contact-split { grid-template-columns: minmax(0, 1fr); }
+  .bento { grid-template-columns: minmax(0, 1fr); }
+  .bento-cell--hero { grid-column: 1 / -1; }
+}
+
 /* ---------- navigation progress (NavGuard) ---------- */
 .nav-progress {
   position: fixed;
@@ -2490,6 +2562,7 @@ a.chip.is-on:hover { color: #fff; }
 }
 
 /* ---------- about: the record ---------- */
+.record-head .sec-title { justify-self: center; text-align: center; }
 /* One block, six cells, three across: the reach line and the five credentials
    fill it exactly. The 1px gap over a hairline ground draws the dividers. */
 .record {
@@ -2502,10 +2575,11 @@ a.chip.is-on:hover { color: #fff; }
   overflow: hidden;
 }
 .record__cell {
-  /* The mark sits above the line, at the cell's top left. */
+  /* The mark sits centred above the text. */
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
   gap: clamp(16px, 1.6vw, 22px);
   padding: clamp(22px, 2.4vw, 34px);
   background: var(--a-card);
@@ -2517,8 +2591,6 @@ a.chip.is-on:hover { color: #fff; }
   flex: none;
   color: var(--a-ink);
 }
-.record__markets { color: var(--a-ink-3); }
-.record__markets b { font-weight: 500; color: var(--a-ink); white-space: nowrap; }
 @media (max-width: 860px) {
   .record { grid-template-columns: minmax(0, 1fr); }
   .record__cell { padding: 18px 20px; }

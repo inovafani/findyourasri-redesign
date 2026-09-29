@@ -13,7 +13,7 @@ export default function SectorTiles() {
 
   return (
     <section className="section" data-section-view="sectors">
-      <div className="stack stack--head">
+      <div className="stack stack--head stack--head-center">
         <h2 className="sec-title line-mask">Your Experts on Everything Travel and Hospitality</h2>
         <p className="markets reveal">Working globally with brands in 100+ countries.</p>
       </div>
