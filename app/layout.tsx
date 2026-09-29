@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Fraunces, Geist, Geist_Mono } from 'next/font/google';
 
 import Motion from '@/components/Motion';
 import NavGuard from '@/components/NavGuard';
@@ -25,6 +25,20 @@ const mono = Geist_Mono({
   subsets: ['latin'],
   weight: ['400', '500'],
   variable: '--font-geist-mono',
+  display: 'swap',
+});
+
+/**
+ * The italic accent on the hero's highlighted words (components/Hero.tsx).
+ * Fraunces over the trendier thin display-italics (Instrument Serif etc.):
+ * its SOFT/WONK axes give the highlight some character of its own instead of
+ * reading as a generic templated one.
+ */
+const accent = Fraunces({
+  subsets: ['latin'],
+  weight: 'variable',
+  style: 'italic',
+  variable: '--font-accent-italic',
   display: 'swap',
 });
 
@@ -82,7 +96,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     // The boot script below stamps `anim-ready` on <html> before hydration, so
     // the class list legitimately differs from what the server sent.
-    <html lang="en" className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${sans.variable} ${mono.variable} ${accent.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <script dangerouslySetInnerHTML={{ __html: boot }} />
         {gtm ? <script dangerouslySetInnerHTML={{ __html: gtm }} /> : null}

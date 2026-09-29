@@ -115,8 +115,9 @@ export default function BrandReel() {
   return (
     <section className="reel" aria-labelledby="reel-title">
       <h2 id="reel-title" className="reel__title reveal">
-        Worked with, worldwide.
+        Asri is a unique type of natural beauty that inspires creativity
       </h2>
+      <p className="reel__subtitle reveal">Harmony. Growth. Evolution.</p>
       <div className="reel__viewport">
         <div className="reel__track" ref={track}>
           {row(false)}

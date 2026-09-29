@@ -150,6 +150,9 @@ export type HiddenPage = {
  */
 export const liveWorkSlugs: WorkCategorySlug[] = ['production'];
 
+/** Off for now (29 Sep). Flip back on to return "Sectors" to the header nav. */
+const SHOW_SECTORS_NAV = false;
+
 /** The header's page links. The call to action to /contact/ sits beside them. */
 export const navLinks: {
   href: string;
@@ -167,7 +170,7 @@ export const navLinks: {
       ] as const
     ).filter((c) => liveWorkSlugs.includes(c.slug)),
   },
-  { href: '/sectors/', label: 'Sectors' },
+  ...(SHOW_SECTORS_NAV ? [{ href: '/sectors/', label: 'Sectors' }] : []),
   { href: '/services/', label: 'Services' },
   { href: '/about/', label: 'About' },
 ];

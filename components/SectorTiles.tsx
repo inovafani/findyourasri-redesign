@@ -1,7 +1,6 @@
 import Link from 'next/link';
 
 import ArrowButton from '@/components/ArrowButton';
-import Markets from '@/components/Markets';
 import { frames, getSector, type FrameId } from '@/lib/content';
 
 /**
@@ -15,8 +14,8 @@ export default function SectorTiles() {
   return (
     <section className="section" data-section-view="sectors">
       <div className="stack stack--head">
-        <h2 className="sec-title line-mask">Four Kinds of Client</h2>
-        <Markets />
+        <h2 className="sec-title line-mask">Your Experts on Everything Travel and Hospitality</h2>
+        <p className="markets reveal">Working globally with brands in 100+ countries.</p>
       </div>
 
       <div className="tiles">

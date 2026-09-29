@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import HeroMedia from "@/components/HeroMedia";
-import { site } from "@/lib/site";
 
 /**
  * The opening frame: the headline, one line of copy and two
@@ -25,12 +24,39 @@ export default function Hero() {
         <div className="hero__scrim" aria-hidden="true" />
 
         <div className="hero__bottom">
-          <h1 className="hero__title line-mask">{site.slogan}</h1>
+          <h1 className="hero__title line-mask">
+            Find Your{" "}
+            <span className="hero__title-glue">
+              <span className="hero__highlight-wrap">
+                <span className="hero__circle hero__circle--a" aria-hidden="true" />
+                <span className="hero__highlight">Story</span>
+              </span>
+              ,
+            </span>
+            <br />
+            Find Your{" "}
+            <span className="hero__title-glue">
+              <span className="hero__highlight-wrap">
+                <span className="hero__circle hero__circle--b" aria-hidden="true" />
+                <span className="hero__highlight">Audience</span>
+              </span>
+              ,
+            </span>
+            <br />
+            Find Your{" "}
+            <span className="hero__title-glue">
+              <span className="hero__highlight-wrap">
+                <span className="hero__circle hero__circle--c" aria-hidden="true" />
+                <span className="hero__highlight">Asri</span>
+              </span>
+              .
+            </span>
+          </h1>
 
           <div className="hero__aside">
             <p className="hero__lede reveal">
-              Content production, performance marketing and creator campaigns
-              for hospitality, operators, global brands and destinations.
+              Award winning production house and marketing agency built by
+              the operators, creators, and strategists themselves.
             </p>
             <div className="hero__actions">
               <Link

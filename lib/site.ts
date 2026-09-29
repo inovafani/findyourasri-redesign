@@ -9,7 +9,7 @@ import { liveServices, sectors, type SectorSlug, type ServiceSlug } from '@/lib/
 export const site = {
   name: 'Asri',
   title: 'Asri: Marketing and Production Agency, Bali, Indonesia',
-  slogan: 'Your Brand, Run by Operators and Marketers.',
+  slogan: 'Find Your Story, Find Your Audience, Find Your Asri.',
   url: 'https://findyourasri.com',
   locale: 'en_GB',
   themeColor: '#EDEFEA',
