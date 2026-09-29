@@ -32,7 +32,7 @@ export default function WorkPage() {
         }}
       />
       <section className="section section--first">
-        <CenteredHead pattern="archipelago" title="Selected Campaigns" />
+        <CenteredHead pattern="archipelago" title="Our Work" />
         <Showreel />
       </section>
       <section className="section">

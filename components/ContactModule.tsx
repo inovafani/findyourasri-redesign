@@ -12,7 +12,9 @@ import type { LeadSector } from '@/lib/content';
  * full (home): the heading and lede top left, the site day and direct lines
  *   bottom left, the form on the right; the contact film runs behind it all.
  * compact (index, sector and service pages): one card, a dark panel with the
- *   heading, lede and direct lines on the left, the form on the right.
+ *   heading, lede and direct lines on the left, the form on the right. An
+ *   `intro` (a sector's first step) opens the section above the card, centred,
+ *   as the heads on /services/ open theirs.
  * start (hidden pages): the first step's copy on the left; the form and the
  *   direct lines on the right.
  *
@@ -23,6 +25,7 @@ export default function ContactModule({
   variant = 'compact',
   title = 'Start With a Day on Site',
   lede,
+  intro,
   children,
   sector,
   service,
@@ -35,6 +38,7 @@ export default function ContactModule({
   variant?: 'full' | 'compact' | 'start';
   title?: string;
   lede?: string;
+  intro?: { title: string; body: string };
   children?: ReactNode;
   sector?: LeadSector;
   service?: string;
@@ -60,6 +64,12 @@ export default function ContactModule({
     // lines over a faint chart motif, and the form on white beside it.
     return (
       <section id={id} className="section section--anchor">
+        {intro ? (
+          <div className="stack stack--head stack--head-center">
+            <h2 className="sec-title line-mask">{intro.title}</h2>
+            <p className="text reveal">{intro.body}</p>
+          </div>
+        ) : null}
         <div className="contact-card">
           <div className="contact-card__intro">
             <Contours name="ripples" />

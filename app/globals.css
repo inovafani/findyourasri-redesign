@@ -1390,12 +1390,6 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   letter-spacing: -.014em;
   color: var(--a-ink);
 }
-.blk__heading {
-  font: 500 clamp(22px, 2.2vw, 30px)/1.12 var(--font-sans);
-  letter-spacing: -.022em;
-  color: var(--a-ink);
-  text-wrap: balance;
-}
 .mlist { display: grid; }
 .mlist li {
   border-top: 1px solid var(--a-line);
@@ -1406,6 +1400,45 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
 .mlist li:last-child { border-bottom: 1px solid var(--a-line); }
 .mlist__row { display: flex; justify-content: space-between; gap: 16px; }
 .mlist__row span + span { color: var(--a-ink-2); white-space: nowrap; }
+
+/* What a sector is measured on: the contact card's white shell, the heading,
+   lede and ticked numbers on one half and a frame from the sector's archive
+   filling the other, so the numbers sit next to the people they are for. */
+.measured {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(10px, 1vw, 14px);
+  padding: clamp(10px, 1vw, 14px);
+  background: var(--a-card);
+  border: 1px solid var(--a-line-soft);
+  border-radius: var(--a-r-lg);
+}
+.measured--solo { grid-template-columns: minmax(0, 1fr); }
+.measured__body {
+  display: grid;
+  gap: clamp(22px, 2.4vw, 32px);
+  align-content: center;
+  padding: clamp(18px, 3vw, 44px);
+}
+.measured__media {
+  position: relative;
+  min-height: clamp(300px, 31vw, 460px);
+  overflow: hidden;
+  border-radius: var(--a-r);
+}
+.measured__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (max-width: 860px) {
+  .measured { grid-template-columns: minmax(0, 1fr); }
+  /* On a phone the frame leads, then the words under it. */
+  .measured__media { order: -1; min-height: 0; aspect-ratio: 4 / 3; }
+  .measured__body { padding: 14px 8px 10px; }
+}
 .ticks { display: grid; gap: 8px; }
 .ticks li {
   position: relative;
@@ -1612,6 +1645,44 @@ a.chip:hover { border-color: var(--a-ocean); color: var(--a-ocean); }
   width: 100%;
 }
 .split-hero__media img { width: 100%; height: 100%; object-fit: cover; }
+
+/* A sector's chart lines: they fill the copy's column from behind the
+   breadcrumbs to the foot of the photo, fading at the top, the bottom and
+   toward the photo. A soft canvas halo round the copy keeps them out from
+   behind the words, so they only show in the space above and below. */
+.split-hero { position: relative; isolation: isolate; }
+.split-hero > .contours {
+  top: -70px;
+  left: calc(-1 * var(--pad));
+  width: calc(54% + var(--pad));
+  max-width: none;
+  height: calc(100% + 70px);
+  transform: none;
+  opacity: .26;
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent),
+    linear-gradient(to right, #000 72%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent),
+    linear-gradient(to right, #000 72%, transparent);
+  mask-composite: intersect;
+}
+.split-hero > .contours ~ .split-hero__body { position: relative; }
+.split-hero > .contours ~ .split-hero__body::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -34px -40px -34px -60px;
+  background: var(--a-canvas);
+  border-radius: 48px;
+  filter: blur(26px);
+}
+/* On a phone the copy runs straight from the breadcrumbs, with no empty
+   space around it for the lines to fill. */
+@media (max-width: 860px) {
+  .split-hero > .contours { display: none; }
+}
 
 /* ---------- service cards ---------- */
 .cards {
@@ -2140,6 +2211,21 @@ a.chip:hover { border-color: var(--a-ocean); color: var(--a-ocean); }
   padding-bottom: clamp(22px, 2.6vw, 36px);
 }
 .work-head .text { max-width: 52ch; }
+/* A category story's one-sentence lead: two lines under the title on a laptop,
+   "Read more" closing the second; the whole story is below the grid. */
+.work-head .text.work-head__story { max-width: 72ch; }
+/* The in-text link down to the rest of the story: ink and underlined, so it
+   reads as a link inside the grey paragraph; ocean on hover, as the crumbs are. */
+.text-link {
+  font-weight: 500;
+  color: var(--a-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+  transition: color 240ms var(--ease);
+}
+.text-link:hover { color: var(--a-ocean); }
 .work-switch { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 8px; }
 .chip.is-on { background: var(--a-ink); border-color: var(--a-ink); color: #fff; }
 a.chip.is-on:hover { color: #fff; }

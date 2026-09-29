@@ -1,12 +1,15 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import Contours, { type PatternName } from '@/components/Contours';
 import type { Frame } from '@/lib/content';
 
 /**
  * The hero for sector, service and hidden pages: the H1, copy and the
  * button on the left, the frame on the right, centred against each other.
- * Without a frame the copy runs the full width.
+ * Without a frame the copy runs the full width. A `pattern` lays the page's
+ * own chart lines behind the copy's column, filling the space above and
+ * below the words.
  */
 export default function SplitHero({
   title,
@@ -14,15 +17,18 @@ export default function SplitHero({
   cta,
   frame,
   ratio = '4 / 5',
+  pattern,
 }: {
   title: string;
   children?: ReactNode;
   cta: { href: string; location: string; label?: string; smooth?: ReactNode };
   frame?: Frame;
   ratio?: string;
+  pattern?: PatternName;
 }) {
   return (
     <section className="split-hero">
+      {pattern ? <Contours name={pattern} /> : null}
       <div className="split-hero__body">
         <h1 className="split-hero__title line-mask">{title}</h1>
         <div className="split-hero__copy">{children}</div>

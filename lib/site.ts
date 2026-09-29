@@ -89,7 +89,7 @@ export const pages = {
     path: '/work/',
     title: 'Work and Archive | Asri',
     description:
-      'Selected campaigns and frames from a ten-year archive of photography and film, shot by the crew that would shoot yours.',
+      'Photography and film from a ten-year archive, shot by the crew that would shoot yours.',
   },
   sectors: {
     path: '/sectors/',

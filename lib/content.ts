@@ -83,10 +83,14 @@ export type Sector = {
   body: string;
   proof: string;
   frame: string;
+  /** The chart motif behind the hero's copy, one per sector. */
+  pattern: 'tide' | 'wake' | 'meridians' | 'terraces';
   /** Cards for "What we run", each with the sector's own line where one exists. */
   services: { slug: ServiceSlug; line?: string }[];
   /** Gate W7. Left out where nothing is on record. */
   measures?: string[];
+  /** The frame beside the measures: a guest, not a view, so the numbers read as people. */
+  measuresFrame?: FrameId;
   /** Gate W8: each sector's first step, from its deck's closing slide. */
   firstStep: { title: string; body: string };
   formTitle: string;
@@ -134,6 +138,8 @@ export type HiddenPage = {
   services: { slug: ServiceSlug; line: string }[];
   closer: string;
   measures: string[];
+  /** The frame beside "What We Ask to Be Measured On". */
+  measuresFrame?: FrameId;
   firstStep: { title: string; body: string; line: string };
   og: { title: string; description: string };
 };
@@ -530,7 +536,16 @@ export type WorkTabSlug = 'travel' | 'client' | 'films';
 export type WorkCategory = {
   slug: WorkCategorySlug;
   name: string;
+  /** The page's H1, where it differs from the name the nav and crumbs use. */
+  title?: string;
   line: string;
+  /**
+   * The category's own story, in place of `line` on its page: `lead` is one
+   * whole sentence of at most two lines under the title, with a link down to
+   * the full `paragraphs`, which sit below the grid so the work stays near
+   * the top.
+   */
+  story?: { lead: string; paragraphs: string[] };
   cover: FrameId;
   /** Tabs inside the category; the first is the category's own page. */
   tabs?: { slug: WorkTabSlug; label: string }[];
@@ -561,7 +576,17 @@ export const workCategories: WorkCategory[] = [
   {
     slug: 'production',
     name: 'Production',
+    title: 'Asri Studios',
     line: 'Travel, client campaigns and films, shot by our own crew.',
+    story: {
+      lead: 'Our in-house team of award-winning photographers, filmmakers and directors works with leading brands, hotels, tourism boards and travel operators across 100+ countries.',
+      paragraphs: [
+        'Our in-house Asri Studios production team brings together a highly sought-after collective of award-winning photographers, filmmakers, directors, and creative specialists with global experience working alongside leading brands, hotels, tourism boards, and travel operators across 100+ countries.',
+        "Beyond our in-house expertise, we have cultivated a personal network of some of the world's leading travel creators, with a combined audience of more than 100 million followers. This exclusive access allows us to connect brands with the right creative voices, whether they are looking for a full-scale brand campaign, a destination story, a social-first content series, or a long-term brand ambassador.",
+        'From intimate editorial shoots to large-scale commercial productions, we offer the creative direction, production expertise, global connections, and talent access to bring ambitious ideas to life anywhere in the world. We work across the full spectrum of photo and film: from concept development and creative direction through to casting, creator partnerships, production, cinematography, photography, post-production, and delivery.',
+        'Whether capturing a destination, developing a global campaign, documenting an experience, or producing a story-driven film, we are a one-stop shop for creative connection and execution. With access to the best creators, exclusive production relationships, and a global network built over years in the industry, the possibilities are limitless.',
+      ],
+    },
     cover: 'fleet',
     tabs: [
       { slug: 'travel', label: 'Travel' },
@@ -940,6 +965,7 @@ export const sectors: Sector[] = [
     body: 'Content, campaigns and channel management, wherever the property is.',
     proof: 'We have run the floor: restaurants, clubs and hotels in Bali.',
     frame: 'hospitalityVilla',
+    pattern: 'tide',
     services: [
       { slug: 'social-media', line: 'Planned ahead, in your voice, on schedule.' },
       { slug: 'web-and-seo', line: 'The site kept current. The search position built.' },
@@ -956,6 +982,7 @@ export const sectors: Sector[] = [
       'Repeat and returning guest rate.',
       'Owned audience growth: email list and followers.',
     ],
+    measuresFrame: 'clientDaybed',
     firstStep: {
       title: 'Come and See the Property With Us',
       body: 'We see the property the way a guest does, then come back with a plan and a number.',
@@ -972,6 +999,7 @@ export const sectors: Sector[] = [
     body: 'Content, direct-booking campaigns and creator expeditions, planned around your departures.',
     proof: 'Every point of direct share you win is margin you keep, permanently.',
     frame: 'operatorsSunset',
+    pattern: 'wake',
     services: [
       { slug: 'production', line: 'One shoot. Months of extraordinary content.' },
       { slug: 'paid-media', line: 'Meta and Google pointed at direct enquiries.' },
@@ -984,6 +1012,7 @@ export const sectors: Sector[] = [
       'Commission paid away, tracked month by month.',
       'Charter and cabin occupancy by month.',
     ],
+    measuresFrame: 'deck',
     firstStep: {
       title: 'Put Us on the Next Trip',
       body: 'We join a scheduled departure, shoot it, and come back with the assets and a plan for the season.',
@@ -1001,6 +1030,7 @@ export const sectors: Sector[] = [
     proof:
       'You are not briefing a fixer and hoping. You are briefing the director who will be on set.',
     frame: 'brandsBeach',
+    pattern: 'meridians',
     services: [{ slug: 'production' }, { slug: 'creator-campaigns' }],
     firstStep: {
       title: 'Send Us the Brief',
@@ -1019,6 +1049,7 @@ export const sectors: Sector[] = [
     proof:
       'We are not pitching your region from a deck. We have filmed in the places you are trying to open.',
     frame: 'destinationsPool',
+    pattern: 'terraces',
     services: [{ slug: 'production' }, { slug: 'creator-campaigns' }, { slug: 'paid-media' }],
     firstStep: {
       title: 'Start With One Region',
@@ -1138,6 +1169,7 @@ export const hiddenPages: HiddenPage[] = [
       'Commission paid away, tracked month by month.',
       'Charter and cabin occupancy by month.',
     ],
+    measuresFrame: 'deck',
     firstStep: {
       title: 'Put Us on the Next Trip',
       body: 'We join a scheduled departure, shoot it, and come back with the assets and a plan for the season.',

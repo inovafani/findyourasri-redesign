@@ -142,7 +142,7 @@ export default async function HiddenPage({ params }: Props) {
         <p className="text text--b closer reveal">{page.closer}</p>
       </section>
 
-      <Measured items={page.measures} />
+      <Measured items={page.measures} frame={page.measuresFrame ? frames[page.measuresFrame] : undefined} />
 
       <ContactModule
         variant="start"

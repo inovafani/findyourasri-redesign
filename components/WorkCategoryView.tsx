@@ -5,6 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import Contours from '@/components/Contours';
 import CtaLine from '@/components/CtaLine';
 import JsonLd from '@/components/JsonLd';
+import SmoothLink from '@/components/SmoothLink';
 import WorkGrid from '@/components/WorkGrid';
 import WorkTabs from '@/components/WorkTabs';
 import {
@@ -24,7 +25,8 @@ export function categoryHref(slug: WorkCategorySlug, tab?: WorkTabSlug) {
 
 /**
  * One Work category: the title, the switch between categories, the category's
- * own tabs where it has them, then the grid.
+ * own tabs where it has them, then the grid, then the rest of its story where
+ * it has one.
  */
 export default function WorkCategoryView({
   slug,
@@ -62,8 +64,17 @@ export default function WorkCategoryView({
       <section className="section section--first">
         <div className="work-head about-head">
           <Contours name={category.pattern} />
-          <h1 className="page-title line-mask">{category.name}</h1>
-          <p className="text reveal">{category.line}</p>
+          <h1 className="page-title line-mask">{category.title ?? category.name}</h1>
+          {category.story ? (
+            <p className="text work-head__story reveal">
+              {category.story.lead}{' '}
+              <SmoothLink href="#story" className="text-link">
+                Read more
+              </SmoothLink>
+            </p>
+          ) : (
+            <p className="text reveal">{category.line}</p>
+          )}
           {liveWorkCategories.length > 1 ? (
           <nav className="work-switch" aria-label="Work categories">
             {liveWorkCategories.map((c) => (
@@ -89,6 +100,18 @@ export default function WorkCategoryView({
 
         <WorkGrid items={workFor(slug, category.tabs ? activeTab : undefined)} ratio={category.ratio} />
       </section>
+
+      {category.story ? (
+        <section id="story" className="section section--anchor">
+          <div className="stack stack--prose about-story">
+            {category.story.paragraphs.map((p) => (
+              <p key={p} className="text reveal">
+                {p}
+              </p>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <CtaLine location="work_page" />
     </>

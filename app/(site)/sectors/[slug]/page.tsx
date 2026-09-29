@@ -12,6 +12,8 @@ import { orgId, pageMetadata, sectorPages, site } from '@/lib/site';
 
 type Props = { params: Promise<{ slug: SectorSlug }> };
 
+const SHOW_CAMPAIGNS = false;
+
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -26,12 +28,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /**
  * The landing page for one kind of client: where per-sector outreach (A9) and
  * search land. What Asri runs for the sector, what it asks to be measured on,
- * the frames, and the first step.
+ * the frames, and the first step, which opens the contact section.
  */
 export default async function SectorPage({ params }: Props) {
   const { slug } = await params;
   const sector = getSector(slug);
   const work = sectorFrames(slug);
+  // Where the first step and the form share a title (brands), the card says it
+  // once, with the step's promise as its lede, rather than twice in a row.
+  const sameTitle = sector.firstStep.title === sector.formTitle;
 
   return (
     <>
@@ -55,6 +60,7 @@ export default async function SectorPage({ params }: Props) {
       <SplitHero
         title={sector.title}
         frame={frames[sector.frame as FrameId]}
+        pattern={sector.pattern}
         cta={{ href: `/contact/?sector=${sector.slug}`, location: 'sector_page' }}
       >
         <p className="text reveal">{sector.covers}</p>
@@ -66,23 +72,26 @@ export default async function SectorPage({ params }: Props) {
         <ServiceCards items={sector.services} />
       </section>
 
-      <Measured items={sector.measures} />
+      <Measured
+        items={sector.measures}
+        frame={sector.measuresFrame ? frames[sector.measuresFrame] : undefined}
+      />
 
-      {work.length ? (
+      {/* Selected Campaigns: off until real campaigns replace the archive frames,
+          as on the home page. */}
+      {SHOW_CAMPAIGNS && work.length ? (
         <section className="section">
           <h2 className="sec-title sec-title--gap line-mask">Selected Campaigns</h2>
           <FrameGrid items={work} />
         </section>
       ) : null}
 
-      <section className="section">
-        <div className="blk reveal">
-          <h2 className="blk__heading">{sector.firstStep.title}</h2>
-          <p className="text">{sector.firstStep.body}</p>
-        </div>
-      </section>
-
-      <ContactModule title={sector.formTitle} sector={sector.lead} />
+      <ContactModule
+        title={sector.formTitle}
+        sector={sector.lead}
+        intro={sameTitle ? undefined : sector.firstStep}
+        lede={sameTitle ? sector.firstStep.body : undefined}
+      />
     </>
   );
 }
