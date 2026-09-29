@@ -1273,8 +1273,8 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   text-wrap: balance;
 }
 .sec-title {
-  font: 500 clamp(27px, 3.3vw, 44px)/1.06 var(--font-sans);
-  letter-spacing: -.028em;
+  font: 500 clamp(23px, 2.6vw, 34px)/1.15 var(--font-sans);
+  letter-spacing: -.022em;
   color: var(--a-ink);
   max-width: 22ch;
   text-wrap: balance;
