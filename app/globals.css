@@ -412,27 +412,31 @@ html.anim-ready .line-mask       { opacity: 0; }
   clip-path: inset(50%);
   white-space: nowrap;
 }
-/* The rotating headline: all three lines share one grid cell, so the cell is
-   as wide as the longest and nothing around it jumps as they change. Each
-   line rises in, holds, and rises out as the next one arrives; the mask
-   hides the other two, waiting just above and below. 2.5s a line, 7.5s round.
+/* The rotating word: "Find Your" is plain text; only this part loops, so it
+   sits inline with that text rather than stacking three full lines. All
+   three words share one grid cell, sized to the widest ("Audience."), so
+   nothing around it shifts as they change. Each word rises in, holds, and
+   rises out as the next one arrives; the mask hides the other two, waiting
+   just above and below. 2.5s a word, 7.5s round.
    A vertical mask-image, not clip-path or overflow: those cut with a hard
-   edge, and a blurred line sliding into a hard edge reads as a visible seam
-   rather than a fade. The fade band sits in the vertical padding, clear of
-   the ring's top and bottom.
-   A mask still clips everything outside this element's own box, sides
-   included, and the box is exactly as wide as the widest line — so the ring
-   around "Audience", which sits a little past its word, was cut off on the
-   right. The side padding keeps the ring and the italic overhang inside. */
+   edge, and a blurred word sliding into a hard edge reads as a visible seam
+   rather than a fade. The fade band sits in the vertical padding. */
 .hero__rotator {
-  display: grid;
-  padding: .4em .3em;
-  mask-image: linear-gradient(to bottom, transparent, #000 .34em, #000 calc(100% - .34em), transparent);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 .34em, #000 calc(100% - .34em), transparent);
+  display: inline-grid;
+  vertical-align: baseline;
+  padding-block: .15em;
+  mask-image: linear-gradient(to bottom, transparent, #000 .12em, #000 calc(100% - .12em), transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 .12em, #000 calc(100% - .12em), transparent);
+  /* Width is set inline per word (measured in JS) so the whole "Find Your
+     ___." line re-centres as the word changes, instead of staying boxed to
+     the widest word ("Audience.") and reading off-centre for "Story."/"Asri.".
+     Falls back to auto (sized to the widest word) until that measurement
+     lands, and stays auto under reduced motion. */
+  transition: width .7s cubic-bezier(.22, 1, .36, 1);
 }
 .hero__line {
   grid-area: 1 / 1;
-  justify-self: center;
+  justify-self: start;
   animation: hero-line 7.5s infinite both;
   will-change: transform, filter, opacity;
 }
@@ -450,16 +454,11 @@ html.anim-ready .line-mask       { opacity: 0; }
 /* Reduced motion: no loop, the three lines simply stand stacked. The global
    reduced-motion rule would otherwise end every line on its hidden frame. */
 @media (prefers-reduced-motion: reduce) {
-  .hero__rotator { display: block; }
+  .hero__rotator { display: inline-block; }
   .hero__line { display: block; animation: none; }
 }
-/* The three words called out in the slogan: an italic accent face and a
-   loose, hand-drawn ring, white to match the rest of the title. */
-.hero__highlight-wrap {
-  position: relative;
-  display: inline-block;
-  padding: 0 .08em;
-}
+/* The rotating word: an italic accent face, white to match the rest of the
+   title. */
 .hero__highlight {
   font-family: var(--font-accent);
   font-style: italic;
@@ -467,26 +466,6 @@ html.anim-ready .line-mask       { opacity: 0; }
   letter-spacing: 0;
   font-variation-settings: "SOFT" 30, "WONK" 1, "opsz" 72;
 }
-/* A plain CSS ellipse, not an SVG path stretched to fit: a viewBox path
-   scaled non-uniformly (preserveAspectRatio="none") to match each word's box
-   rendered as an open, broken arc on wide words like "Audience" in real
-   Chrome — border-radius has no such failure mode, at any width. The four
-   corner radii are nudged unevenly per word so it reads as hand-drawn rather
-   than a perfect ellipse. Top/bottom stay on the word's own box — only loose
-   side to side, and not so loose that the tip reaches into the previous word
-   (it did at -.22em, e.g. into the "r" of "Your" right before "Story"). */
-.hero__circle {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -.09em;
-  right: -.09em;
-  border: max(1.5px, .028em) solid #fff;
-  pointer-events: none;
-}
-.hero__circle--a { border-radius: 54% 46% 45% 55% / 40% 60% 42% 58%; }
-.hero__circle--b { border-radius: 46% 54% 56% 44% / 58% 42% 62% 38%; }
-.hero__circle--c { border-radius: 51% 49% 43% 57% / 44% 56% 38% 62%; }
 .hero__aside {
   display: flex;
   flex-direction: column;
