@@ -412,12 +412,13 @@ html.anim-ready .line-mask       { opacity: 0; }
   clip-path: inset(50%);
   white-space: nowrap;
 }
-/* The rotating word: "Find Your" is plain text; only this part loops, so it
-   sits inline with that text rather than stacking three full lines. All
-   three words share one grid cell, sized to the widest ("Audience."), so
-   nothing around it shifts as they change. Each word rises in, holds, and
-   rises out as the next one arrives; the mask hides the other two, waiting
-   just above and below. 2.5s a word, 7.5s round.
+/* The rotating word: "Find Your" is plain text and stays fixed in place;
+   only this part loops, so it sits inline with that text rather than
+   stacking three full lines. All three words share one grid cell, auto-sized
+   to the widest ("Audience."), so nothing around it — including "Find
+   Your" — shifts as they change. Each word rises in, holds, and rises out as
+   the next one arrives; the mask hides the other two, waiting just above and
+   below. 2.5s a word, 7.5s round.
    A vertical mask-image, not clip-path or overflow: those cut with a hard
    edge, and a blurred word sliding into a hard edge reads as a visible seam
    rather than a fade. The fade band sits in the vertical padding. */
@@ -427,12 +428,6 @@ html.anim-ready .line-mask       { opacity: 0; }
   padding-block: .15em;
   mask-image: linear-gradient(to bottom, transparent, #000 .12em, #000 calc(100% - .12em), transparent);
   -webkit-mask-image: linear-gradient(to bottom, transparent, #000 .12em, #000 calc(100% - .12em), transparent);
-  /* Width is set inline per word (measured in JS) so the whole "Find Your
-     ___." line re-centres as the word changes, instead of staying boxed to
-     the widest word ("Audience.") and reading off-centre for "Story."/"Asri.".
-     Falls back to auto (sized to the widest word) until that measurement
-     lands, and stays auto under reduced motion. */
-  transition: width .7s cubic-bezier(.22, 1, .36, 1);
 }
 .hero__line {
   grid-area: 1 / 1;
