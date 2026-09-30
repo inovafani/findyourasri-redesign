@@ -412,52 +412,35 @@ html.anim-ready .line-mask       { opacity: 0; }
   clip-path: inset(50%);
   white-space: nowrap;
 }
-/* The rotating word: "Find Your" is plain text; only this part loops, so it
-   sits inline with that text rather than stacking three full lines. All
-   three words share one grid cell, sized to the widest ("Audience."), so
-   nothing around it shifts as they change. Each word rises in, holds, and
-   rises out as the next one arrives; the mask hides the other two, waiting
-   just above and below. 2.5s a word, 7.5s round.
-   A vertical mask-image, not clip-path or overflow: those cut with a hard
-   edge, and a blurred word sliding into a hard edge reads as a visible seam
-   rather than a fade. The fade band sits in the vertical padding. */
-.hero__rotator {
-  display: inline-grid;
-  vertical-align: baseline;
-  padding-block: .15em;
-  mask-image: linear-gradient(to bottom, transparent, #000 .12em, #000 calc(100% - .12em), transparent);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 .12em, #000 calc(100% - .12em), transparent);
-  /* Width is set inline per word (measured in JS) so the whole "Find Your
-     ___." line re-centres as the word changes, instead of staying boxed to
-     the widest word ("Audience.") and reading off-centre for "Story."/"Asri.".
-     Falls back to auto (sized to the widest word) until that measurement
-     lands, and stays auto under reduced motion. */
-  transition: width .7s cubic-bezier(.22, 1, .36, 1);
+/* The typed word: "Find Your" is plain text; only this part is typed,
+   deleted and retyped (Hero.tsx). It never wraps mid-word, and the caret
+   keeps the line box standing while the word is empty. The whole line
+   re-centres as the word grows and shrinks. */
+.hero__typer {
+  display: inline-block;
+  white-space: nowrap;
 }
-.hero__line {
-  grid-area: 1 / 1;
-  justify-self: start;
-  animation: hero-line 7.5s infinite both;
-  will-change: transform, filter, opacity;
+/* A thin bar in the title colour: blinks while holding, solid while typing
+   or deleting, as a real caret does. */
+.hero__caret {
+  display: inline-block;
+  width: .06em;
+  height: .82em;
+  margin-left: .06em;
+  vertical-align: -.06em;
+  background: currentColor;
+  border-radius: 1px;
+  animation: hero-caret 1s steps(1) infinite;
 }
-.hero__line:nth-child(2) { animation-delay: 2.5s; }
-.hero__line:nth-child(3) { animation-delay: 5s; }
-/* The blur rides the movement: heaviest while a line is travelling, gone by
-   the time it settles, so the change reads as motion rather than a cut. */
-@keyframes hero-line {
-  0% { opacity: 0; transform: translateY(105%); filter: blur(10px); animation-timing-function: cubic-bezier(.22, 1, .36, 1); }
-  9% { opacity: 1; transform: translateY(0); filter: blur(0); }
-  30% { opacity: 1; transform: translateY(0); filter: blur(0); animation-timing-function: cubic-bezier(.64, 0, .78, 0); }
-  37%,
-  100% { opacity: 0; transform: translateY(-105%); filter: blur(10px); }
+.hero__typer.is-typing .hero__caret { animation: none; }
+@keyframes hero-caret {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
-/* Reduced motion: no loop, the three lines simply stand stacked. The global
-   reduced-motion rule would otherwise end every line on its hidden frame. */
 @media (prefers-reduced-motion: reduce) {
-  .hero__rotator { display: inline-block; }
-  .hero__line { display: block; animation: none; }
+  .hero__caret { display: none; }
 }
-/* The rotating word: an italic accent face, white to match the rest of the
+/* The typed word: an italic accent face, white to match the rest of the
    title. */
 .hero__highlight {
   font-family: var(--font-accent);
@@ -1210,6 +1193,9 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
     letter-spacing: -.035em;
     max-width: 14ch;
   }
+  /* The word takes its own line, so the title doesn't jump between one and
+     two lines as the word is typed. */
+  .hero__typer { display: block; }
   .hero__aside { align-items: center; gap: 24px; width: 100%; }
   .hero__lede { font-size: 14.5px; max-width: 40ch; }
   /* One grid column sized to the widest button: every pill stretches to that

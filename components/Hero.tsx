@@ -1,46 +1,73 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import HeroMedia from "@/components/HeroMedia";
 import { motionIsOff } from "@/lib/gsap";
 
-const ROTATION = ["Story", "Audience", "Asri"] as const;
+const ROTATION = ["Story.", "Audience.", "Asri."] as const;
+
+// Typewriter pacing, in ms.
+const TYPE_MS = 85;
+const DELETE_MS = 40;
+const HOLD_MS = 2200;
+const GAP_MS = 380;
 
 /**
  * The opening frame: the headline, one line of copy and two
  * calls to action, in one centred stack, so the photograph carries the rest.
  *
  * The frame wipes open and the photograph drifts on scroll (Motion.tsx); the
- * headline rotates its three lines on its own CSS loop (globals.css). The
- * rotator's width is measured per word here and applied inline, so the
- * centred headline re-balances around whichever word is showing instead of
- * staying boxed to the widest one ("Audience.").
+ * word after "Find Your" is typed out, held, deleted and replaced by the
+ * next, with a caret after it. It renders "Story." in full on the server, so
+ * the first paint is a whole headline; the loop starts by holding that word.
+ * Under reduced motion it simply stays on "Story.".
  */
 export default function Hero() {
-  const wordRefs = useRef<Array<HTMLSpanElement | null>>([]);
-  const [widths, setWidths] = useState<number[] | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [text, setText] = useState<string>(ROTATION[0]);
+  const [typing, setTyping] = useState(false);
 
   useEffect(() => {
     if (motionIsOff()) return;
 
-    const measure = () => {
-      setWidths(wordRefs.current.map((el) => el?.getBoundingClientRect().width ?? 0));
-    };
-    measure();
-    document.fonts?.ready?.then(measure).catch(() => {});
-    window.addEventListener("resize", measure);
+    let index = 0;
+    let length = ROTATION[0].length;
+    let deleting = true;
+    let timer: number;
 
-    const id = window.setInterval(() => {
-      setActiveIndex((i) => (i + 1) % ROTATION.length);
-    }, 2500);
-
-    return () => {
-      window.removeEventListener("resize", measure);
-      window.clearInterval(id);
+    const tick = () => {
+      const word = ROTATION[index];
+      if (deleting) {
+        length -= 1;
+        setText(word.slice(0, length));
+        if (length === 0) {
+          deleting = false;
+          index = (index + 1) % ROTATION.length;
+          timer = window.setTimeout(tick, GAP_MS);
+          return;
+        }
+        timer = window.setTimeout(tick, DELETE_MS);
+      } else {
+        length += 1;
+        setText(word.slice(0, length));
+        if (length === word.length) {
+          deleting = true;
+          setTyping(false);
+          timer = window.setTimeout(start, HOLD_MS);
+          return;
+        }
+        // A little jitter so it reads as typed, not ticked.
+        timer = window.setTimeout(tick, TYPE_MS + Math.random() * 60 - 20);
+      }
     };
+    const start = () => {
+      setTyping(true);
+      tick();
+    };
+
+    timer = window.setTimeout(start, HOLD_MS);
+    return () => window.clearTimeout(timer);
   }, []);
 
   return (
@@ -56,30 +83,17 @@ export default function Hero() {
         <div className="hero__scrim" aria-hidden="true" />
 
         <div className="hero__bottom">
-          {/* "Find Your" stays put; only the word after it takes turns on a
-              CSS loop, sharing one grid cell. Screen readers get the whole
-              slogan once. */}
+          {/* "Find Your" stays put; only the word after it is typed and
+              retyped. Screen readers get the whole slogan once. */}
           <h1 className="hero__title">
             <span className="hero__sr">
               Find Your Story, Find Your Audience, Find Your Asri.
             </span>
             <span aria-hidden="true">
               Find Your{" "}
-              <span
-                className="hero__rotator"
-                style={widths ? { width: `${widths[activeIndex]}px` } : undefined}
-              >
-                {ROTATION.map((word, i) => (
-                  <span
-                    key={word}
-                    className="hero__line"
-                    ref={(el) => {
-                      wordRefs.current[i] = el;
-                    }}
-                  >
-                    <span className="hero__highlight">{word}.</span>
-                  </span>
-                ))}
+              <span className={`hero__typer${typing ? " is-typing" : ""}`}>
+                <span className="hero__highlight">{text}</span>
+                <span className="hero__caret" />
               </span>
             </span>
           </h1>
