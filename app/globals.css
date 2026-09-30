@@ -412,20 +412,42 @@ html.anim-ready .line-mask       { opacity: 0; }
   clip-path: inset(50%);
   white-space: nowrap;
 }
-/* The rotating word: "Find Your" is plain text and stays fixed in place;
-   only this part loops, so it sits inline with that text rather than
-   stacking three full lines. All three words share one grid cell, auto-sized
-   to the widest ("Audience."), so nothing around it — including "Find
-   Your" — shifts as they change. Each word rises in, holds, and rises out as
-   the next one arrives; the mask hides the other two, waiting just above and
-   below. 2.5s a word, 7.5s round.
+/* The rotating word: "Find Your" is plain text and stays fixed in place.
+   The box is sized to "Asri." only (via the hidden .hero__sizer), not to
+   whichever word is showing — so the centred headline always balances
+   around "Find Your Asri.". .hero__lines carries the actual words and is
+   pinned to that box's top-left corner but left free to grow as wide as
+   whichever word is showing (shrink-to-fit, via left/top/bottom with no
+   right), so "Story."/"Audience." (both wider than "Asri.") render in full
+   instead of being clipped at the Asri-width edge.
+   Each word rises in, holds, and rises out as the next one arrives; the
+   mask hides the other two, waiting just above and below. 2.5s a word,
+   7.5s round. The mask lives on .hero__lines (sized to whichever word is
+   widest) rather than .hero__rotator (sized to "Asri."), since mask-clip
+   would otherwise hard-cut anything wider than the Asri-sized box.
    A vertical mask-image, not clip-path or overflow: those cut with a hard
    edge, and a blurred word sliding into a hard edge reads as a visible seam
    rather than a fade. The fade band sits in the vertical padding. */
 .hero__rotator {
-  display: inline-grid;
+  position: relative;
+  display: inline-block;
   vertical-align: baseline;
   padding-block: .15em;
+}
+.hero__sizer {
+  visibility: hidden;
+  white-space: nowrap;
+}
+/* Same padding-block as .hero__rotator: .hero__lines is pinned to the
+   rotator's top-left corner (the padding edge, i.e. before the rotator's
+   own padding), so it needs its own matching padding to start its text at
+   the same baseline as .hero__sizer instead of .15em too high. */
+.hero__lines {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding-block: .15em;
+  display: inline-grid;
   mask-image: linear-gradient(to bottom, transparent, #000 .12em, #000 calc(100% - .12em), transparent);
   -webkit-mask-image: linear-gradient(to bottom, transparent, #000 .12em, #000 calc(100% - .12em), transparent);
 }
@@ -446,10 +468,16 @@ html.anim-ready .line-mask       { opacity: 0; }
   37%,
   100% { opacity: 0; transform: translateY(-105%); filter: blur(10px); }
 }
-/* Reduced motion: no loop, the three lines simply stand stacked. The global
-   reduced-motion rule would otherwise end every line on its hidden frame. */
+/* Reduced motion: no loop, the three lines simply stand stacked; the sizer
+   isn't needed since the stacked lines set their own width. */
 @media (prefers-reduced-motion: reduce) {
-  .hero__rotator { display: inline-block; }
+  .hero__sizer { display: none; }
+  .hero__lines {
+    position: static;
+    display: block;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
   .hero__line { display: block; animation: none; }
 }
 /* The rotating word: an italic accent face, white to match the rest of the

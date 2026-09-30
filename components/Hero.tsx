@@ -45,11 +45,16 @@ export default function Hero() {
             <span aria-hidden="true">
               Find Your{" "}
               <span className="hero__rotator">
-                {ROTATION.map((word) => (
-                  <span key={word} className="hero__line">
-                    <span className="hero__highlight">{word}.</span>
-                  </span>
-                ))}
+                <span className="hero__sizer">
+                  <span className="hero__highlight">Asri.</span>
+                </span>
+                <span className="hero__lines">
+                  {ROTATION.map((word) => (
+                    <span key={word} className="hero__line">
+                      <span className="hero__highlight">{word}.</span>
+                    </span>
+                  ))}
+                </span>
               </span>
             </span>
           </h1>
