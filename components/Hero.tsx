@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 import HeroMedia from "@/components/HeroMedia";
+import { motionIsOff } from "@/lib/gsap";
 
 const ROTATION = ["Story", "Audience", "Asri"] as const;
 
@@ -11,17 +13,36 @@ const ROTATION = ["Story", "Audience", "Asri"] as const;
  * calls to action, in one centred stack, so the photograph carries the rest.
  *
  * The frame wipes open and the photograph drifts on scroll (Motion.tsx); the
- * headline rotates its three lines on its own CSS loop (globals.css). "Find
- * Your" stays fixed in place — the rotator box is auto-sized to the widest
- * word ("Audience.") instead of resizing per word, so nothing shifts.
- *
- * TEMPORARY TRIAL (2026-09-30): previously the rotator's width was measured
- * per word in JS and applied inline so the centred headline re-balanced
- * around whichever word was showing. That made "Find Your" drift left/right
- * as the word changed. Revert to that behavior if this doesn't work out —
- * see git history for this file.
+ * headline rotates its three lines on its own CSS loop (globals.css). The
+ * rotator's width is measured per word here and applied inline, so the
+ * centred headline re-balances around whichever word is showing instead of
+ * staying boxed to the widest one ("Audience.").
  */
 export default function Hero() {
+  const wordRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const [widths, setWidths] = useState<number[] | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    if (motionIsOff()) return;
+
+    const measure = () => {
+      setWidths(wordRefs.current.map((el) => el?.getBoundingClientRect().width ?? 0));
+    };
+    measure();
+    document.fonts?.ready?.then(measure).catch(() => {});
+    window.addEventListener("resize", measure);
+
+    const id = window.setInterval(() => {
+      setActiveIndex((i) => (i + 1) % ROTATION.length);
+    }, 2500);
+
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.clearInterval(id);
+    };
+  }, []);
+
   return (
     <section
       id="top"
@@ -44,17 +65,21 @@ export default function Hero() {
             </span>
             <span aria-hidden="true">
               Find Your{" "}
-              <span className="hero__rotator">
-                <span className="hero__sizer">
-                  <span className="hero__highlight">Asri.</span>
-                </span>
-                <span className="hero__lines">
-                  {ROTATION.map((word) => (
-                    <span key={word} className="hero__line">
-                      <span className="hero__highlight">{word}.</span>
-                    </span>
-                  ))}
-                </span>
+              <span
+                className="hero__rotator"
+                style={widths ? { width: `${widths[activeIndex]}px` } : undefined}
+              >
+                {ROTATION.map((word, i) => (
+                  <span
+                    key={word}
+                    className="hero__line"
+                    ref={(el) => {
+                      wordRefs.current[i] = el;
+                    }}
+                  >
+                    <span className="hero__highlight">{word}.</span>
+                  </span>
+                ))}
               </span>
             </span>
           </h1>
