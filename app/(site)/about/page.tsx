@@ -109,7 +109,7 @@ export default function AboutPage() {
 
       <section className="section">
         <div className="stack record-head">
-          <h2 className="sec-title sec-title--gap line-mask">The Record</h2>
+          <h2 className="sec-title line-mask">The Record</h2>
           {/* Six cells, three across: they fill the grid exactly, so nothing
               is left ragged. */}
           <div className="record">
