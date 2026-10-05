@@ -17,11 +17,30 @@ type Next = {
   cover: ProjectImage;
 };
 
-/** Height is the rail's; width follows from the picture's shape. */
-const fit = (m: { w: number; h: number }) => ({
-  aspectRatio: `${m.w} / ${m.h}`,
-  width: `calc(var(--hs-h) * ${m.w} / ${m.h})`,
-});
+/** Height is the rail's; width follows from the picture's shape (`--w`). */
+const fit = (m: { w: number; h: number }) =>
+  ({
+    aspectRatio: `${m.w} / ${m.h}`,
+    '--w': `calc(var(--hs-h) * ${m.w} / ${m.h})`,
+  }) as React.CSSProperties;
+
+/** Turns @handles in a story into links to their Instagram profiles. */
+function withHandles(text: string) {
+  return text.split(/(@[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)*)/g).map((part, i) =>
+    part.startsWith('@') ? (
+      <a
+        key={i}
+        href={`https://www.instagram.com/${part.slice(1)}/`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {part}
+      </a>
+    ) : (
+      part
+    ),
+  );
+}
 
 type Panel =
   | { kind: 'story'; text: string }
@@ -75,6 +94,29 @@ export default function ProjectGallery({
     if (next) list.push({ kind: 'next' });
     return list;
   }, [gallery, story, next]);
+
+  /* ---------- phones and reduced motion: the rail is a swipeable row ---------- */
+  useEffect(() => {
+    const root = rootRef.current;
+    const viewport = viewportRef.current;
+    const bar = barRef.current;
+    const count = countRef.current;
+    if (!root || !viewport || !bar || !count) return;
+
+    const update = () => {
+      // Pinned, the page scroll drives the bar instead.
+      if (root.classList.contains('is-pinned')) return;
+      const max = viewport.scrollWidth - viewport.clientWidth;
+      if (max <= 0) return;
+      const progress = Math.min(1, Math.max(0, viewport.scrollLeft / max));
+      bar.style.setProperty('--p', String(progress));
+      const n = Math.min(gallery.length, Math.floor(progress * gallery.length) + 1);
+      count.textContent = String(n).padStart(2, '0');
+    };
+
+    viewport.addEventListener('scroll', update, { passive: true });
+    return () => viewport.removeEventListener('scroll', update);
+  }, [gallery.length]);
 
   /* ---------- desktop: pin, and let the page scroll drive the rail ---------- */
   useEffect(() => {
@@ -158,7 +200,7 @@ export default function ProjectGallery({
             <Fragment key={i}>
               {panel.kind === 'story' ? (
                 <div className="hs__panel hs__panel--story">
-                  <p className={`hs__story${panel.text.length > 220 ? ' hs__story--long' : ''}`}>{panel.text}</p>
+                  <p className={`hs__story${panel.text.length > 220 ? ' hs__story--long' : ''}`}>{withHandles(panel.text)}</p>
                 </div>
               ) : null}
 
@@ -251,6 +293,7 @@ export default function ProjectGallery({
           <span className="hs__fill" />
           <span className="hs__thumb" />
         </span>
+        <span className="hs__swipe">Swipe</span>
       </div>
 
       <Lightbox

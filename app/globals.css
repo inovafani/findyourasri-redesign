@@ -2867,11 +2867,20 @@ a.chip.is-on:hover { color: #fff; }
   color: var(--a-ink);
   text-wrap: pretty;
 }
+/* An @handle is a link to the profile: ink and underlined as .text-link is, ocean on hover. */
+.hs__story a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color 240ms var(--ease);
+}
+.hs__story a:hover { color: var(--a-ocean); }
 /* A long passage steps down a size so it still sits inside the rail's height. */
 .hs__story--long { font-size: clamp(16px, 1.25vw, 19px); line-height: 1.55; }
 
 .hs__still {
   display: block;
+  width: var(--w);
   height: var(--hs-h);
   padding: 0;
   border: 0;
@@ -2886,6 +2895,7 @@ a.chip.is-on:hover { color: #fff; }
 
 .hs__film {
   position: relative;
+  width: var(--w);
   height: var(--hs-h);
   border-radius: var(--a-r-sm);
   overflow: hidden;
@@ -2923,7 +2933,7 @@ a.chip.is-on:hover { color: #fff; }
 
 .hs__bar {
   --p: 0;
-  display: none;
+  display: flex;
   align-items: center;
   gap: 18px;
   margin: clamp(28px, 3.2vw, 46px) var(--hs-edge) 0;
@@ -2950,6 +2960,11 @@ a.chip.is-on:hover { color: #fff; }
   width: calc(var(--p) * 100%);
   background: var(--a-ocean);
 }
+.hs__swipe {
+  flex: none;
+  font: 400 12px/1 var(--font-sans);
+  color: var(--a-ink-3);
+}
 .hs__thumb {
   position: absolute;
   top: 50%;
@@ -2964,6 +2979,7 @@ a.chip.is-on:hover { color: #fff; }
 }
 
 @media (min-width: 861px) {
+  .hs__swipe { display: none; }
   /* The pinned stage already centres the rail with air above it. */
   .project-body { padding-top: 0; }
   .hs { --hs-h: clamp(260px, calc(100svh - var(--hs-top) - 150px), 820px); }
@@ -2976,9 +2992,11 @@ a.chip.is-on:hover { color: #fff; }
     justify-content: center;
   }
   .hs.is-pinned .hs__viewport { overflow: hidden; scroll-snap-type: none; }
-  .hs.is-pinned .hs__bar { display: flex; }
 }
 
 @media (max-width: 860px) {
+  .hs__bar { margin-top: 20px; margin-bottom: 4px; }
+  /* A film fits the screen's width rather than running past it. */
+  .hs__film { width: calc(100vw - 2 * var(--hs-edge)); height: auto; }
   .project-hero__frame { height: max(480px, calc(100svh - 70px)); }
 }
