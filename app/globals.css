@@ -517,6 +517,13 @@ html:not(.anim-ready) .reel__track { animation: reel-slide 46s linear infinite; 
   color: var(--a-ink-2);
   text-align: center;
 }
+/* The language tag in the dictionary line, in the site's italic accent face. */
+.reel__lang {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0;
+}
 
 /* ---------- shared card surface ---------- */
 .card {
@@ -2246,11 +2253,15 @@ a.chip.is-on:hover { color: #fff; }
 .work-tabs__tab.is-on { color: var(--a-ocean); }
 .work-tabs__tab.is-on::after { transform: scaleX(1); }
 
+/* Flex, not grid, so a short last row (five clients, say) centres itself
+   rather than sitting against the left edge. */
 .work-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--gap);
 }
+.work-grid > .work-tile { width: calc((100% - 3 * var(--gap)) / 4); }
 .work-tile {
   position: relative;
   display: block;
@@ -2260,7 +2271,6 @@ a.chip.is-on:hover { color: #fff; }
   border-radius: var(--a-r);
   overflow: hidden;
   background: var(--a-tint);
-  cursor: zoom-in;
   text-align: left;
 }
 .work-tile img {
@@ -2307,7 +2317,8 @@ a.chip.is-on:hover { color: #fff; }
 
 @media (max-width: 860px) {
   .tiles--3 { grid-template-columns: minmax(0, 1fr); gap: 22px; }
-  .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .work-grid { gap: 10px; }
+  .work-grid > .work-tile { width: calc((100% - 10px) / 2); }
   .work-tile { border-radius: var(--a-r-sm); }
   .work-tile__text { padding: 12px; }
   .work-tile__title { font-size: 15px; }
@@ -2728,4 +2739,246 @@ a.chip.is-on:hover { color: #fff; }
   .cta-dot__label,
   .cta-dot__label > span,
   .cta-dot .pill__arrow { transition: none; }
+}
+
+/* ---------- work: one project ---------- */
+/* The hero runs edge to edge, as the header's plate does, and sits straight
+   under the header. The breadcrumb, title, description and place are all set
+   over the photograph, so the frame can take the whole screen. */
+.project-hero {
+  --edge: max(var(--pad), calc((100vw - var(--wrap)) / 2 + var(--pad)));
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+.project-hero__frame {
+  position: relative;
+  /* One screen: the header is 72px at rest. */
+  height: max(520px, calc(100svh - 72px));
+  overflow: hidden;
+  background: var(--a-tint);
+}
+.project-hero__frame > img { width: 100%; height: 100%; object-fit: cover; }
+.project-hero__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(8, 14, 13, .46) 0%, rgba(8, 14, 13, 0) 22%),
+    linear-gradient(to top, rgba(8, 14, 13, .78) 0%, rgba(8, 14, 13, .36) 36%, rgba(8, 14, 13, 0) 66%);
+}
+.project-hero .crumbs {
+  position: absolute;
+  z-index: 1;
+  top: clamp(16px, 2vw, 28px);
+  left: var(--edge);
+  right: var(--edge);
+  padding-top: 0;
+}
+.crumbs--light ol,
+.crumbs--light a { color: rgba(255, 255, 255, .72); }
+.crumbs--light a:hover { color: #fff; }
+.crumbs--light [aria-current] { color: #fff; }
+.project-hero__head {
+  position: absolute;
+  left: var(--edge);
+  right: var(--edge);
+  bottom: clamp(32px, 4.6vw, 72px);
+  display: grid;
+  gap: clamp(14px, 1.5vw, 22px);
+}
+.project-hero__head .page-title {
+  max-width: 16ch;
+  color: #fff;
+  font-size: clamp(40px, 5.8vw, 88px);
+}
+.project-hero__head .lead {
+  max-width: 46ch;
+  color: rgba(255, 255, 255, .9);
+  font-size: clamp(17px, 1.5vw, 22px);
+}
+.project-hero__place {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 clamp(13px, 1vw, 15px)/1.4 var(--font-sans);
+  color: rgba(255, 255, 255, .78);
+}
+.project-hero__place svg { flex: none; }
+
+/*
+ * The rail. At rest it is an ordinary swipeable row. ProjectGallery adds
+ * `is-pinned` on a desktop: the section then holds the screen and the page's
+ * own scroll slides the track, so no horizontal gesture is needed.
+ */
+.project-body { padding-top: var(--sec); }
+.hs {
+  --hs-top: 84px;
+  --hs-h: min(60svh, 460px);
+  --hs-edge: max(var(--pad), calc((100vw - var(--wrap)) / 2 + var(--pad)));
+  position: relative;
+  /* Out to the screen's edges, as the header's plate is. The width is stated
+     because the pin freezes whatever it measures when it takes hold. */
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+.hs__viewport {
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--hs-edge);
+  scrollbar-width: none;
+}
+.hs__viewport::-webkit-scrollbar { display: none; }
+.hs__track {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 32px);
+  width: max-content;
+  padding-inline: var(--hs-edge);
+}
+.hs__panel { position: relative; flex: none; scroll-snap-align: start; }
+
+/* Faint chart lines on the empty ground behind the rail, the site's motif. */
+.hs__deco {
+  position: absolute;
+  z-index: 0;
+  top: -64px;
+  bottom: -64px;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+.hs__deco .contours {
+  inset: 0;
+  z-index: auto;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  transform: none;
+  opacity: .3;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  -webkit-mask-composite: initial;
+  mask-composite: initial;
+}
+.hs__track > .hs__panel { z-index: 1; }
+.hs__panel--story { width: min(78vw, 360px); }
+.hs__story {
+  font: 500 clamp(17px, 1.5vw, 22px)/1.5 var(--font-sans);
+  letter-spacing: -.012em;
+  color: var(--a-ink);
+  text-wrap: pretty;
+}
+/* A long passage steps down a size so it still sits inside the rail's height. */
+.hs__story--long { font-size: clamp(16px, 1.25vw, 19px); line-height: 1.55; }
+
+.hs__still {
+  display: block;
+  height: var(--hs-h);
+  padding: 0;
+  border: 0;
+  border-radius: var(--a-r-sm);
+  overflow: hidden;
+  background: var(--a-tint);
+  cursor: zoom-in;
+}
+.hs__still img { width: 100%; height: 100%; object-fit: cover; transition: transform 900ms var(--ease); }
+.hs__still:hover img { transform: scale(1.03); }
+.hs__still:focus-visible { outline: 2px solid var(--a-ocean); outline-offset: 3px; }
+
+.hs__film {
+  position: relative;
+  height: var(--hs-h);
+  border-radius: var(--a-r-sm);
+  overflow: hidden;
+  background: var(--a-black);
+}
+.hs__film video,
+.hs__film .reel-frame__play img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hs__film-title {
+  position: absolute;
+  left: 18px;
+  bottom: 16px;
+  font: 500 clamp(16px, 1.3vw, 19px)/1.2 var(--font-sans);
+  letter-spacing: -.014em;
+  color: #fff;
+  pointer-events: none;
+}
+.hs__film video ~ .hs__film-title { display: none; }
+
+.work-tile.hs__next { width: auto; height: var(--hs-h); aspect-ratio: 3 / 4; border-radius: var(--a-r-sm); }
+.hs__round {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--a-ink);
+  font-size: 16px;
+  transition: transform 300ms var(--ease);
+}
+.hs__next:hover .hs__round { transform: scale(1.08); }
+
+.hs__bar {
+  --p: 0;
+  display: none;
+  align-items: center;
+  gap: 18px;
+  margin: clamp(28px, 3.2vw, 46px) var(--hs-edge) 0;
+}
+.hs__count {
+  flex: none;
+  font: 400 13px/1 var(--font-mono);
+  letter-spacing: .04em;
+  color: var(--a-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.hs__count b { font-weight: 500; color: var(--a-ink); }
+.hs__line {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: var(--a-line);
+}
+.hs__fill {
+  position: absolute;
+  left: 0;
+  top: -.5px;
+  height: 2px;
+  width: calc(var(--p) * 100%);
+  background: var(--a-ocean);
+}
+.hs__thumb {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--p) * 100%);
+  width: 13px;
+  height: 13px;
+  border: 2px solid var(--a-ocean);
+  border-radius: 50%;
+  background: var(--a-canvas);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--a-ocean) 12%, transparent);
+  transform: translate(-50%, -50%);
+}
+
+@media (min-width: 861px) {
+  /* The pinned stage already centres the rail with air above it. */
+  .project-body { padding-top: 0; }
+  .hs { --hs-h: clamp(260px, calc(100svh - var(--hs-top) - 150px), 820px); }
+  .hs__panel--story { width: clamp(320px, 32vw, 520px); }
+  .hs__still, .hs__film, .work-tile.hs__next { border-radius: var(--a-r); }
+  .hs.is-pinned {
+    height: calc(100svh - var(--hs-top));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .hs.is-pinned .hs__viewport { overflow: hidden; scroll-snap-type: none; }
+  .hs.is-pinned .hs__bar { display: flex; }
+}
+
+@media (max-width: 860px) {
+  .project-hero__frame { height: max(480px, calc(100svh - 70px)); }
 }

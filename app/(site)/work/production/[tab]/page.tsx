@@ -9,7 +9,8 @@ type Props = { params: Promise<{ tab: WorkTabSlug }> };
 export const dynamicParams = false;
 
 const descriptions: Partial<Record<WorkTabSlug, string>> = {
-  client: 'Production for brands, hospitality and destinations: campaign photography and film, from scout to master.',
+  hospitality: 'Production for hotels, villas and resorts: photography and film that sell the stay, from scout to master.',
+  products: 'Production for product brands: campaign photography and film, from scout to master.',
   films: 'Films by our crew: destination, brand and expedition films, shot and finished in house.',
 };
 

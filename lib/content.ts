@@ -1,4 +1,6 @@
 import type { RecordIconName } from '@/components/RecordIcon';
+import { media } from '@/lib/media';
+import { projectHref, projects, type ProjectTabSlug } from '@/lib/projects';
 
 /**
  * Every string on the site, as data. Sections stay layout-only, so copy edits
@@ -162,22 +164,30 @@ export const liveWorkSlugs: WorkCategorySlug[] = ['production'];
 const SHOW_SECTORS_NAV = false;
 
 /** The header's page links. The call to action to /contact/ sits beside them. */
+const workNavChildren = (
+  [
+    { slug: 'production', href: '/work/production/', label: 'Production' },
+    { slug: 'marketing', href: '/work/marketing/', label: 'Marketing' },
+    { slug: 'social-media', href: '/work/social-media/', label: 'Social Media' },
+  ] as const
+).filter((c) => liveWorkSlugs.includes(c.slug));
+
+/**
+ * With a single live category a "Work" dropdown would hold one item, so the
+ * header links straight to it ("Production"). A second slug in `liveWorkSlugs`
+ * brings the dropdown back on its own.
+ */
+const workNav =
+  workNavChildren.length === 1
+    ? { href: workNavChildren[0].href, label: workNavChildren[0].label }
+    : { href: '/work/', label: 'Work', children: [...workNavChildren] };
+
 export const navLinks: {
   href: string;
   label: string;
   children?: { href: string; label: string }[];
 }[] = [
-  {
-    href: '/work/',
-    label: 'Work',
-    children: (
-      [
-        { slug: 'production', href: '/work/production/', label: 'Production' },
-        { slug: 'marketing', href: '/work/marketing/', label: 'Marketing' },
-        { slug: 'social-media', href: '/work/social-media/', label: 'Social Media' },
-      ] as const
-    ).filter((c) => liveWorkSlugs.includes(c.slug)),
-  },
+  workNav,
   ...(SHOW_SECTORS_NAV ? [{ href: '/sectors/', label: 'Sectors' }] : []),
   { href: '/services/', label: 'Services' },
   { href: '/about/', label: 'About' },
@@ -506,14 +516,7 @@ export const showreel = {
   label: 'Play the showreel',
 };
 
-/**
- * Long films live on the Bunny CDN (storage and pull zone `asri-media`), not
- * in the repo. NEXT_PUBLIC_MEDIA_URL is the pull zone's address; the files sit
- * at the root of the storage zone.
- */
-const MEDIA = (process.env.NEXT_PUBLIC_MEDIA_URL ?? '').replace(/\/$/, '');
-/** A file at the root of the Bunny storage zone, or in /public/video without it. */
-export const media = (file: string) => (MEDIA ? `${MEDIA}/${file}` : `/video/${file}`);
+export { media };
 
 /* ============================================================
    Work: the portfolio (Cam, 25 Sep)
@@ -521,7 +524,7 @@ export const media = (file: string) => (MEDIA ? `${MEDIA}/${file}` : `/video/${f
 
 /**
  * The Work menu opens on three categories. Production splits into Travel,
- * Client and Films, the way Emmett's portfolio does; Marketing and Social
+ * Hospitality, Products and Films, the way Emmett's portfolio does; Marketing and Social
  * Media are single grids for now.
  *
  * ⚠ PLACEHOLDER CONTENT. Cam's production team is choosing the campaigns and
@@ -531,7 +534,7 @@ export const media = (file: string) => (MEDIA ? `${MEDIA}/${file}` : `/video/${f
  * name here without their written approval (C10, C12).
  */
 export type WorkCategorySlug = 'production' | 'marketing' | 'social-media';
-export type WorkTabSlug = 'travel' | 'client' | 'films';
+export type WorkTabSlug = ProjectTabSlug | 'films';
 
 export type WorkCategory = {
   slug: WorkCategorySlug;
@@ -558,15 +561,16 @@ export type WorkCategory = {
 export type WorkPiece = {
   id: string;
   title: string;
-  /** Shown under the title: the place for travel, the client or format elsewhere. */
+  /** Shown under the title: the place, or what the work was. */
   meta?: string;
   category: WorkCategorySlug;
   tab?: WorkTabSlug;
-  frame: FrameId;
-  /** A client's mark, drawn white in the tile's corner. */
-  logo?: { src: string; w: number; h: number };
+  /** Where a tile goes: its own project page. */
+  href?: string;
+  /** The tile's picture, for a project; films use their poster instead. */
+  cover?: { src: string; w: number; h: number; alt: string; pos?: string };
   /**
-   * Films play in place; everything else opens the viewer. `srcSm` is the
+   * Films play in place; everything else opens its project. `srcSm` is the
    * 720p cut phones get; both are web encodes of the masters in _src/video.
    */
   video?: { src: string; srcSm?: string; poster: string };
@@ -577,7 +581,7 @@ export const workCategories: WorkCategory[] = [
     slug: 'production',
     name: 'Production',
     title: 'Asri Studios',
-    line: 'Travel, client campaigns and films, shot by our own crew.',
+    line: 'Travel, hospitality, products and films, shot by our own crew.',
     story: {
       lead: 'Our in-house team of award-winning photographers, filmmakers and directors works with leading brands, hotels, tourism boards and travel operators across 100+ countries.',
       paragraphs: [
@@ -590,7 +594,8 @@ export const workCategories: WorkCategory[] = [
     cover: 'fleet',
     tabs: [
       { slug: 'travel', label: 'Travel' },
-      { slug: 'client', label: 'Client' },
+      { slug: 'hospitality', label: 'Hospitality' },
+      { slug: 'products', label: 'Products' },
       { slug: 'films', label: 'Films' },
     ],
     ratio: '2 / 3',
@@ -621,29 +626,19 @@ export function getWorkCategory(slug: WorkCategorySlug) {
 }
 
 export const workPieces: WorkPiece[] = [
-  // Production · Travel: one tile per place, from Cam's travel frames in
-  // public/img/travel.
-  { id: 't1', title: 'Bhutan', meta: 'A monk crossing the bridge', category: 'production', tab: 'travel', frame: 'travelBhutan' },
-  { id: 't2', title: 'India', meta: 'A sadhu at dusk', category: 'production', tab: 'travel', frame: 'travelIndia' },
-  { id: 't3', title: 'Mantas', meta: 'A manta over the reef', category: 'production', tab: 'travel', frame: 'travelMantas' },
-  { id: 't4', title: 'Nepal', meta: 'Young monks at the temple', category: 'production', tab: 'travel', frame: 'travelNepal' },
-  { id: 't5', title: 'San Marzano', meta: 'Phinisi fleet at sunrise', category: 'production', tab: 'travel', frame: 'travelSanMarzano' },
-  { id: 't6', title: 'Vietnam', meta: 'A basket seller on his bicycle', category: 'production', tab: 'travel', frame: 'travelVietnam' },
-  { id: 't7', title: 'Indonesia', meta: 'A temple procession', category: 'production', tab: 'travel', frame: 'travelIndonesia' },
-  { id: 't8', title: 'Africa', meta: 'A rider below the falls', category: 'production', tab: 'travel', frame: 'travelAfrica' },
-  // Production · Client: the client cards from the original design, each with
-  // its logo. The line under each name is the sector, not the invented service
-  // lines the first build carried.
-  { id: 'c1', title: 'Canon', meta: 'Global brands', category: 'production', tab: 'client', frame: 'deck', logo: { src: '/img/logo-canon.png', w: 81, h: 17 } },
-  { id: 'c2', title: 'DJI', meta: 'Global brands', category: 'production', tab: 'client', frame: 'fleet', logo: { src: '/img/logo-dji.png', w: 35, h: 20 } },
-  { id: 'c3', title: 'National Geographic', meta: 'Global brands', category: 'production', tab: 'client', frame: 'karst', logo: { src: '/img/logo-natgeo.png', w: 95, h: 28 } },
-  { id: 'c4', title: 'Jamaica Tourist Board', meta: 'Destinations & tourism boards', category: 'production', tab: 'client', frame: 'clientCoast', logo: { src: '/img/logo-jamaica.png', w: 70, h: 24 } },
-  { id: 'c5', title: 'Corona', meta: 'Global brands', category: 'production', tab: 'client', frame: 'clientBeach', logo: { src: '/img/logo-corona.png', w: 69, h: 28 } },
-  { id: 'c6', title: 'Rosewood London', meta: 'Hospitality', category: 'production', tab: 'client', frame: 'clientDaybed', logo: { src: '/img/logo-rosewood.png', w: 143, h: 14 } },
-  { id: 'c7', title: 'Boattime Yacht Charters', meta: 'Travel & experience operators', category: 'production', tab: 'client', frame: 'sails', logo: { src: '/img/logo-boattime.png', w: 53, h: 30 } },
-  { id: 'c8', title: 'Wonderful Indonesia', meta: 'Destinations & tourism boards', category: 'production', tab: 'client', frame: 'lagoon', logo: { src: '/img/logo-indonesia.png', w: 70, h: 28 } },
-  { id: 'c9', title: 'BluePass', meta: 'Travel & experience operators', category: 'production', tab: 'client', frame: 'clientNight', logo: { src: '/img/logo-bluepass.png', w: 19, h: 28 } },
-  { id: 'c10', title: 'Press Play', meta: 'Hospitality', category: 'production', tab: 'client', frame: 'clientDj', logo: { src: '/img/logo-pressplay.png', w: 50, h: 28 } },
+  // Production · Travel, Hospitality and Products: one tile per client,
+  // each opening its own page. See lib/projects.ts.
+  ...projects.map(
+    (p): WorkPiece => ({
+      id: p.slug,
+      title: p.title,
+      meta: p.meta,
+      category: 'production',
+      tab: p.tab,
+      href: projectHref(p),
+      cover: { ...p.tile, alt: p.cover.alt, pos: p.cover.pos },
+    }),
+  ),
   // Production · Films: DUMMY titles until Cam names the films.
   {
     id: 'f1',
@@ -651,7 +646,6 @@ export const workPieces: WorkPiece[] = [
     meta: 'Brand film · 1 min 12',
     category: 'production',
     tab: 'films',
-    frame: 'fleet',
     video: {
       src: media('film-marriott.mp4'),
       srcSm: media('film-marriott-sm.mp4'),
@@ -664,7 +658,6 @@ export const workPieces: WorkPiece[] = [
     meta: 'Expedition film · 2 min 21',
     category: 'production',
     tab: 'films',
-    frame: 'islands',
     video: {
       src: media('film-san-mazarno.mp4'),
       srcSm: media('film-san-mazarno-sm.mp4'),

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 import { liveServices, liveWorkCategories, sectors } from '@/lib/content';
+import { projectHref, projects } from '@/lib/projects';
 import { site } from '@/lib/site';
 
 export const dynamic = 'force-static';
@@ -16,6 +17,7 @@ const indexedRoutes = [
     `/work/${c.slug}/`,
     ...(c.tabs ?? []).slice(1).map((t) => `/work/${c.slug}/${t.slug}/`),
   ]),
+  ...projects.map(projectHref),
   '/sectors/',
   ...sectors.map((s) => `/sectors/${s.slug}/`),
   '/services/',

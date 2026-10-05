@@ -1,67 +1,47 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import Link from 'next/link';
+import { useState } from 'react';
 
-import Lightbox from '@/components/Lightbox';
-import { frames, type WorkPiece } from '@/lib/content';
+import type { WorkPiece } from '@/lib/content';
 
 /**
  * A portfolio grid in the reference's format: tall tiles, the title and place
- * laid over the foot of the photograph. Stills open the shared viewer; films
+ * laid over the foot of the photograph. A tile opens its project page; films
  * play in place, with sound, only when asked.
  */
 export default function WorkGrid({ items, ratio }: { items: WorkPiece[]; ratio: string }) {
   const stills = items.filter((p) => !p.video);
   const films = items.filter((p) => p.video);
-  const [index, setIndex] = useState<number | null>(null);
-  const openerRef = useRef<HTMLButtonElement | null>(null);
 
   return (
     <>
       {stills.length ? (
         <div className="work-grid">
           {stills.map((piece, i) => {
-            const f = frames[piece.frame];
+            const cover = piece.cover!;
             return (
-              <button
+              <Link
                 key={piece.id}
-                type="button"
+                href={piece.href!}
                 className="work-tile reveal"
                 style={{ aspectRatio: ratio }}
-                aria-label={`Open ${piece.title}`}
-                onClick={(event) => {
-                  openerRef.current = event.currentTarget;
-                  setIndex(i);
-                }}
+                aria-label={`${piece.title}: open the project`}
               >
                 <img
-                  src={f.src}
-                  alt={f.alt}
-                  width={f.w}
-                  height={f.h}
+                  src={cover.src}
+                  alt={cover.alt}
+                  width={cover.w}
+                  height={cover.h}
                   loading={i < 4 ? 'eager' : 'lazy'}
-                  style={'pos' in f ? { objectPosition: f.pos } : undefined}
+                  style={cover.pos ? { objectPosition: cover.pos } : undefined}
                 />
                 <span className="work-tile__scrim" aria-hidden="true" />
-                {piece.logo ? (
-                  // A masked block, not an <img>, so the mark renders white
-                  // over any photograph (the original design's approach).
-                  <span
-                    className="work-tile__logo"
-                    aria-hidden="true"
-                    style={{
-                      width: piece.logo.w,
-                      height: piece.logo.h,
-                      WebkitMaskImage: `url(${piece.logo.src})`,
-                      maskImage: `url(${piece.logo.src})`,
-                    }}
-                  />
-                ) : null}
                 <span className="work-tile__text">
                   <span className="work-tile__title">{piece.title}</span>
                   {piece.meta ? <span className="work-tile__meta">{piece.meta}</span> : null}
                 </span>
-              </button>
+              </Link>
             );
           })}
         </div>
@@ -74,18 +54,6 @@ export default function WorkGrid({ items, ratio }: { items: WorkPiece[]; ratio: 
           ))}
         </div>
       ) : null}
-
-      <Lightbox
-        items={stills.map((p) => ({ ...frames[p.frame], title: p.title, caption: p.meta }))}
-        index={index}
-        restoreFocusTo={openerRef}
-        onClose={() => setIndex(null)}
-        onStep={(delta) =>
-          setIndex((current) =>
-            current === null ? current : (current + delta + stills.length) % stills.length,
-          )
-        }
-      />
     </>
   );
 }

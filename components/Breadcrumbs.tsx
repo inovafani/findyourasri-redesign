@@ -8,14 +8,14 @@ export type Crumb = { href: string; label: string };
 /**
  * Shared component H. Every page below the home page opens with it; the last
  * item is the current page and is not a link. The BreadcrumbList carries the
- * same items.
+ * same items. `light` is for sitting over a photograph.
  */
-export default function Breadcrumbs({ items }: { items: Crumb[] }) {
+export default function Breadcrumbs({ items, light = false }: { items: Crumb[]; light?: boolean }) {
   const trail = [{ href: '/', label: 'Home' }, ...items];
 
   return (
     <>
-      <nav className="crumbs" aria-label="Breadcrumb">
+      <nav className={`crumbs${light ? ' crumbs--light' : ''}`} aria-label="Breadcrumb">
         <ol>
           {trail.map((crumb, i) => (
             <li key={crumb.href}>
