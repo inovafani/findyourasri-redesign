@@ -21,7 +21,7 @@ const showPeopleSection = false;
 
 export default function AboutPage() {
   const shown = showPeopleSection ? people.filter((p) => p.show) : [];
-  const hero = frames.about;
+  const hero = frames.dKarstSunset;
 
   return (
     <>
@@ -68,7 +68,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section tone-cream">
         <div className="stack stack--prose about-story">
           <h2 className="sec-title line-mask">{whyAsri.title}</h2>
           {whyAsri.paragraphs.map((p) => (

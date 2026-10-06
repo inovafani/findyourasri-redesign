@@ -7,12 +7,15 @@ import JsonLd from '@/components/JsonLd';
 import SplitHero from '@/components/SplitHero';
 import Stages from '@/components/Stages';
 import {
+  campaignPart,
+  frames,
   getService,
   howWeShoot,
   liveServices,
   ON_APPLICATION,
   price,
   sectorsFor,
+  type Frame,
   type ServiceSlug,
 } from '@/lib/content';
 import { orgId, pageMetadata, servicePages, site } from '@/lib/site';
@@ -40,14 +43,17 @@ function withNames(line: string) {
 
 /**
  * One service in full: what is delivered, where it sits in the chain, which
- * partnership includes it and who it is for, then the enquiry. The 4:3 image
- * is optional and none is decided, so the hero runs the full width. Questions
+ * partnership includes it and who it is for, then the enquiry. The hero's
+ * frame is the service's first picture on /services/ (lib/content.ts,
+ * `campaign`), so the two pages show the same campaign. Questions
  * (FAQPage) wait for Phase 2 and the SEO desk's drafts.
  */
 export default async function ServicePage({ params }: Props) {
   const { slug } = await params;
   const service = getService(slug);
   const forWhom = sectorsFor(slug);
+  const lead = campaignPart(slug)?.frames[0];
+  const frame = lead ? (frames[lead] as Frame) : undefined;
 
   return (
     <>
@@ -71,6 +77,7 @@ export default async function ServicePage({ params }: Props) {
 
       <SplitHero
         title={service.title}
+        frame={frame}
         cta={{ href: `/contact/?service=${slug}`, location: 'service_page' }}
       >
         <p className="text reveal">{service.body}</p>

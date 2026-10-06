@@ -12,8 +12,9 @@ export default function SectorTiles() {
   const order = ['hospitality', 'operators', 'brands', 'destinations'] as const;
 
   return (
-    <section className="section" data-section-view="sectors">
+    <section className="section tone-cream" data-section-view="sectors">
       <div className="stack stack--head stack--head-center">
+        <p className="kick kick--rule reveal">Who we work with</p>
         <h2 className="sec-title line-mask">Your Experts on Everything Travel and Hospitality</h2>
         <p className="markets reveal">Working globally with brands in 100+ countries.</p>
       </div>

@@ -12,7 +12,7 @@ export const site = {
   slogan: 'Find Your Story, Find Your Audience, Find Your Asri.',
   url: 'https://findyourasri.com',
   locale: 'en_GB',
-  themeColor: '#EDEFEA',
+  themeColor: '#0C0A08',
   description:
     'Marketing and production for hospitality, operators, global brands and destinations. Content, paid media, search and creator campaigns, run by operators.',
   ogImage: {
@@ -23,21 +23,34 @@ export const site = {
   },
   email: 'hello@findyourasri.com',
   emailSubject: 'Enquiry from findyourasri.com',
-  phone: '+61 422 755 457',
-  phoneHref: '+61422755457',
-  phoneCountry: 'AU',
+  /**
+   * The site's one number is WhatsApp, the number every proposal carries
+   * since 5 Oct 2026 (Anthony, 6 Oct: "Use the +1 WhatsApp number on the
+   * site"). It replaces +61 422 755 457. `phone` is its display form.
+   */
+  phone: '+1 757 296 2109',
+  phoneHref: '+17572962109',
+  phoneCountry: 'US',
   /**
    * Gate A11: the scheduler link for Book a site day. While null the button
    * scrolls to the form on the page instead.
    */
   bookingUrl: null as string | null,
-  /** Gate W4: an Indonesian or WhatsApp number. Links stay hidden while null. */
-  whatsapp: null as string | null,
+  /** Gate W4: the WhatsApp number, digits only. While null, `phone` shows as a call link. */
+  whatsapp: '17572962109' as string | null,
   base: 'Bali, Indonesia',
   hours: 'Mon to Fri · 09.00 to 17.00 GMT+8',
 } as const;
 
 export const mailto = `mailto:${site.email}?subject=${encodeURIComponent(site.emailSubject)}`;
+
+/** The WhatsApp chat link, with the opening line filled in. */
+export const whatsappHref = site.whatsapp
+  ? `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hello Asri, I found you on findyourasri.com.')}`
+  : null;
+
+/** The number's link: WhatsApp when there is one, otherwise a call. */
+export const phoneLink = whatsappHref ?? `tel:${site.phoneHref}`;
 
 /**
  * Metadata for one route. Titles are drafts for the SEO desk: under 60

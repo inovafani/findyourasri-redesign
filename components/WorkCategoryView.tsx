@@ -102,7 +102,7 @@ export default function WorkCategoryView({
       </section>
 
       {category.story ? (
-        <section id="story" className="section section--anchor">
+        <section id="story" className="section section--anchor tone-cream">
           <div className="stack stack--prose about-story">
             {category.story.paragraphs.map((p) => (
               <p key={p} className="text reveal">

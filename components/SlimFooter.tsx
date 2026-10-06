@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { mailto, site } from '@/lib/site';
+import { mailto, phoneLink, site } from '@/lib/site';
 
 /** Shared component B, slim variant, for hidden pages: one row of the mark, the contact lines, a link to the full site and the fine print. */
 export default function SlimFooter() {
@@ -11,8 +11,8 @@ export default function SlimFooter() {
         <p className="footer__slim-lines">
           <a href={mailto}>{site.email}</a>
           <span aria-hidden="true"> · </span>
-          <a href={`tel:${site.phoneHref}`} data-phone-country={site.phoneCountry}>
-            {site.phone}
+          <a href={phoneLink} data-phone-country={site.phoneCountry}>
+            {site.whatsapp ? `WhatsApp ${site.phone}` : site.phone}
           </a>
           <span aria-hidden="true"> · </span>
           {site.base}
