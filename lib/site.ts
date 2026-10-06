@@ -8,7 +8,7 @@ import { liveServices, sectors, type SectorSlug, type ServiceSlug } from '@/lib/
  */
 export const site = {
   name: 'Asri',
-  title: 'Asri: Marketing and Production Agency, Bali, Indonesia',
+  title: 'Asri: Marketing and Production Agency, Singapore',
   slogan: 'Find Your Story, Find Your Audience, Find Your Asri.',
   url: 'https://findyourasri.com',
   locale: 'en_GB',
@@ -38,7 +38,7 @@ export const site = {
   bookingUrl: null as string | null,
   /** Gate W4: the WhatsApp number, digits only. While null, `phone` shows as a call link. */
   whatsapp: '17572962109' as string | null,
-  base: 'Bali, Indonesia',
+  base: 'Singapore',
   hours: 'Mon to Fri · 09.00 to 17.00 GMT+8',
 } as const;
 
@@ -213,10 +213,10 @@ export const homeGraph = {
       telephone: site.phoneHref,
       address: {
         '@type': 'PostalAddress',
-        addressRegion: 'Bali',
-        addressCountry: 'ID',
+        addressLocality: 'Singapore',
+        addressCountry: 'SG',
       },
-      // W1: international clients, Bali as the base.
+      // W1: international clients, Singapore as the base.
       areaServed: 'Worldwide',
       knowsAbout: sectors.map((s) => s.kicker),
       makesOffer: liveServices.map((s) => ({

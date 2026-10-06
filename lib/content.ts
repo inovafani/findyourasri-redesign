@@ -999,7 +999,7 @@ export const partnerships: Partnership[] = [
       'Event and brand shoots',
       'A monthly report',
     ],
-    note: 'Shoots outside Indonesia may need a local crew hired in; travel costs add to the price.',
+    note: 'Shoots away from our usual locations may need a local crew hired in; travel costs add to the price.',
     term: 'Six-month minimum · ad spend excluded',
     reporting: 'Monthly',
     price: 'growth',

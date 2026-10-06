@@ -68,7 +68,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <dt>Clock</dt>
-                  <dd>Bali keeps Singapore’s clock, and our afternoon is London’s morning.</dd>
+                  <dd>We keep Singapore time, and our afternoon is London’s morning.</dd>
                 </div>
                 <div>
                   <dt>Base</dt>
