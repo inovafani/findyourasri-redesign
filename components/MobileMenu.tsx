@@ -8,7 +8,7 @@ import { EASE, EASE_LONG, gsap, initGsap, motionIsOff } from '@/lib/gsap';
 import { navLinks } from '@/lib/content';
 import { followLink } from '@/components/NavGuard';
 import { isActivePath } from '@/lib/nav';
-import { mailto, site } from '@/lib/site';
+import { mailto, phoneLink, site } from '@/lib/site';
 
 /**
  * The phone navigation: a bar button that opens a full-height sheet.
@@ -210,12 +210,8 @@ export default function MobileMenu() {
                 <a href={mailto} className="sheet__email">
                   {site.email}
                 </a>
-                <a
-                  href={`tel:${site.phoneHref}`}
-                  className="sheet__phone"
-                  data-phone-country={site.phoneCountry}
-                >
-                  {site.phone}
+                <a href={phoneLink} className="sheet__phone" data-phone-country={site.phoneCountry}>
+                  {site.whatsapp ? `WhatsApp ${site.phone}` : site.phone}
                 </a>
                 <button
                   type="button"

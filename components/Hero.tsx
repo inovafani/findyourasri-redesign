@@ -71,11 +71,9 @@ export default function Hero() {
   }, []);
 
   return (
-    <section
-      id="top"
-      className="hero"
-      style={{ paddingTop: "clamp(10px, 1.4vw, 20px)" }}
-    >
+    // Full bleed, under the header, as a proposal's cover page is: the
+    // spacing and the pull-up live in app/brand.css.
+    <section id="top" className="hero">
       <div className="hero__frame clip-reveal">
         <div className="hero__media media-zoom">
           <HeroMedia />

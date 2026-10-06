@@ -10,7 +10,7 @@ export default function Measured({ items, frame }: { items?: readonly string[]; 
   if (!items?.length) return null;
 
   return (
-    <section className="section">
+    <section className="section tone-cream">
       <div className={`measured${frame ? '' : ' measured--solo'}`}>
         <div className="measured__body">
           <div className="stack">

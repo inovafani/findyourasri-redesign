@@ -1,0 +1,1609 @@
+/* ============================================================
+   Asri: the brand layer
+
+   The site in the look of the proposals and decks (the Madonna growth
+   partnership, the sector proposals, Coconut Grove): a Didone display face,
+   Avenir Next for text, gold hairlines on Madonna's warm black, cream
+   interludes for reading, square corners, gold kickers, gold-ringed icons,
+   and one warm film grade on the photography.
+
+   Source of truth for the look: new-business/proposals/_engine/asri-a4.css
+   (the "hotel" theme in asri_a4.py). Colours and type below are copied from
+   it value for value; only the sizes are converted from page widths to the
+   screen.
+
+   How it works. app/globals.css is untouched and still holds every layout
+   rule; this file loads after it and does three things:
+     1. re-points the --a-* tokens, so most of the site turns over at once;
+     2. sets the type, buttons, cards and fields in the proposals' language;
+     3. recomposes the sections the proposals have their own pattern for
+        (the cover, the logo wall, numbered cards, the hairline record).
+   A section takes the cream page with `tone-cream`, which re-points the
+   same tokens for everything inside it.
+
+   Motion is untouched: Motion.tsx still owns every animation, and nothing
+   here hides an element.
+   ============================================================ */
+
+:root {
+  /* ---- type: the proposals' stacks, with the self-hosted fallbacks ---- */
+  --font-display: Didot, 'Bodoni 72', var(--font-bodoni), 'Bodoni Moda', Georgia, serif;
+  --font-sans: 'Avenir Next', Avenir, var(--font-nunito), 'Nunito Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-cond: 'Avenir Next Condensed', var(--font-oswald), Oswald, 'Arial Narrow', sans-serif;
+  /* Labels were mono; in the proposals they are letter-spaced caps. */
+  --font-mono: var(--font-sans);
+  --font-accent: var(--font-display);
+
+  /* ---- the hotel theme (Madonna's warm black), from asri_a4.py ---- */
+  --g: #0C0A08;
+  --shade: 12, 10, 8;
+  --desk: #070605;
+  --phbg: #211B15;
+  --cream: #F3EEE5;
+  --gold: #C9A063;
+  --gold-2: #E6C88F;
+  --gold-grad: linear-gradient(180deg, #F8E6BD 0%, #D9B474 48%, #A7804A 100%);
+  --kick: var(--gold-2);
+  --on-gold: #0C0A08;
+
+  /* ---- the site's tokens, re-pointed ---- */
+  --a-ink: #F2ECE2;
+  --a-ink-2: rgba(242, 236, 226, .78);
+  --a-ink-3: rgba(242, 236, 226, .56);
+  --a-canvas: var(--g);
+  --a-card: #14110D;
+  --a-tint: #1C1813;
+  --a-black: var(--desk);
+  --a-line: rgba(201, 160, 99, .45);
+  --a-line-soft: rgba(242, 236, 226, .13);
+  --a-green: var(--gold-2);
+  --a-ocean: var(--gold);
+  --a-aqua: var(--gold-2);
+  --a-accent: var(--gold);
+
+  /* Square corners: frames, cards, fields and buttons. Icons stay round. */
+  --a-r: 0px;
+  --a-r-sm: 0px;
+  --a-r-lg: 0px;
+
+  /* ---- rhythm: more air, as the pages have ---- */
+  --pad: clamp(18px, 3.4vw, 52px);
+  --sec: clamp(64px, 7.4vw, 120px);
+  --hdr-h: 84px;
+
+  /* One grade for every frame Asri shows as its own: warm, a little muted,
+     soft blacks. Client work on /work/ keeps the colour it was delivered in. */
+  --grade: saturate(.82) sepia(.12) contrast(.96) brightness(.96);
+}
+
+/* ---- the cream page ---- */
+.tone-cream {
+  --a-ink: #121A1C;
+  --a-ink-2: #465156;
+  --a-ink-3: #7F8A8C;
+  --a-canvas: var(--cream);
+  --a-card: #F8F4EC;
+  --a-tint: #E7DFD1;
+  --a-line: rgba(165, 126, 67, .55);
+  --a-line-soft: rgba(18, 26, 28, .13);
+  --a-green: #8C6A35;
+  --a-ocean: #A57E43;
+  --a-aqua: #8C6A35;
+  --a-accent: #A57E43;
+  --gold: #A57E43;
+  --gold-2: #8C6A35;
+  --kick: #A57E43;
+  --on-gold: #F8F4EC;
+  position: relative;
+  isolation: isolate;
+  color: var(--a-ink);
+  padding-bottom: var(--sec);
+}
+/* The page runs edge to edge from inside the 1480px wrap. */
+.tone-cream::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  background: var(--cream);
+  pointer-events: none;
+}
+/* Dark ground on both sides of a cream page, so nothing above it runs into
+   its edge. A photograph may meet it directly (About's wide frame). */
+.tone-cream { margin-top: var(--sec); }
+.section--first:has(.wide-frame) + .tone-cream { margin-top: 0; }
+.tone-cream + .section { padding-top: var(--sec); }
+
+/* ============================================================
+   Base
+   ============================================================ */
+html { background: var(--g); }
+body {
+  background: var(--g);
+  color: var(--a-ink);
+  font-size: 16px;
+  text-rendering: optimizeLegibility;
+}
+/* Bodoni Moda's display optical size thins its hairlines well past Didot's;
+   held at 28 it matches the proposals. Didot is not variable and ignores it,
+   and Nunito Sans clamps it to its own default. It is set on every element,
+   and important, because each rule's `font` shorthand resets it. */
+*, *::before, *::after { font-variation-settings: "opsz" 28 !important; }
+.wrap { padding-bottom: 0; }
+::selection { background: var(--gold); color: var(--on-gold); }
+:focus-visible { outline-color: var(--gold); border-radius: 0; }
+.skip-link { background: var(--gold); color: var(--on-gold); }
+.section--anchor { scroll-margin-top: calc(var(--hdr-h) + 12px); }
+.section--first { padding-top: clamp(36px, 4.4vw, 72px); }
+
+/* ============================================================
+   Type: the proposals' kicker, titles, sub and lede
+   ============================================================ */
+.kick,
+.up {
+  display: block;
+  font: 500 11.5px/1.45 var(--font-sans);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--kick);
+}
+/* A kicker's gold rule, as under every proposal page label. */
+.kick--rule::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin-top: 16px;
+  background: var(--gold);
+}
+.stack--head-center .kick--rule::after,
+.about-head .kick--rule::after { margin-inline: auto; }
+
+/* Page titles: the proposals' Didot caps (.h-caps). */
+.page-title {
+  font: 400 clamp(38px, 5.2vw, 78px)/1.02 var(--font-display);
+  letter-spacing: .005em;
+  text-transform: uppercase;
+  color: var(--a-ink);
+  max-width: 18ch;
+}
+/* Section titles: the same voice, a size down. */
+.sec-title {
+  font: 400 clamp(28px, 3.2vw, 48px)/1.06 var(--font-display);
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  color: var(--a-ink);
+  max-width: 24ch;
+}
+.split-hero__title {
+  font: 400 clamp(34px, 3.9vw, 60px)/1.04 var(--font-display);
+  letter-spacing: .005em;
+  text-transform: uppercase;
+  max-width: 19ch;
+}
+/* Body text: Avenir, as the proposals' lede. */
+.text {
+  font: 400 clamp(15.5px, 1.1vw, 17px)/1.65 var(--font-sans);
+  color: var(--a-ink-2);
+}
+/* The one bold line in a block reads as the proposals' gold Didot sub. */
+.text--b {
+  font: 400 clamp(20px, 1.8vw, 27px)/1.3 var(--font-display);
+  color: var(--gold-2);
+  letter-spacing: 0;
+}
+.text b { font-weight: 600; }
+.lead {
+  font: 400 clamp(18px, 1.5vw, 22px)/1.5 var(--font-sans);
+  letter-spacing: 0;
+  color: var(--a-ink);
+}
+.small { font: 400 13px/1.5 var(--font-sans); color: var(--a-ink-3); }
+.markets {
+  font: 500 11.5px/1.6 var(--font-sans);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+.prose h2 { font: 400 26px/1.15 var(--font-display); letter-spacing: .01em; text-transform: uppercase; }
+.prose p { font-size: 16px; }
+.prose a { border-bottom-color: var(--a-line); }
+
+/* ============================================================
+   Buttons: square, letter-spaced caps, gold hairline
+   ============================================================ */
+.pill {
+  height: 48px;
+  padding: 0 26px;
+  gap: 12px;
+  border-radius: 0;
+  font: 600 11.5px/1 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+.pill__arrow { font-size: 13px; letter-spacing: 0; }
+.pill--ink,
+.pill--light {
+  background: transparent;
+  border-color: var(--gold);
+  color: var(--gold-2);
+}
+.pill--ink:hover,
+.pill--light:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--on-gold);
+}
+.pill--ghost { border-color: rgba(242, 236, 226, .5); color: #F2ECE2; }
+.pill--ghost:hover { background: rgba(242, 236, 226, .08); border-color: #F2ECE2; color: #F2ECE2; }
+.pill--outline { border-color: var(--a-line); color: var(--a-ink); }
+.pill--outline:hover { background: transparent; border-color: var(--gold); color: var(--gold-2); }
+/* Over a photograph the outline needs a ground to stand on. */
+.hero .pill--light {
+  background: rgba(var(--shade), .34);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.hero .pill--light:hover { background: var(--gold); }
+
+/* The round "go" mark: a gold ring, as the proposals' icons. */
+.arrow-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--a-line);
+  background: transparent;
+  color: var(--gold-2);
+}
+.tile:hover .arrow-btn,
+.tile:focus-visible .arrow-btn,
+.svc:hover .arrow-btn,
+.svc:focus-visible .arrow-btn {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--on-gold);
+}
+.to-top { border-color: var(--a-line); color: var(--gold-2); }
+.to-top:hover { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+
+/* Chips and stage tags: square hairline labels. */
+.chip {
+  border-radius: 0;
+  background: transparent;
+  border-color: var(--a-line-soft);
+  padding: 11px 18px;
+  font: 500 11px/1 var(--font-sans);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+a.chip:hover { border-color: var(--gold); color: var(--gold-2); }
+.chip.is-on { background: transparent; border-color: var(--gold); color: var(--gold-2); }
+a.chip.is-on:hover { color: var(--gold-2); }
+
+/* ============================================================
+   Header: the mark, caps nav, a gold hairline when it sticks
+   ============================================================ */
+.header,
+.header.is-stuck {
+  height: var(--hdr-h);
+  /* Block only: phones pad the bar's sides back in (globals.css). */
+  padding-block: 0;
+  display: flex;
+  align-items: center;
+}
+.header__row { width: 100%; }
+.header::before { background: color-mix(in srgb, var(--g) 84%, transparent); }
+.header.is-stuck::before { box-shadow: inset 0 -1px 0 var(--a-line); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .header::before { background: var(--g); }
+}
+/* Home: the header sits over the cover until the page moves. */
+.wrap:has(> main > .hero) .header:not(.is-stuck)::before {
+  background: linear-gradient(to bottom, rgba(var(--shade), .55), rgba(var(--shade), 0));
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.header__logo img { height: 30px; filter: none; }
+
+.nav {
+  gap: clamp(26px, 2.8vw, 44px);
+  font: 500 11.5px/1 var(--font-sans);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+}
+.nav a,
+.nav__trigger { letter-spacing: .26em; color: var(--a-ink); }
+.nav a::before { font-weight: 500; font-size: inherit; }
+.nav a::after { bottom: -9px; background: var(--gold); }
+.nav a:hover,
+.nav__trigger:hover,
+.nav__item.is-open .nav__trigger { color: var(--gold-2); }
+.nav a.is-current,
+.nav a.is-current:hover,
+.nav__trigger.is-current {
+  font-weight: 500;
+  font-size: inherit;
+  color: var(--gold-2);
+}
+.nav__sep { display: none; }
+.nav__menu ul {
+  background: var(--g);
+  border: 1px solid var(--a-line);
+  border-radius: 0;
+  box-shadow: 0 24px 50px -24px rgba(0, 0, 0, .8);
+}
+.nav .nav__menu a {
+  border-radius: 0;
+  font: 500 11px/1.2 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+.nav .nav__menu a:hover { background: rgba(242, 236, 226, .05); color: var(--gold-2); }
+.nav .nav__menu a.is-here { color: var(--gold-2); }
+
+/* The header's call to action: a gold square that opens into the label. */
+.cta-dot-slot { width: 44px; height: 44px; }
+.cta-dot { height: 44px; min-width: 44px; }
+.cta-dot .pill__arrow { font-size: 14px; }
+
+/* Phones: a square hairline burger, a dark sheet set in Didot caps. */
+.burger {
+  border-radius: 0;
+  border-color: var(--a-line);
+  background: transparent;
+}
+.burger:hover { background: rgba(242, 236, 226, .05); }
+.burger__bar { background: var(--a-ink); border-radius: 0; height: 1px; }
+.sheet__panel { background: var(--g); }
+.sheet__row { border-bottom-color: var(--a-line-soft); }
+.sheet__row span {
+  font: 400 clamp(30px, 8.8vw, 42px)/1.05 var(--font-display);
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.sheet__row:hover span { color: var(--gold-2); }
+.sheet__row.is-current span,
+.sheet__row.is-current:hover span {
+  font-weight: 400;
+  font-size: clamp(30px, 8.8vw, 42px);
+  color: var(--gold-2);
+}
+.sheet__row i { font: 500 11px/1 var(--font-sans); letter-spacing: .1em; color: var(--gold); }
+.sheet__sub button {
+  font: 500 12px/1.2 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+.sheet__sub button:hover,
+.sheet__sub button.is-here { color: var(--gold-2); }
+.sheet__email {
+  font: 400 22px/1.2 var(--font-display);
+  border-bottom-color: var(--a-line);
+}
+
+/* ============================================================
+   Home 01: the cover
+   Full bleed and a full screen, as a proposal's cover page: the photograph
+   under a warm veil, the line in Didot with the typed word in gold.
+   ============================================================ */
+.hero {
+  margin-inline: calc(50% - 50vw);
+  margin-top: calc(-1 * var(--hdr-h));
+}
+.hero__frame {
+  border-radius: 0;
+  min-height: max(640px, 100svh);
+  background: var(--desk);
+}
+.hero__media img,
+.hero__media video { background: var(--desk); }
+.hero__scrim {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--shade), .7) 0%,
+    rgba(var(--shade), .38) 22%,
+    rgba(var(--shade), .3) 50%,
+    rgba(var(--shade), .46) 76%,
+    rgba(var(--shade), .9) 100%
+  );
+}
+/* A fine grain over the frame, the proposals' film. */
+.hero__frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .1;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.hero__bottom {
+  padding: calc(var(--hdr-h) + 32px) var(--pad) clamp(56px, 7vw, 96px);
+  gap: clamp(20px, 2vw, 28px);
+}
+.hero__title {
+  font: 400 clamp(52px, 7.6vw, 124px)/.98 var(--font-display);
+  letter-spacing: -.008em;
+  color: #F4EEE4;
+  max-width: none;
+}
+/* The typed word always takes the second line, as the proposals stack a
+   two-part title ("Fewer Villas. / More Story."): the cover keeps one
+   height whichever word is showing. */
+.hero__typer { display: block; min-height: 1em; }
+.hero__highlight {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  /* the proposals' gold, as on every cover title */
+  background: var(--gold-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-right: .06em;
+}
+.hero__caret {
+  width: 2px;
+  background: var(--gold);
+  border-radius: 0;
+  vertical-align: -.04em;
+}
+.hero__aside { gap: clamp(28px, 3vw, 40px); }
+.hero__lede {
+  font: 400 clamp(15.5px, 1.25vw, 18.5px)/1.6 var(--font-sans);
+  color: rgba(244, 238, 228, .86);
+  max-width: 46ch;
+}
+.hero__actions { gap: 14px; }
+/* A gold hairline drops from the foot of the cover toward the page. */
+.hero__bottom::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 1px;
+  height: clamp(36px, 5vw, 64px);
+  background: linear-gradient(to bottom, rgba(201, 160, 99, 0), var(--gold));
+}
+
+/* ============================================================
+   Home 02: the name, then the wall
+   ============================================================ */
+.reel { padding: var(--sec) 0 0; }
+.defn {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  text-align: center;
+}
+.defn__line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px 22px;
+  margin: 0;
+}
+.defn__word {
+  font: italic 400 clamp(48px, 5.4vw, 80px)/1 var(--font-display);
+  background: var(--gold-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-right: .06em;
+}
+.defn__pos {
+  font: 500 11.5px/1 var(--font-sans);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+.defn__rule { display: block; width: 72px; height: 1px; background: var(--gold); }
+.defn__meaning {
+  font: 400 clamp(23px, 2.5vw, 38px)/1.28 var(--font-display);
+  color: var(--a-ink);
+  max-width: 30ch;
+  text-wrap: balance;
+}
+
+/* Twelve cells on a hairline ground: the label, then eleven marks. */
+.wall {
+  margin-top: clamp(56px, 6.4vw, 104px);
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--a-line-soft);
+  border: 1px solid var(--a-line);
+}
+.wall > li {
+  display: grid;
+  place-items: center;
+  min-height: clamp(104px, 8.6vw, 140px);
+  padding: 18px 14px;
+  background: var(--g);
+}
+.wall img {
+  width: auto;
+  height: var(--h, 24px);
+  max-width: 78%;
+  object-fit: contain;
+  opacity: .8;
+  /* the white marks, warmed to the page's cream */
+  filter: sepia(.25) brightness(.96);
+  transition: opacity 240ms var(--ease);
+}
+.wall__cell:hover img { opacity: 1; }
+.wall__label {
+  align-content: center;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
+}
+.wall__label .kick { line-height: 1.8; }
+.wall__rule { display: block; width: 40px; height: 1px; background: var(--gold); }
+
+/* ============================================================
+   Home 03 and the index pages: numbered tiles
+   The proposals' "01 Find it" cards: the frame, a gold Didot numeral, the
+   name in Didot caps, the line under it.
+   ============================================================ */
+.stack--head { gap: 18px; padding-bottom: clamp(32px, 3.6vw, 56px); }
+.tiles { counter-reset: tile; gap: clamp(14px, 1.6vw, 26px); margin-top: 0; }
+.tile { gap: 16px; }
+.tile__media {
+  aspect-ratio: 3 / 4;
+  border-radius: 0;
+  margin-bottom: 4px;
+  background: var(--a-tint);
+}
+.tile__media img { filter: var(--grade); }
+.tile__text { gap: 8px; }
+.tile__name {
+  font: 400 clamp(20px, 1.7vw, 26px)/1.08 var(--font-display);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+.tile__name::before {
+  counter-increment: tile;
+  content: counter(tile, decimal-leading-zero);
+  display: block;
+  margin-bottom: 12px;
+  font: 400 clamp(30px, 2.8vw, 44px)/1 var(--font-display);
+  letter-spacing: 0;
+  color: var(--gold);
+}
+.tile:hover .tile__name { color: var(--gold-2); }
+.tile__covers { font: 400 14.5px/1.55 var(--font-sans); color: var(--a-ink-2); }
+.tiles--solo .tile__name::before,
+.tiles--3 .tile__name::before { content: none; }
+
+/* ============================================================
+   Cards, plans, steps and stages: gold hairline boxes
+   ============================================================ */
+.card {
+  background: transparent;
+  border: 1px solid var(--a-line);
+  border-radius: 0;
+  padding: clamp(22px, 2.4vw, 38px);
+}
+.card--dark { background: var(--desk); }
+.svc { gap: 14px; }
+.svc:hover { border-color: var(--gold); }
+.svc__name {
+  font: 500 11px/1.45 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--kick);
+}
+.svc__line {
+  font: 400 clamp(20px, 1.6vw, 25px)/1.2 var(--font-display);
+  letter-spacing: 0;
+  color: var(--a-ink);
+}
+.svc__terms {
+  font: 500 10.5px/1.5 var(--font-sans);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+
+.plans { gap: clamp(14px, 1.6vw, 24px); }
+.plan { gap: 18px; padding: clamp(28px, 3.2vw, 52px); }
+.plan__name {
+  font: 400 clamp(30px, 3vw, 46px)/1 var(--font-display);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.plan__name::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin-top: 18px;
+  background: var(--gold);
+}
+/* The proposals' list bullet: a small gold dot. */
+.ticks { gap: 11px; }
+.ticks li { padding-left: 20px; font: 400 15px/1.5 var(--font-sans); color: var(--a-ink); }
+.ticks li::before {
+  content: '';
+  top: .62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.terms {
+  border-top-color: var(--a-line-soft);
+  padding-top: 16px;
+  font: 500 10.5px/1.5 var(--font-sans);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+.terms span + span { color: var(--gold-2); }
+
+.stages { gap: 10px; }
+.stage {
+  border-radius: 0;
+  background: transparent;
+  border-color: var(--a-line-soft);
+  padding: 11px 16px;
+  gap: 10px;
+}
+.stage__n { font: 400 15px/1 var(--font-display); color: var(--gold); }
+.stage__label {
+  font: 500 11px/1 var(--font-sans);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+.stage--on { background: transparent; border-color: var(--gold); }
+.stage--on .stage__n { color: var(--gold-2); }
+.stage--on .stage__label { color: var(--gold-2); }
+
+.steps { gap: clamp(14px, 1.6vw, 24px); }
+.step__dot { width: 7px; height: 7px; background: var(--gold); }
+.step__line { background: var(--a-line); }
+.step__when {
+  font: 500 10.5px/1 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--kick);
+}
+.step__title {
+  font: 400 clamp(24px, 2.2vw, 34px)/1.05 var(--font-display);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+.step__body { font-size: 15px; }
+#process .head2__main,
+#process .head2 { text-align: center; }
+
+/* The partnerships head and the process head centre, as the proposals do. */
+.head2 { padding-bottom: clamp(32px, 3.6vw, 56px); }
+
+/* ============================================================
+   Section heads
+   ============================================================ */
+.about-head { padding-bottom: clamp(36px, 4vw, 64px); gap: 20px; }
+.about-head .page-title { max-width: 20ch; }
+.about-head .page-title::before,
+.work-head .page-title::before {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin: 0 auto clamp(22px, 2.2vw, 32px);
+  background: var(--gold);
+}
+.work-head { gap: 18px; padding-bottom: clamp(32px, 3.6vw, 56px); }
+
+/* Faint chart lines, now the proposals' gold line plates. */
+.contours { color: var(--gold); opacity: .16; }
+.contact-card__intro .contours { color: var(--gold); opacity: .22; }
+.split-hero > .contours { opacity: .2; }
+
+/* Breadcrumbs: letter-spaced caps. */
+.crumbs { padding-top: clamp(18px, 2vw, 28px); }
+.crumbs ol {
+  gap: 10px;
+  font: 500 10.5px/1.4 var(--font-sans);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+.crumbs li + li::before { content: '/'; margin-right: 10px; color: var(--gold); }
+.crumbs a:hover { color: var(--gold-2); }
+.crumbs [aria-current] { font-weight: 500; color: var(--gold-2); }
+
+/* ============================================================
+   Photographs: square, graded, edge to edge where they lead
+   ============================================================ */
+.wide-frame,
+.band__media img,
+.split-hero__media img,
+.measured__media img,
+.contact-hero__media img,
+.contact-hero__media video,
+.contact-media img,
+.contact-media video,
+.sector__media img,
+.frame__media img,
+.hero__media img,
+.hero__media video { filter: var(--grade); }
+
+.wide-frame {
+  margin-inline: calc(50% - 50vw);
+  border-radius: 0;
+  aspect-ratio: 21 / 9;
+  max-height: 86svh;
+  background: var(--desk);
+}
+.split-hero { padding-top: clamp(24px, 3vw, 48px); gap: clamp(28px, 4vw, 72px); }
+.split-hero__media { border-radius: 0; }
+.split-hero > .contours ~ .split-hero__body::before { background: var(--g); }
+
+/* The closing band: edge to edge, the line in Didot over a warm veil. */
+.band {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  border-radius: 0;
+  aspect-ratio: 21 / 8;
+  min-height: 360px;
+  max-height: 80svh;
+  background: var(--desk);
+}
+.band__scrim {
+  background:
+    radial-gradient(ellipse 70% 65% at 50% 50%, rgba(var(--shade), .62), rgba(var(--shade), .28) 100%),
+    rgba(var(--shade), .14);
+}
+.band .band__line {
+  font: 400 clamp(30px, 4vw, 64px)/1.08 var(--font-display);
+  letter-spacing: 0;
+  color: #F4EEE4;
+  max-width: 22ch;
+  text-shadow: none;
+}
+.band__center::before {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin-bottom: 8px;
+  background: var(--gold-2);
+}
+
+.frame__line { font: 400 13.5px/1.5 var(--font-sans); }
+.frame__line b { font-weight: 600; }
+.frame__title {
+  font: 400 clamp(19px, 1.5vw, 23px)/1.15 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.frame__meta {
+  font: 500 10.5px/1.5 var(--font-sans);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+/* /sectors/ rows: a hairline frame, the seam faded into the card. */
+.sector { background: transparent; border: 1px solid var(--a-line); }
+.sector__media::after {
+  background: linear-gradient(to right, rgba(var(--shade), 0), var(--g) 88%);
+}
+.sector--flip .sector__media::after {
+  background: linear-gradient(to left, rgba(var(--shade), 0), var(--g) 88%);
+}
+.sector__title {
+  font: 400 clamp(26px, 2.8vw, 42px)/1.04 var(--font-display);
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.sector__proof { color: var(--gold-2); }
+@media (max-width: 860px) {
+  .sector__media::after,
+  .sector--flip .sector__media::after {
+    background: linear-gradient(to bottom, rgba(var(--shade), 0), var(--g) 88%);
+  }
+}
+
+/* ============================================================
+   About: the record as the proposals' icon grid
+   ============================================================ */
+.about-story { gap: 20px; }
+.about-story .sec-title { margin-bottom: 8px; }
+.about-story .text { font-size: clamp(16px, 1.15vw, 18px); line-height: 1.75; }
+.about-story .sec-title::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin: 24px auto 0;
+  background: var(--gold);
+}
+.record-head { gap: clamp(28px, 3vw, 44px); }
+.record {
+  background: var(--a-line-soft);
+  border: 1px solid var(--a-line);
+  border-radius: 0;
+}
+.record__cell {
+  background: var(--g);
+  gap: 22px;
+  padding: clamp(30px, 3.2vw, 52px) clamp(22px, 2.4vw, 36px);
+  font: 400 clamp(15px, 1.1vw, 16.5px)/1.6 var(--font-sans);
+  color: var(--a-ink-2);
+}
+.record__icon {
+  box-sizing: content-box;
+  width: 24px;
+  height: 24px;
+  padding: 17px;
+  border: 1px solid var(--a-line);
+  border-radius: 50%;
+  color: var(--gold-2);
+}
+.person__photo { border-radius: 0; border-color: var(--a-line); }
+.person__name {
+  font: 400 clamp(20px, 1.6vw, 24px)/1.1 var(--font-display);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+.person__role {
+  font: 500 10.5px/1.5 var(--font-sans);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--kick);
+}
+
+/* ============================================================
+   What a sector is measured on
+   ============================================================ */
+.measured {
+  background: transparent;
+  border: 1px solid var(--a-line);
+  border-radius: 0;
+}
+.measured__media { border-radius: 0; }
+
+/* ============================================================
+   Direct lines, the form and the contact modules
+   ============================================================ */
+.lines > div { border-top-color: var(--a-line-soft); padding: 14px 0; }
+.lines dt {
+  font: 500 10.5px/1.4 var(--font-sans);
+  letter-spacing: .24em;
+  color: var(--a-ink-3);
+}
+.lines dd { font: 400 15.5px/1.45 var(--font-sans); }
+.lines a:hover { color: var(--gold-2); }
+.blk { background: transparent; border: 1px solid var(--a-line); border-radius: 0; }
+.blk .lines > div { border-color: var(--a-line-soft); }
+.blk__title {
+  font: 400 clamp(20px, 1.6vw, 24px)/1.15 var(--font-display);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+/* Fields: a single hairline under each, labels in caps, gold on focus. */
+.form {
+  background: transparent;
+  border: 1px solid var(--a-line);
+  border-radius: 0;
+  gap: 18px;
+  padding: clamp(22px, 2.6vw, 40px);
+}
+.form__row { gap: 18px 22px; }
+.field { gap: 4px; }
+.field__label {
+  font: 500 10.5px/1.4 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+.field__optional { letter-spacing: .12em; }
+.field input,
+.field select,
+.field textarea {
+  min-height: 44px;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 1px solid var(--a-line);
+  border-radius: 0;
+  background-color: transparent;
+  color: var(--a-ink);
+  font: 400 16px/1.4 var(--font-sans);
+}
+.field textarea { min-height: 88px; }
+.field select {
+  padding-right: 28px;
+  background-position: calc(100% - 11px) 52%, calc(100% - 6px) 52%;
+}
+.field select option { background: var(--g); color: var(--a-ink); }
+.tone-cream .field select option { background: var(--cream); }
+.field input::placeholder,
+.field textarea::placeholder { color: var(--a-ink-3); opacity: .8; }
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--gold);
+  background-color: transparent;
+  box-shadow: 0 1px 0 0 var(--gold);
+}
+.field.is-invalid input { border-color: #E08A76; }
+.field__error,
+.form__failed { color: #E08A76; }
+.form__send { margin-top: 6px; }
+.form__fine { font-size: 12.5px; }
+.form__fine a { border-bottom-color: var(--a-line); }
+
+/* Home: the film on the left, the form on a dark panel on the right. */
+.contact-hero {
+  border: 1px solid var(--a-line);
+  border-radius: 0;
+  background: var(--a-card);
+}
+.contact-hero__scrim {
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--shade), .7) 0%,
+    rgba(var(--shade), .14) 38%,
+    rgba(var(--shade), .14) 58%,
+    rgba(var(--shade), .82) 100%
+  );
+}
+.contact-hero__form { padding: clamp(28px, 3.6vw, 64px); }
+.contact-hero__head { margin-bottom: 26px; gap: 14px; }
+.contact-hero .lines dt { color: rgba(242, 236, 226, .62); }
+.contact-hero .lines a:hover { color: var(--gold-2); }
+.contact-hero__logo { width: clamp(110px, 10vw, 160px); }
+
+/* Index, sector and service pages: one hairline card, the dark half
+   carrying the heading and the direct lines. */
+.contact-card {
+  border: 1px solid var(--a-line);
+  border-radius: 0;
+  background: var(--a-card);
+}
+.contact-card__intro { border-radius: 0; background: var(--desk); }
+.contact-card__intro .sec-title { color: #F2ECE2; max-width: 18ch; }
+.contact-card__intro .lines a:hover { color: var(--gold-2); }
+
+/* /contact/: the bento becomes three hairline panels. */
+.bento-cell {
+  border-radius: 0;
+  border: 1px solid var(--a-line);
+  padding: clamp(24px, 2.8vw, 40px);
+}
+.bento-cell--hero { background: var(--a-card); color: var(--a-ink); }
+.bento-cell--hero .up { color: var(--kick); }
+.bento-cell--hero .sec-title { color: var(--a-ink); }
+.bento-cell--hero .text { color: var(--a-ink-2); }
+.bento-cell--ocean,
+.bento-cell--aqua { background: transparent; color: var(--a-ink); }
+.bento-cell--ocean .blk__title { color: var(--a-ink); }
+.bento-cell--ocean .lines > div,
+.bento-cell--aqua .lines > div { border-color: var(--a-line-soft); }
+.bento-cell--ocean .lines > div:last-child,
+.bento-cell--aqua .lines > div:last-child { border-bottom: 1px solid var(--a-line-soft); }
+.bento-cell--ocean .lines dt,
+.bento-cell--aqua .lines dt { color: var(--a-ink-3); }
+.bento-cell--ocean .lines dd,
+.bento-cell--ocean .lines a { color: var(--a-ink); }
+.bento-cell--ocean .lines a:hover { color: var(--gold-2); }
+.contact-split .form { background: var(--a-card); }
+
+/* The CTA line that closes a page. */
+.cta-line { border-top: 1px solid var(--a-line); padding-top: clamp(22px, 2.4vw, 32px); }
+.cta-line .text { font: 400 clamp(22px, 2vw, 30px)/1.25 var(--font-display); color: var(--a-ink); }
+.cta-line__link:hover { color: var(--gold-2); }
+
+/* Service page questions. */
+.qa__item { border-color: var(--a-line-soft); }
+.qa__item summary { font: 400 clamp(18px, 1.4vw, 21px)/1.35 var(--font-display); }
+.qa__item summary span { color: var(--gold); }
+
+/* ============================================================
+   Work: the tabs, the grid, a project
+   ============================================================ */
+.work-tabs { gap: clamp(28px, 3.6vw, 56px); }
+.work-tabs__tab {
+  font: 500 11.5px/1.2 var(--font-sans);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+  padding: 8px 0;
+}
+.work-tabs__tab::after { height: 1px; border-radius: 0; background: var(--gold); bottom: -4px; }
+.work-tabs__tab:hover { color: var(--a-ink); }
+.work-tabs__tab.is-on { color: var(--gold-2); }
+.work-tile { border-radius: 0; }
+.work-tile__scrim {
+  background: linear-gradient(to top, rgba(var(--shade), .82) 0%, rgba(var(--shade), .2) 40%, rgba(var(--shade), 0) 62%);
+}
+.work-tile__title {
+  font: 400 clamp(19px, 1.6vw, 25px)/1.1 var(--font-display);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: #F4EEE4;
+}
+.work-tile__meta {
+  font: 500 10px/1.5 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: rgba(244, 238, 228, .72);
+}
+.text-link { color: var(--gold-2); text-decoration-color: var(--a-line); }
+.text-link:hover { color: var(--gold-2); text-decoration-color: var(--gold); }
+
+.reel-frame { border-radius: 0; }
+.reel-frame__button {
+  background: rgba(var(--shade), .42);
+  border: 1px solid var(--gold);
+  color: var(--gold-2);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.reel-frame__play:focus-visible { outline-color: var(--gold); }
+.film .reel-frame { border-radius: 0; }
+.film__meta { font: 500 10.5px/1.5 var(--font-sans); letter-spacing: .2em; text-transform: uppercase; }
+
+.project-hero__frame { background: var(--desk); }
+.project-hero__scrim {
+  background:
+    linear-gradient(to bottom, rgba(var(--shade), .55) 0%, rgba(var(--shade), 0) 24%),
+    linear-gradient(to top, rgba(var(--shade), .86) 0%, rgba(var(--shade), .38) 36%, rgba(var(--shade), 0) 66%);
+}
+.project-hero__head .page-title { font-size: clamp(44px, 6.2vw, 100px); color: #F4EEE4; }
+.project-hero__place {
+  font: 500 11px/1.4 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+.crumbs--light li + li::before { color: var(--gold-2); }
+.crumbs--light [aria-current] { color: #F4EEE4; }
+
+.hs__story {
+  font: 400 clamp(20px, 1.7vw, 27px)/1.42 var(--font-display);
+  letter-spacing: 0;
+}
+.hs__story--long { font-size: clamp(18px, 1.35vw, 22px); line-height: 1.5; }
+.hs__story a:hover { color: var(--gold-2); }
+.hs__still,
+.hs__film,
+.work-tile.hs__next { border-radius: 0; }
+.hs__still:focus-visible { outline-color: var(--gold); }
+.hs__film-title {
+  font: 400 clamp(18px, 1.4vw, 22px)/1.2 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.hs__round { background: transparent; border: 1px solid var(--gold); color: var(--gold-2); }
+.hs__count { font: 500 11px/1 var(--font-sans); letter-spacing: .2em; }
+.hs__line { background: var(--a-line-soft); }
+.hs__fill { background: var(--gold); height: 1px; top: 0; }
+.hs__thumb {
+  width: 11px;
+  height: 11px;
+  border: 1px solid var(--gold);
+  background: var(--g);
+  box-shadow: 0 0 0 5px rgba(201, 160, 99, .12);
+}
+.hs__swipe { font: 500 10.5px/1 var(--font-sans); letter-spacing: .2em; text-transform: uppercase; }
+
+/* The viewer. */
+.lb__scrim { background: rgba(var(--shade), .975); }
+.lb__btn { border-color: var(--a-line); background: rgba(var(--shade), .4); color: var(--gold-2); }
+.lb__btn:hover { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.lb__btn:disabled:hover { background: rgba(var(--shade), .4); color: var(--gold-2); border-color: var(--a-line); }
+.lb__figure img { border-radius: 0; }
+.lb__count { font: 500 11px/1 var(--font-sans); letter-spacing: .2em; }
+.lb__client { font: 500 11px/1.3 var(--font-sans); letter-spacing: .26em; color: var(--gold-2); }
+
+.nav-progress { background: var(--gold); height: 1px; }
+
+/* ============================================================
+   Footer: the mark large, gold hairlines, edge to edge
+   ============================================================ */
+.footer {
+  position: relative;
+  isolation: isolate;
+  margin-top: var(--sec);
+  border-radius: 0;
+  background: transparent;
+  padding: clamp(56px, 6.4vw, 104px) 0 28px;
+}
+.footer::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  background: var(--desk);
+  border-top: 1px solid var(--a-line);
+}
+.footer__mark img { height: clamp(64px, 8.6vw, 128px); }
+.footer__year p {
+  font: 500 11px/1 var(--font-sans);
+  letter-spacing: .3em;
+  color: var(--a-ink-3);
+}
+.footer__rule { height: 1px; background: var(--gold); }
+.footer__blurb { color: var(--a-ink-2); font-size: 14.5px; }
+.footer__email {
+  margin-top: 24px;
+  font: 400 clamp(22px, 2vw, 30px)/1.2 var(--font-display);
+  letter-spacing: 0;
+  color: var(--a-ink);
+  border-bottom-color: var(--a-line);
+}
+.footer__email:hover { color: var(--gold-2); border-color: var(--gold); }
+.footer__label {
+  font: 500 10.5px/1 var(--font-sans);
+  letter-spacing: .3em;
+  color: var(--kick);
+}
+.footer__list { margin-top: 22px; gap: 13px; }
+.footer__list li,
+.footer__list a { font: 400 14.5px/1.2 var(--font-sans); color: var(--a-ink-2); }
+.footer__list a:hover { color: var(--gold-2); }
+.footer__bar { border-top-color: var(--a-line-soft); }
+.footer__fine {
+  font: 500 10.5px/1.5 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+.footer--slim { padding-block: clamp(26px, 3vw, 40px); }
+.footer__slim-lines { color: var(--a-ink-2); }
+.footer__slim-lines a { color: var(--a-ink); }
+.footer__slim-lines a:hover,
+.footer__slim-link:hover { color: var(--gold-2); }
+.footer__slim-link {
+  font: 500 11px/1 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+}
+
+/* ============================================================
+   Phones and tablets
+   ============================================================ */
+@media (max-width: 1100px) {
+  .wall { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (max-width: 860px) {
+  :root { --hdr-h: 68px; }
+  .pill { height: 50px; }
+  .header__logo img { height: 26px; }
+  .hero__frame { min-height: max(560px, 100svh); }
+  .hero__title { font-size: clamp(44px, 12.4vw, 64px); max-width: 11ch; }
+  .hero__lede { font-size: 15px; }
+  .tiles { gap: 28px 12px; }
+  .tile__name { font-size: 18px; }
+  .tile__name::before { font-size: 28px; margin-bottom: 8px; }
+  .tile__covers { font-size: 13.5px; }
+  .wide-frame { aspect-ratio: 4 / 3; }
+  .band { aspect-ratio: 4 / 5; max-height: none; }
+  .record__cell { padding: 26px 22px; }
+  .footer { padding-top: 48px; }
+  /* The email in Didot needs the full row, not half of it. */
+  .footer__cols > div:first-child { grid-column: 1 / -1; }
+  .footer__email { font-size: clamp(21px, 6.2vw, 26px); }
+  /* The halo behind a sector hero's copy only exists for the chart lines,
+     which phones do not draw; left on, it pushed the page 40px wide. */
+  .split-hero > .contours ~ .split-hero__body::before { content: none; }
+  .svc__name { letter-spacing: .18em; }
+  .work-tabs { gap: 6px 20px; flex-wrap: wrap; }
+  .work-tabs__tab { font-size: 10.5px; letter-spacing: .18em; }
+}
+
+@media (max-width: 600px) {
+  /* One card a row: a Didot line and a caps label need more than half a phone. */
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  /* Two tiles a row: the name takes the width, the whole tile is the link. */
+  .tile .arrow-btn { display: none; }
+  .tile__name { font-size: 16px; letter-spacing: .02em; }
+}
+
+@media (max-width: 700px) {
+  .wall { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .wall > li { min-height: 88px; padding: 14px 10px; }
+  .wall img { max-width: 84%; height: calc(var(--h, 24px) * .8); }
+  .wall__label .kick { font-size: 9.5px; letter-spacing: .24em; }
+  .defn__line { flex-direction: column; align-items: center; gap: 14px; }
+}
+
+/* ============================================================
+   /services/: one campaign, told in pictures
+   The page reads as the proposals do: a cover, then one picture-led
+   spread per part of the campaign, then the packages and the plan.
+   ============================================================ */
+
+/* Over a photograph an outline button needs a ground to stand on. */
+.svc-cover .pill--light,
+.band .pill--light {
+  background: rgba(var(--shade), .34);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.svc-cover .pill--light:hover,
+.band .pill--light:hover { background: var(--gold); }
+
+/* ---- the cover: full bleed, the words at its foot, left ---- */
+.svc-cover {
+  --edge: max(var(--pad), calc((100vw - var(--wrap)) / 2 + var(--pad)));
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+.svc-cover__frame {
+  position: relative;
+  height: clamp(560px, 86svh, 900px);
+  overflow: hidden;
+  background: var(--desk);
+}
+.svc-cover__media { position: absolute; inset: -8% 0; }
+.svc-cover__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: var(--grade);
+}
+.svc-cover__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(var(--shade), .55) 0%, rgba(var(--shade), 0) 22%),
+    linear-gradient(to top, rgba(var(--shade), .92) 0%, rgba(var(--shade), .5) 38%, rgba(var(--shade), .08) 70%),
+    linear-gradient(to right, rgba(var(--shade), .5) 0%, rgba(var(--shade), 0) 60%);
+}
+.svc-cover .crumbs {
+  position: absolute;
+  z-index: 1;
+  top: clamp(18px, 2vw, 28px);
+  left: var(--edge);
+  right: var(--edge);
+  padding-top: 0;
+}
+.svc-cover__body {
+  position: absolute;
+  left: var(--edge);
+  right: var(--edge);
+  bottom: clamp(48px, 6.4vw, 104px);
+  display: grid;
+  justify-items: start;
+  gap: clamp(18px, 1.8vw, 26px);
+}
+.svc-cover__title {
+  margin: 0;
+  font: 400 clamp(46px, 6.8vw, 112px)/.98 var(--font-display);
+  letter-spacing: -.006em;
+  color: #F4EEE4;
+  max-width: 13ch;
+  text-wrap: balance;
+}
+.svc-cover__title em,
+.arc-title em {
+  font-style: italic;
+  background: var(--gold-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-right: .06em;
+}
+.svc-cover__lede {
+  font: 400 clamp(15.5px, 1.25vw, 18.5px)/1.6 var(--font-sans);
+  color: rgba(244, 238, 228, .86);
+  max-width: 46ch;
+}
+.svc-cover__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+
+/* ---- the arc's title, the proposals' title case with a gold word ---- */
+.arc-title {
+  margin: 0;
+  font: 400 clamp(44px, 6.2vw, 100px)/1 var(--font-display);
+  letter-spacing: -.006em;
+  color: var(--a-ink);
+  text-wrap: balance;
+}
+
+/* ---- the five parts ---- */
+.chapters {
+  display: grid;
+  gap: clamp(80px, 9.6vw, 160px);
+  margin-top: clamp(28px, 3.4vw, 56px);
+}
+.chapter {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr);
+  gap: clamp(32px, 5.4vw, 104px);
+  align-items: center;
+}
+.chapter--flip { grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); }
+.chapter--flip .chapter__visual { order: 2; }
+.chapter__body { display: grid; gap: 18px; align-content: center; }
+.chapter__n {
+  font: 400 clamp(56px, 6vw, 100px)/.9 var(--font-display);
+  background: var(--gold-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  justify-self: start;
+}
+.chapter__dot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin: 0 .9em;
+  border-radius: 50%;
+  background: var(--gold);
+  vertical-align: middle;
+}
+.chapter__title {
+  font: 400 clamp(28px, 2.8vw, 46px)/1.05 var(--font-display);
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  color: var(--a-ink);
+  max-width: 17ch;
+  text-wrap: balance;
+}
+.chapter__body .text { max-width: 40ch; }
+.chapter__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px 28px;
+  margin-top: 8px;
+  padding-top: 18px;
+  border-top: 1px solid var(--a-line-soft);
+}
+.chapter__terms {
+  font: 500 10.5px/1.5 var(--font-sans);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+.chapter__link {
+  font: 600 11px/1.4 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+}
+.chapter__link:hover { color: var(--a-ink); }
+.chapter__visual img { filter: var(--grade); }
+
+/* 01 the shoot: a wide frame, a second laid over its corner */
+.collage2 { position: relative; padding: 0 9% 15% 0; }
+.collage2__main { position: relative; margin: 0; aspect-ratio: 3 / 2; overflow: hidden; background: var(--a-tint); }
+.collage2__main .parallax-media { position: absolute; inset: -8% 0; }
+.collage2__main img { width: 100%; height: 100%; object-fit: cover; }
+.collage2__inset {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  width: 44%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--a-tint);
+  box-shadow: 0 0 0 clamp(8px, 1vw, 14px) var(--g);
+}
+.collage2__inset img { width: 100%; height: 100%; object-fit: cover; }
+
+/* 02 the feed: a profile grid, each frame with its one word */
+.feed {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.feed__tile { position: relative; margin: 0; aspect-ratio: 4 / 5; overflow: hidden; background: var(--a-tint); }
+.feed__tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 900ms var(--ease); }
+.feed__tile:hover img { transform: scale(1.04); }
+.feed__tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(var(--shade), .5), rgba(var(--shade), 0) 42%);
+  pointer-events: none;
+}
+.feed__label {
+  position: absolute;
+  z-index: 1;
+  left: clamp(12px, 1.2vw, 18px);
+  top: clamp(12px, 1.2vw, 18px);
+  font: 500 10px/1.8 var(--font-sans);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: #F4EEE4;
+}
+.feed__label::after {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  margin-top: 8px;
+  background: rgba(244, 238, 228, .85);
+}
+
+/* 03 the creators: one tall frame, a gold line offset behind it */
+.chapter--portrait .chapter__visual { display: flex; justify-content: center; }
+.portrait {
+  position: relative;
+  margin: 0 14px 14px 0;
+  width: min(78%, 560px);
+  aspect-ratio: 4 / 5;
+  overflow: visible;
+}
+.portrait::before {
+  content: '';
+  position: absolute;
+  inset: 14px -14px -14px 14px;
+  border: 1px solid var(--a-line);
+  pointer-events: none;
+}
+.portrait .parallax-media { position: absolute; inset: 0; overflow: hidden; background: var(--a-tint); }
+.portrait img { width: 100%; height: 116%; margin-top: -8%; object-fit: cover; }
+
+/* 04 the push: the photograph and the proposals' Seen, Wanted, Booked box */
+.boxed { position: relative; padding-left: 10%; }
+.boxed__media { position: relative; margin: 0; aspect-ratio: 5 / 4; overflow: hidden; background: var(--a-tint); }
+.boxed__media .parallax-media { position: absolute; inset: -8% 0; }
+.boxed__media img { width: 100%; height: 100%; object-fit: cover; }
+.boxed__box {
+  position: absolute;
+  left: 0;
+  bottom: 12%;
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  width: clamp(160px, 15vw, 230px);
+  padding: clamp(26px, 2.6vw, 40px) 18px;
+  border: 1px solid var(--gold);
+  background: rgba(var(--shade), .74);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font: 400 clamp(18px, 1.6vw, 24px)/1 var(--font-display);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+  text-indent: .3em;
+}
+.boxed__box i { display: block; width: 36px; height: 1px; background: var(--gold); }
+
+/* 05 the site: a browser holding the photograph, a booking bar at its foot */
+.browser { border: 1px solid var(--a-line); background: var(--a-card); }
+.browser__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--a-line-soft);
+}
+.browser__dots { position: absolute; left: 14px; display: flex; gap: 7px; }
+.browser__dots i { width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--a-ink-3); }
+.browser__url {
+  padding: 5px 22px;
+  border: 1px solid var(--a-line-soft);
+  font: 500 10px/1 var(--font-sans);
+  letter-spacing: .2em;
+  color: var(--a-ink-3);
+}
+.browser__view { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+.browser__view img { width: 100%; height: 100%; object-fit: cover; }
+.browser__book {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: 7%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  border: 1px solid var(--a-line);
+  background: rgba(var(--shade), .78);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.browser__book span,
+.browser__book b {
+  padding: 15px 18px;
+  font: 500 10px/1 var(--font-sans);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+.browser__book span { color: rgba(244, 238, 228, .62); border-right: 1px solid rgba(244, 238, 228, .14); }
+.browser__book b { font-weight: 600; background: var(--gold); color: var(--on-gold); }
+
+/* ---- the packages, each under its own photograph ---- */
+.plan { --pp: clamp(28px, 3.2vw, 52px); padding: var(--pp); }
+.plan__top {
+  margin: calc(-1 * var(--pp)) calc(-1 * var(--pp)) 10px;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
+  background: var(--a-tint);
+}
+.plan__top img { width: 100%; height: 100%; object-fit: cover; filter: var(--grade); }
+
+/* ---- the ninety days, each month under its frame ---- */
+.step__card { --pp: clamp(22px, 2.4vw, 38px); padding: var(--pp); }
+.step__top {
+  margin: calc(-1 * var(--pp)) calc(-1 * var(--pp)) 8px;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--a-tint);
+}
+.step__top img { width: 100%; height: 100%; object-fit: cover; filter: var(--grade); }
+#process .head2 { justify-items: center; text-align: center; }
+
+/* ---- every part on its own: one ruled row each ---- */
+.svc-index { display: grid; border-bottom: 1px solid var(--a-line-soft); }
+.svc-index__row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1.05fr) minmax(0, 1.35fr) minmax(0, .8fr) 28px;
+  gap: 20px;
+  align-items: center;
+  padding: clamp(20px, 2vw, 28px) 0;
+  border-top: 1px solid var(--a-line-soft);
+  color: var(--a-ink);
+}
+.svc-index__n { font: 400 clamp(26px, 2.2vw, 34px)/1 var(--font-display); color: var(--gold); }
+.svc-index__name {
+  font: 400 clamp(19px, 1.6vw, 25px)/1.1 var(--font-display);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  transition: color 240ms var(--ease);
+}
+.svc-index__claim { font: 400 15px/1.5 var(--font-sans); color: var(--a-ink-2); }
+.svc-index__terms {
+  font: 500 10.5px/1.5 var(--font-sans);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--a-ink-3);
+}
+.svc-index__go { justify-self: end; color: var(--gold-2); transition: transform 300ms var(--ease); }
+.svc-index__row:hover .svc-index__name { color: var(--gold-2); }
+.svc-index__row:hover .svc-index__go { transform: translate(2px, -2px); }
+
+/* ---- the closing band carries the button under its line ---- */
+.band--cta .band__center { gap: 26px; }
+.band--cta { aspect-ratio: 21 / 9; }
+
+@media (max-width: 860px) {
+  .svc-cover__frame { height: max(560px, 82svh); }
+  .svc-cover__title { font-size: clamp(40px, 11.4vw, 60px); }
+  .svc-cover__lede { font-size: 15px; }
+  .svc-cover__actions { display: grid; width: 100%; }
+  .svc-cover__actions .pill { justify-content: center; }
+
+  .chapters { gap: 72px; }
+  .chapter,
+  .chapter--flip { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .chapter--flip .chapter__visual { order: 0; }
+  .chapter__n { font-size: 52px; }
+  .chapter__title { font-size: clamp(26px, 7.4vw, 34px); }
+  .collage2 { padding: 0 6% 18% 0; }
+  .collage2__inset { width: 52%; }
+  .feed { gap: 4px; }
+  .feed__label { font-size: 8.5px; letter-spacing: .22em; left: 9px; top: 9px; }
+  .feed__label::after { width: 16px; margin-top: 5px; }
+  .portrait { width: 86%; }
+  .boxed { padding-left: 0; padding-bottom: 0; }
+  .boxed__box { left: auto; right: 4%; bottom: 6%; width: 136px; gap: 11px; padding: 18px 10px; font-size: 15px; }
+  .browser__book { grid-template-columns: minmax(0, 1fr) auto; }
+  .browser__book span:not(:first-child) { display: none; }
+  .browser__book span,
+  .browser__book b { padding: 12px 12px; font-size: 9px; letter-spacing: .18em; }
+
+  .svc-index__row { grid-template-columns: 44px minmax(0, 1fr) 20px; gap: 6px 14px; }
+  .svc-index__claim { grid-column: 2; grid-row: 2; font-size: 14px; }
+  .svc-index__terms { display: none; }
+  .svc-index__go { grid-column: 3; grid-row: 1; }
+  .band--cta { aspect-ratio: 4 / 5; }
+}

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import ToTop from '@/components/ToTop';
 import { liveServices, sectors } from '@/lib/content';
-import { mailto, site } from '@/lib/site';
+import { mailto, phoneLink, site } from '@/lib/site';
 
 const company = [
   { href: '/work/', label: 'Work' },
@@ -57,8 +57,8 @@ export default function Footer() {
             <p className="footer__label reveal">Reach us</p>
             <ul className="footer__list">
               <li className="reveal">
-                <a href={`tel:${site.phoneHref}`} data-phone-country={site.phoneCountry}>
-                  {site.phone}
+                <a href={phoneLink} data-phone-country={site.phoneCountry}>
+                  {site.whatsapp ? `WhatsApp ${site.phone}` : site.phone}
                 </a>
               </li>
               <li className="reveal">{site.base}</li>

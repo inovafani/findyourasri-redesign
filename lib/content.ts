@@ -108,6 +108,8 @@ export type Partnership = {
   term: string;
   reporting: string;
   price: PriceKey;
+  /** The photograph across the top of the card on /services/. */
+  frame?: FrameId;
 };
 
 export type Person = {
@@ -197,33 +199,24 @@ export const navLinks: {
    Brands
    ============================================================ */
 
-/** The logo reel on the home page. */
+/**
+ * The "Our team has worked with" wall on the home page. Led as every
+ * proposal wall is led: National Geographic, Corona, Canon, DJI. `size` is
+ * each mark's height on the wall in px, balanced by its visible area so a
+ * long wordmark (Rosewood) does not shout over a compact one (DJI).
+ */
 export const brands = [
-  { src: "/img/logo-corona.png", alt: "Corona", w: 297, h: 120, size: 20 },
-  { src: "/img/logo-marriott.png", alt: "Marriott", w: 244, h: 120, size: 22 },
-  { src: "/img/logo-dji.png", alt: "DJI", w: 208, h: 120, size: 17 },
-  {
-    src: "/img/logo-indonesia.png",
-    alt: "Wonderful Indonesia",
-    w: 300,
-    h: 120,
-    size: 24,
-  },
-  { src: "/img/logo-canon.png", alt: "Canon", w: 573, h: 120, size: 19 },
-  {
-    src: "/img/logo-pressplay.png",
-    alt: "Press Play",
-    w: 215,
-    h: 120,
-    size: 21,
-  },
   {
     src: "/img/logo-natgeo.png",
     alt: "National Geographic",
     w: 408,
     h: 120,
-    size: 18,
+    size: 26,
   },
+  { src: "/img/logo-corona.png", alt: "Corona", w: 297, h: 120, size: 30 },
+  { src: "/img/logo-canon.png", alt: "Canon", w: 573, h: 120, size: 21 },
+  { src: "/img/logo-dji.png", alt: "DJI", w: 208, h: 120, size: 27 },
+  { src: "/img/logo-marriott.png", alt: "Marriott", w: 244, h: 120, size: 34 },
   {
     src: "/img/logo-rosewood.png",
     alt: "Rosewood London",
@@ -232,25 +225,39 @@ export const brands = [
     size: 14,
   },
   {
+    src: "/img/logo-indonesia.png",
+    alt: "Wonderful Indonesia",
+    w: 300,
+    h: 120,
+    size: 34,
+  },
+  {
     src: "/img/logo-jamaica.png",
     alt: "Jamaica Tourist Board",
     w: 351,
     h: 120,
-    size: 24,
+    size: 22,
   },
   {
     src: "/img/logo-talalla.png",
     alt: "Talalla Retreat, Sri Lanka",
     w: 741,
     h: 120,
-    size: 17,
+    size: 21,
+  },
+  {
+    src: "/img/logo-pressplay.png",
+    alt: "Press Play",
+    w: 215,
+    h: 120,
+    size: 34,
   },
   {
     src: "/img/logo-boattime.png",
     alt: "Boattime Yacht Charters",
     w: 212,
     h: 120,
-    size: 22,
+    size: 36,
   },
 ] as const;
 
@@ -489,6 +496,37 @@ export const frames = {
   clientDaybed: { id: 'clientDaybed', src: '/img/w-daybed.jpg', alt: 'A guest reading on a daybed under a canopy', w: 1200, h: 1026, subject: 'A daybed under the canopy', sectors: ['hospitality'] },
   clientNight: { id: 'clientNight', src: '/img/whitsundays-1.jpg', alt: 'Guests dancing at a night event, lit in deep magenta', w: 1200, h: 1026, subject: 'A night event', sectors: ['operators'] },
   clientDj: { id: 'clientDj', src: '/img/w-dj.jpg', alt: 'A DJ performing under magenta stage light', w: 1024, h: 1100, subject: 'A DJ set', sectors: ['hospitality'] },
+  /* From Cam's Drive ("Asri Web Photo/Video"), chosen 5 Oct 2026 for the
+     site in the proposal look. Rights rows 473 to 498 in
+     team/cam/rights-register.csv, all pending Cam's decision: none ships
+     until his column is filled (standing rule 5). Captions never name the
+     client a frame was shot for. */
+  dPavilionPool: { id: 'dPavilionPool', src: '/img/drive/pavilion-pool.jpg', alt: 'A thatched pavilion beside a garden pool among palms', w: 1600, h: 2000, subject: 'Pavilion and pool', sectors: ['hospitality'] },
+  dPhinisiGold: { id: 'dPhinisiGold', src: '/img/drive/phinisi-gold.jpg', alt: 'A phinisi under dark sails, silhouetted against a golden sunset', w: 1600, h: 2000, subject: 'Phinisi at sunset', sectors: ['operators'] },
+  dSunsetPour: { id: 'dSunsetPour', src: '/img/drive/sunset-pour.jpg', alt: 'Wine poured into a glass on deck as the sun sets', w: 2400, h: 1600, subject: 'A pour at sunset', sectors: ['brands'], pos: '58% 50%' },
+  dLagoonChannel: { id: 'dLagoonChannel', src: '/img/drive/lagoon-channel.jpg', alt: 'A turquoise channel between forested karst islands, from the air', w: 1583, h: 2000, subject: 'Lagoon from the air', sectors: ['destinations'] },
+  dArchGuest: { id: 'dArchGuest', src: '/img/drive/arch-guest.jpg', alt: 'A guest walking through a timber arch toward a pool in the jungle', w: 1600, h: 2000, subject: 'Through the arch', sectors: ['hospitality'] },
+  dDeckLunch: { id: 'dDeckLunch', src: '/img/drive/deck-lunch.jpg', alt: 'A long table laid for lunch on the shaded deck of a phinisi', w: 2400, h: 1600, subject: 'Lunch on deck', sectors: ['operators', 'hospitality'] },
+  dKarstSunset: { id: 'dKarstSunset', src: '/img/drive/karst-sunset.jpg', alt: 'A phinisi among karst islands as the sun goes down, from the air', w: 2400, h: 1349, subject: 'Karst at sunset', sectors: ['destinations', 'operators'], pos: '50% 55%' },
+  dKarstBay: { id: 'dKarstBay', src: '/img/drive/karst-bay.jpg', alt: 'A phinisi in a still bay ringed by forested karst islands', w: 2400, h: 1174, subject: 'A bay among the islands', sectors: ['destinations', 'operators'], pos: '50% 50%' },
+  dPhinisiKarst: { id: 'dPhinisiKarst', src: '/img/drive/phinisi-karst.jpg', alt: 'A phinisi under sail between karst islands at sunset', w: 2400, h: 1601, subject: 'Under sail at sunset', sectors: ['operators'] },
+  dBaitBall: { id: 'dBaitBall', src: '/img/drive/bait-ball.jpg', alt: 'A freediver swimming beside a spiralling school of fish', w: 2400, h: 1521, subject: 'A freediver and the school', sectors: ['brands', 'destinations'], pos: '42% 50%' },
+  dConvoySails: { id: 'dConvoySails', src: '/img/drive/convoy-sails.jpg', alt: 'Phinisi sailing in convoy, a white sail close in the foreground', w: 2400, h: 1350, subject: 'Sailing in convoy', sectors: ['operators', 'brands'] },
+  dCupLagoon: { id: 'dCupLagoon', src: '/img/drive/cup-lagoon.jpg', alt: 'A hand holding a coffee cup over a still lagoon among islands', w: 1500, h: 2000, subject: 'Coffee over the lagoon', sectors: ['hospitality', 'destinations'] },
+  dPendantLamps: { id: 'dPendantLamps', src: '/img/drive/pendant-lamps.jpg', alt: 'Clay pendant lamps over a timber chevron wall', w: 1600, h: 2000, subject: 'Pendant lamps', sectors: ['hospitality'] },
+  dHullWake: { id: 'dHullWake', src: '/img/drive/hull-wake.jpg', alt: 'Low sun on the wake along a wooden hull', w: 2400, h: 1600, subject: 'The wake at sunset', sectors: ['operators'] },
+  dButterLamps: { id: 'dButterLamps', src: '/img/drive/butter-lamps.jpg', alt: 'Rows of butter lamps burning in the dark', w: 2400, h: 1601, subject: 'Butter lamps', sectors: ['destinations'] },
+  dPhinisiPastel: { id: 'dPhinisiPastel', src: '/img/drive/phinisi-pastel.jpg', alt: 'A phinisi under white sails on a pastel evening sea', w: 1600, h: 2000, subject: 'Evening sail', sectors: ['operators'] },
+  dJunglePavilion: { id: 'dJunglePavilion', src: '/img/drive/jungle-pavilion.jpg', alt: 'Two loungers in an open pavilion facing the jungle', w: 1600, h: 2000, subject: 'A pavilion in the trees', sectors: ['hospitality'] },
+  dMastSwing: { id: 'dMastSwing', src: '/img/drive/mast-swing.jpg', alt: 'A swimmer swinging from a phinisi\'s rigging against the clouds', w: 2400, h: 1601, subject: 'From the rigging', sectors: ['operators', 'brands'], pos: '58% 50%' },
+  dSunsetSip: { id: 'dSunsetSip', src: '/img/drive/sunset-sip.jpg', alt: 'A guest in silhouette sipping wine at sunset', w: 2400, h: 1600, subject: 'A glass at sunset', sectors: ['brands', 'hospitality'], pos: '56% 50%' },
+  dPoolTerrace: { id: 'dPoolTerrace', src: '/img/drive/pool-terrace.jpg', alt: 'A pool terrace with striped loungers and parasols among palms', w: 2400, h: 1350, subject: 'The pool terrace', sectors: ['hospitality'] },
+  dFleetSails: { id: 'dFleetSails', src: '/img/drive/fleet-sails.jpg', alt: 'Two phinisi under red and black sails on open water, from the air', w: 2400, h: 1516, subject: 'Red and black sails', sectors: ['operators', 'brands'] },
+  dPhinisiDusk: { id: 'dPhinisiDusk', src: '/img/drive/phinisi-dusk.jpg', alt: 'A phinisi under white sails at dusk, islands on the horizon', w: 2400, h: 1349, subject: 'A phinisi at dusk', sectors: ['operators'], pos: '50% 60%' },
+  dDawnBay: { id: 'dDawnBay', src: '/img/drive/dawn-bay.jpg', alt: 'A phinisi at anchor in a bay of karst islands at first light', w: 1600, h: 2000, subject: 'First light in the bay', sectors: ['destinations', 'operators'] },
+  dAmberSails: { id: 'dAmberSails', src: '/img/drive/amber-sails.jpg', alt: 'Phinisi under amber and black sails crossing at sea', w: 2400, h: 1350, subject: 'Crossing at sea', sectors: ['operators', 'brands'] },
+  dPinkDusk: { id: 'dPinkDusk', src: '/img/drive/pink-dusk.jpg', alt: 'Karst islands and a lone boat on a still sea at dusk', w: 1600, h: 2000, subject: 'Dusk among the islands', sectors: ['destinations'] },
+  dGoldenCrossing: { id: 'dGoldenCrossing', src: '/img/drive/golden-crossing.jpg', alt: 'A phinisi under way across a golden sea at sunset, from the air', w: 2400, h: 1350, subject: 'A golden crossing', sectors: ['operators', 'brands'], pos: '50% 60%' },
 } as const satisfies Record<string, Frame>;
 
 export type FrameId = keyof typeof frames;
@@ -591,7 +629,7 @@ export const workCategories: WorkCategory[] = [
         'Whether capturing a destination, developing a global campaign, documenting an experience, or producing a story-driven film, we are a one-stop shop for creative connection and execution. With access to the best creators, exclusive production relationships, and a global network built over years in the industry, the possibilities are limitless.',
       ],
     },
-    cover: 'fleet',
+    cover: 'dConvoySails',
     tabs: [
       { slug: 'travel', label: 'Travel' },
       { slug: 'hospitality', label: 'Hospitality' },
@@ -757,23 +795,27 @@ export const stages: Stage[] = [
   'Scale',
 ];
 
-export const steps = [
+/** Each month carries a frame: first light, under sail, dusk. */
+export const steps: { when: string; title: string; body: string; frame?: FrameId }[] = [
   {
     when: 'Month one',
     title: 'Foundation',
     body: 'Strategy and content planning, SEO and analytics setup, hero shoot and the first campaigns.',
+    frame: 'dDawnBay',
   },
   {
     when: 'Month two',
     title: 'Distribution',
     body: 'Social publishing and SEO content, paid campaigns and creative testing, retargeting.',
+    frame: 'dPhinisiKarst',
   },
   {
     when: 'Month three',
     title: 'Optimisation',
     body: 'Analyse what won, scale the creative that worked, grow the search position, plan the next cycle.',
+    frame: 'dPinkDusk',
   },
-] as const;
+];
 
 /* ============================================================
    Services
@@ -885,6 +927,41 @@ export const services: Service[] = [
 /** Only the services that are on the site today (W2). */
 export const liveServices = services.filter((s) => s.live);
 
+/**
+ * The services page tells one campaign in five parts, in the order the
+ * stages run (Content, Attention, Discovery, Traffic, Conversion). Each part
+ * is a service; its title, body and terms come from `services` above, so the
+ * words live in one place. `frames` are the part's pictures, the first of
+ * which also heads that service's own page.
+ */
+export type CampaignPart = {
+  slug: ServiceSlug;
+  chapter: string;
+  visual: 'collage' | 'mosaic' | 'portrait' | 'boxed' | 'browser';
+  frames: FrameId[];
+  /** One word over each mosaic tile, as the proposals' social page labels its frames. */
+  labels?: string[];
+};
+
+export const campaign: CampaignPart[] = [
+  { slug: 'production', chapter: 'The shoot', visual: 'collage', frames: ['dBaitBall', 'dConvoySails'] },
+  {
+    slug: 'social-media',
+    chapter: 'The feed',
+    visual: 'mosaic',
+    frames: ['dCupLagoon', 'dPendantLamps', 'dHullWake', 'dButterLamps', 'dPhinisiPastel', 'dJunglePavilion'],
+    labels: ['The view', 'The details', 'The light', 'The ritual', 'The voyage', 'The stay'],
+  },
+  { slug: 'creator-campaigns', chapter: 'The creators', visual: 'portrait', frames: ['dMastSwing'] },
+  { slug: 'paid-media', chapter: 'The push', visual: 'boxed', frames: ['dSunsetSip'] },
+  { slug: 'web-and-seo', chapter: 'The site', visual: 'browser', frames: ['dPoolTerrace'] },
+];
+
+/** The campaign part a service belongs to, for its page's hero frame. */
+export function campaignPart(slug: ServiceSlug) {
+  return campaign.find((c) => c.slug === slug);
+}
+
 export function getService(slug: ServiceSlug) {
   return services.find((s) => s.slug === slug)!;
 }
@@ -919,13 +996,14 @@ export const partnerships: Partnership[] = [
       'Social media management',
       'SEO and GEO (AI search)',
       'Paid ads',
-      'Event and product shoots',
+      'Event and brand shoots',
       'A monthly report',
     ],
     note: 'Shoots outside Indonesia may need a local crew hired in; travel costs add to the price.',
     term: 'Six-month minimum · ad spend excluded',
     reporting: 'Monthly',
     price: 'growth',
+    frame: 'dFleetSails',
   },
   {
     slug: 'performance',
@@ -940,6 +1018,7 @@ export const partnerships: Partnership[] = [
     term: 'Six-month minimum · ad spend excluded',
     reporting: 'Monthly',
     price: 'performance',
+    frame: 'dAmberSails',
   },
 ];
 
@@ -957,7 +1036,7 @@ export const sectors: Sector[] = [
     covers: 'Beach clubs, resorts, villas, hotels and restaurants.',
     body: 'Content, campaigns and channel management, wherever the property is.',
     proof: 'We have run the floor: restaurants, clubs and hotels in Bali.',
-    frame: 'hospitalityVilla',
+    frame: 'dPavilionPool',
     pattern: 'tide',
     services: [
       { slug: 'social-media', line: 'Planned ahead, in your voice, on schedule.' },
@@ -975,7 +1054,7 @@ export const sectors: Sector[] = [
       'Repeat and returning guest rate.',
       'Owned audience growth: email list and followers.',
     ],
-    measuresFrame: 'clientDaybed',
+    measuresFrame: 'dArchGuest',
     firstStep: {
       title: 'Come and See the Property With Us',
       body: 'We see the property the way a guest does, then come back with a plan and a number.',
@@ -991,7 +1070,7 @@ export const sectors: Sector[] = [
     covers: 'Liveaboards, charter, dive and tour operators.',
     body: 'Content, direct-booking campaigns and creator expeditions, planned around your departures.',
     proof: 'Every point of direct share you win is margin you keep, permanently.',
-    frame: 'operatorsSunset',
+    frame: 'dPhinisiGold',
     pattern: 'wake',
     services: [
       { slug: 'production', line: 'One shoot. Months of extraordinary content.' },
@@ -1005,7 +1084,7 @@ export const sectors: Sector[] = [
       'Commission paid away, tracked month by month.',
       'Charter and cabin occupancy by month.',
     ],
-    measuresFrame: 'deck',
+    measuresFrame: 'dDeckLunch',
     firstStep: {
       title: 'Put Us on the Next Trip',
       body: 'We join a scheduled departure, shoot it, and come back with the assets and a plan for the season.',
@@ -1022,7 +1101,7 @@ export const sectors: Sector[] = [
     body: 'Campaign creative and full production service on location, from scout to master.',
     proof:
       'You are not briefing a fixer and hoping. You are briefing the director who will be on set.',
-    frame: 'brandsBeach',
+    frame: 'dSunsetPour',
     pattern: 'meridians',
     services: [{ slug: 'production' }, { slug: 'creator-campaigns' }],
     firstStep: {
@@ -1041,7 +1120,7 @@ export const sectors: Sector[] = [
     body: 'Story-led destination films, regional campaigns and creator programmes built to open a region, not to expire with a quarter.',
     proof:
       'We are not pitching your region from a deck. We have filmed in the places you are trying to open.',
-    frame: 'destinationsPool',
+    frame: 'dLagoonChannel',
     pattern: 'terraces',
     services: [{ slug: 'production' }, { slug: 'creator-campaigns' }, { slug: 'paid-media' }],
     firstStep: {
@@ -1079,7 +1158,7 @@ export const leadSectors: { value: LeadSector; label: string }[] = [
  * to false to take someone off both pages.
  */
 export const people: Person[] = [
-  { name: 'Anthony', fullName: 'Anthony Cargill', role: 'GTM & Performance Director', line: 'A decade of performance marketing: paid search, social and SEO.', photo: '/img/people/anthony.jpg', show: true },
+  { name: 'Anthony', fullName: 'Anthony Cargill', role: 'Performance & GTM', line: 'A decade of performance marketing: paid search, social and SEO.', photo: '/img/people/anthony.jpg', show: true },
   { name: 'Hannah', fullName: 'Hannah', role: 'Marketing Director', photo: '/img/people/hannah.jpg', show: true },
   { name: 'Brandon', fullName: 'Brandon Vaughne', role: 'Business Director', line: 'Founding partner in Boatique Charters, a Singapore charter company.', photo: '/img/people/brandon.jpg', show: true },
   { name: 'Cam', fullName: 'Cam Vaughne', role: 'Production and Content Director', line: '10+ years as photographer, cinematographer and director, commissioned by Corona, Canon, DJI and National Geographic.', photo: '/img/people/cam.jpg', show: true },
@@ -1149,7 +1228,7 @@ export const hiddenPages: HiddenPage[] = [
         'Vertical cuts per destination and trip type, ready to publish.',
       ],
     },
-    frames: ['fleet', 'sails', 'blackSails'],
+    frames: ['dPhinisiKarst', 'dBaitBall', 'dConvoySails'],
     services: [
       { slug: 'production', line: 'One shoot. Months of extraordinary content.' },
       { slug: 'paid-media', line: 'Meta and Google pointed at direct enquiries.' },
@@ -1162,7 +1241,7 @@ export const hiddenPages: HiddenPage[] = [
       'Commission paid away, tracked month by month.',
       'Charter and cabin occupancy by month.',
     ],
-    measuresFrame: 'deck',
+    measuresFrame: 'dDeckLunch',
     firstStep: {
       title: 'Put Us on the Next Trip',
       body: 'We join a scheduled departure, shoot it, and come back with the assets and a plan for the season.',

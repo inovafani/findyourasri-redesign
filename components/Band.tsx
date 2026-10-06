@@ -5,10 +5,10 @@ export default function Band() {
       <div className="band">
         <div className="band__media parallax-media">
           <img
-            src="/img/about-below.jpg"
-            alt="Aerial view of a forested karst island ringed by reef and white sand"
+            src="/img/drive/karst-bay.jpg"
+            alt="A phinisi in a still bay ringed by forested karst islands"
             width={2400}
-            height={1348}
+            height={1174}
             loading="lazy"
           />
         </div>

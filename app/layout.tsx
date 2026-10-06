@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Fraunces, Geist, Geist_Mono } from 'next/font/google';
+import { Bodoni_Moda, Nunito_Sans, Oswald } from 'next/font/google';
 
 import Motion from '@/components/Motion';
 import NavGuard from '@/components/NavGuard';
@@ -7,39 +7,42 @@ import Tracking from '@/components/Tracking';
 import { site } from '@/lib/site';
 
 import './globals.css';
+import './brand.css';
 
 /**
- * Geist stands in for the design system's proprietary Saans / SaansMono, as
- * flagged in the system's own readme: same geometric build, and weight 500
- * reads correctly against the spec. Swapping in the real binaries is a change
- * to these two declarations and nothing else.
+ * The type of the proposals and decks: a Didone display, Avenir Next for
+ * text, and Avenir Next Condensed for the occasional tall caps line.
+ *
+ * Apple devices have Didot and Avenir Next built in and render the site
+ * exactly as the proposals print. Everyone else gets the open fallbacks the
+ * proposal engine itself names (new-business/proposals/_engine/asri-a4.css):
+ * Bodoni Moda, Nunito Sans and Oswald, self-hosted here. They are not
+ * preloaded, so a Mac never downloads a face it will not use; the stacks
+ * live in app/brand.css.
  */
-const sans = Geist({
+const display = Bodoni_Moda({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-geist-sans',
+  style: ['normal', 'italic'],
+  axes: ['opsz'],
+  variable: '--font-bodoni',
   display: 'swap',
+  preload: false,
 });
 
-const mono = Geist_Mono({
+const text = Nunito_Sans({
   subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-geist-mono',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-nunito',
   display: 'swap',
+  preload: false,
 });
 
-/**
- * The italic accent on the hero's highlighted words (components/Hero.tsx).
- * Fraunces over the trendier thin display-italics (Instrument Serif etc.):
- * its SOFT/WONK axes give the highlight some character of its own instead of
- * reading as a generic templated one.
- */
-const accent = Fraunces({
+const condensed = Oswald({
   subsets: ['latin'],
-  weight: 'variable',
-  style: 'italic',
-  variable: '--font-accent-italic',
+  weight: ['200', '300'],
+  variable: '--font-oswald',
   display: 'swap',
+  preload: false,
 });
 
 /** Defaults only. Every page sets its own title, description and canonical via pageMetadata(). */
@@ -98,7 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     // the class list legitimately differs from what the server sent.
     <html
       lang="en"
-      className={`${sans.variable} ${mono.variable} ${accent.variable}`}
+      className={`${display.variable} ${text.variable} ${condensed.variable}`}
       suppressHydrationWarning
     >
       <body>
