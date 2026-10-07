@@ -34,6 +34,18 @@ export default function SectorTiles() {
                   loading="lazy"
                   style={'pos' in f ? { objectPosition: f.pos } : undefined}
                 />
+                {s.logo ? (
+                  <span
+                    className="work-tile__logo"
+                    aria-hidden="true"
+                    style={{
+                      width: s.logo.w,
+                      height: s.logo.h,
+                      WebkitMaskImage: `url(${s.logo.src})`,
+                      maskImage: `url(${s.logo.src})`,
+                    }}
+                  />
+                ) : null}
               </span>
               <span className="tile__meta">
                 <span className="tile__text">

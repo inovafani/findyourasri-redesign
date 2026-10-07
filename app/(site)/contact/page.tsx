@@ -44,7 +44,7 @@ export default function ContactPage() {
             <div className="bento-cell bento-cell--hero">
               <p className="up">Let's talk</p>
               <h1 className="sec-title line-mask">
-                A Day on Site, Then a Plan You Can Say No To
+                A Day on Site, Then a Plan Built Around You
               </h1>
               <p className="text reveal">
                 We spend a day with your team, then come back with a plan and a number.

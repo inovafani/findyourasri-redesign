@@ -55,6 +55,8 @@ export type Project = {
   cover: ProjectImage;
   /** A lighter copy of the cover for the grid tile. */
   tile: { src: string; w: number; h: number };
+  /** The client's mark, white, for the tile's top-left corner. w and h are CSS px (the file is 3x). */
+  logo?: { src: string; w: number; h: number };
   gallery: ProjectMedia[];
 };
 
@@ -70,8 +72,9 @@ export const projects: Project[] = [
       'An ongoing client relationship spanning across 5 years of partnership, including photography and film production, YouTube and Instagram management, as well as influencer marketing campaigns.',
       'Creators we have worked with on Anne Bonny include @emmettsparling, @lostleblanc, @chelseakauai, @josiahwg, @samnewton and @mikkopaasi, among others.',
     ],
-    cover: { src: '/img/work/travel/anne-bonny/cover.jpg', w: 1601, h: 2400, alt: 'A wooden sailing ship at dusk under a deep blue sky, a figure swinging from its bowsprit', pos: '50% 62%' },
-    tile: { src: '/img/work/travel/anne-bonny/tile.jpg', w: 734, h: 1100 },
+    cover: { src: '/img/work/travel/anne-bonny/cover.jpg', w: 1920, h: 2400, alt: 'A green island rising from calm water at golden hour, a small sailing ship anchored below it', pos: '50% 55%' },
+    tile: { src: '/img/work/travel/anne-bonny/tile.jpg', w: 880, h: 1100 },
+    logo: { src: '/img/work/travel/anne-bonny/logo.png', w: 88, h: 30 },
     gallery: [
       { type: 'image', src: '/img/work/travel/anne-bonny/01.jpg', w: 1520, h: 1900, alt: 'The ship anchored in a misty bay, three women sitting on the beach in the foreground' },
       { type: 'image', src: '/img/work/travel/anne-bonny/02.jpg', w: 1520, h: 1900, alt: 'Two people mid-flip off the bowsprit at sunset between rocky islands' },
@@ -92,8 +95,9 @@ export const projects: Project[] = [
       'We followed the route a Bhutan Peaceful Tours guest would take: a covered wooden bridge at the start of the day, a fortress monastery above a river, and a long suspension bridge strung with prayer flags.',
       'The portraits sit beside the landscapes so the place reads through its people as much as its architecture: a monk crossing a sunlit courtyard, a guide on a ridge with the local dogs, a man resting beneath a monastery built into the cliff.',
     ],
-    cover: { src: '/img/work/travel/bhutan-peaceful-tours/cover.jpg', w: 2400, h: 1500, alt: 'A monk in red robes walking across a covered wooden bridge', pos: '50% 80%' },
-    tile: { src: '/img/work/travel/bhutan-peaceful-tours/tile.jpg', w: 1100, h: 688 },
+    cover: { src: '/img/work/travel/bhutan-peaceful-tours/cover.jpg', w: 1920, h: 2400, alt: 'A white and gold monastery clinging to a cliff above a misty valley', pos: '50% 50%' },
+    tile: { src: '/img/work/travel/bhutan-peaceful-tours/tile.jpg', w: 880, h: 1100 },
+    logo: { src: '/img/work/travel/bhutan-peaceful-tours/logo.png', w: 34, h: 44 },
     gallery: [
       { type: 'image', src: '/img/work/travel/bhutan-peaceful-tours/01.jpg', w: 1080, h: 607, alt: 'A fortress monastery with red roofs beside a river, seen from above' },
       { type: 'image', src: '/img/work/travel/bhutan-peaceful-tours/02.jpg', w: 1080, h: 1350, alt: 'Two walkers crossing a suspension bridge hung with prayer flags' },
@@ -114,8 +118,9 @@ export const projects: Project[] = [
       'The Nepal frames start in a temple hall, with three young monks seated in front of a gilded Buddha, and move out into the narrow streets, where cyclists and shopkeepers share the same cobbles.',
       'Most of the gallery is spent around the stupa, where prayer flags, flocks of pigeons and rows of butter lamps give every frame its own light. A smiling monk and a woman at prayer show a place that is lived in, not put on display.',
     ],
-    cover: { src: '/img/work/travel/nepal/cover.jpg', w: 1920, h: 2400, alt: 'Three young monks seated in front of a golden Buddha in a temple', pos: '50% 70%' },
+    cover: { src: '/img/work/travel/nepal/cover.jpg', w: 1920, h: 2400, alt: 'The golden spire of the stupa with prayer flags streaming across a blue sky', pos: '50% 35%' },
     tile: { src: '/img/work/travel/nepal/tile.jpg', w: 880, h: 1100 },
+    logo: { src: '/img/work/travel/nepal/logo.png', w: 76, h: 44 },
     gallery: [
       { type: 'image', src: '/img/work/travel/nepal/01.jpg', w: 1900, h: 1267, alt: 'A cyclist riding down a cobbled Kathmandu street' },
       { type: 'image', src: '/img/work/travel/nepal/02.jpg', w: 1520, h: 1900, alt: 'A man carrying a lamb on his shoulders among a flock of sheep' },
@@ -137,8 +142,8 @@ export const projects: Project[] = [
       'The campaign also follows the vessel\'s attempted journey to become the first phinisi to return to Australian shores in 100+ years.',
       'Phinisi are built where they will be launched: on an open beach, under palms, with hand tools and a crew that knows the hull by heart. The gallery moves between drone views of the whole yard and close portraits of the men who work in it.',
     ],
-    cover: { src: '/img/work/travel/phinisi-armada/cover.jpg', w: 2400, h: 1500, alt: 'A wooden phinisi hull taking shape on a beach behind palm trees', pos: '62% 50%' },
-    tile: { src: '/img/work/travel/phinisi-armada/tile.jpg', w: 1100, h: 687 },
+    cover: { src: '/img/work/travel/phinisi-armada/cover.jpg', w: 1920, h: 2400, alt: 'A wooden phinisi hull under construction on a beach beside turquoise water, palms behind', pos: '50% 50%' },
+    tile: { src: '/img/work/travel/phinisi-armada/tile.jpg', w: 880, h: 1100 },
     gallery: [
       { type: 'image', src: '/img/work/travel/phinisi-armada/01.jpg', w: 1520, h: 1900, alt: 'A man sitting at the foot of a staircase against the hull' },
       { type: 'image', src: '/img/work/travel/phinisi-armada/02.jpg', w: 1900, h: 1267, alt: 'Two men working on the planks inside the hull' },
@@ -161,6 +166,7 @@ export const projects: Project[] = [
     ],
     cover: { src: '/img/work/travel/wonderful-indonesia/cover.jpg', w: 1920, h: 2400, alt: 'A procession in white ceremonial dress walking up a jungle path', pos: '50% 75%' },
     tile: { src: '/img/work/travel/wonderful-indonesia/tile.jpg', w: 880, h: 1100 },
+    logo: { src: '/img/work/travel/wonderful-indonesia/logo.png', w: 88, h: 35 },
     gallery: [
       { type: 'image', src: '/img/work/travel/wonderful-indonesia/01.jpg', w: 1520, h: 1900, alt: 'Two sulphur carriers on the rim of a steaming crater above a turquoise lake' },
       { type: 'image', src: '/img/work/travel/wonderful-indonesia/02.jpg', w: 1520, h: 1900, alt: 'Terraced rice fields from above with a white-clad gathering beneath a tree' },
@@ -210,6 +216,7 @@ export const projects: Project[] = [
     ],
     cover: { src: '/img/work/hospitality/desa-hay-bali/cover.jpg', w: 1920, h: 2400, alt: 'A dark timber villa beside a plunge pool, a surfboard in hand and a guest seated nearby', pos: '50% 62%' },
     tile: { src: '/img/work/hospitality/desa-hay-bali/tile.jpg', w: 880, h: 1100 },
+    logo: { src: '/img/work/hospitality/desa-hay-bali/logo.png', w: 74, h: 48 },
     gallery: [
       { type: 'image', src: '/img/work/hospitality/desa-hay-bali/01.jpg', w: 1520, h: 1900, alt: 'A couple laughing over glasses of red wine at the bar' },
       { type: 'image', src: '/img/work/hospitality/desa-hay-bali/02.jpg', w: 1520, h: 1900, alt: 'A woman sitting in a stone bath surrounded by ferns' },
@@ -235,6 +242,7 @@ export const projects: Project[] = [
     ],
     cover: { src: '/img/work/hospitality/eco-six/cover.jpg', w: 1920, h: 2400, alt: 'A woman in a towel sitting on a freestanding bath in front of an arched window', pos: '50% 55%' },
     tile: { src: '/img/work/hospitality/eco-six/tile.jpg', w: 880, h: 1100 },
+    logo: { src: '/img/work/hospitality/eco-six/logo.png', w: 73, h: 44 },
     gallery: [
       { type: 'image', src: '/img/work/hospitality/eco-six/01.jpg', w: 1520, h: 1900, alt: 'A pool on a lawn beneath a tall palm in soft light' },
       { type: 'image', src: '/img/work/hospitality/eco-six/02.jpg', w: 1520, h: 1900, alt: 'A woman reading in a hammock under a bamboo roof' },
@@ -255,8 +263,9 @@ export const projects: Project[] = [
       'Each film follows one kind of guest through a stay at Hidden Hills Villas in Uluwatu, Bali, from the welcome at the gate to the villa lit up at night.',
       'The couple\'s film is slow and private: a floating breakfast in the pool, a sauna and a wine cellar. The family film opens with a welcome at the gate, and the solo film starts at the cliffs and the ocean and ends with a quiet night in the villa.',
     ],
-    cover: { src: '/img/work/hospitality/hidden-hills-villas/cover.jpg', w: 1920, h: 960, alt: 'An aerial of a floating breakfast tray in a turquoise pool with two swimmers', pos: '56% 50%' },
-    tile: { src: '/img/work/hospitality/hidden-hills-villas/tile.jpg', w: 1920, h: 960 },
+    cover: { src: '/img/work/hospitality/hidden-hills-villas/cover.jpg', w: 1004, h: 1374, alt: 'A glass-walled villa bathroom with a tub of red rose petals, the jungle beyond', pos: '50% 70%' },
+    tile: { src: '/img/work/hospitality/hidden-hills-villas/tile.jpg', w: 804, h: 1100 },
+    logo: { src: '/img/work/hospitality/hidden-hills-villas/logo.png', w: 96, h: 35 },
     gallery: [
       { type: 'video', title: 'Couple', src: media('hidden-hills-couple.mp4'), srcSm: media('hidden-hills-couple-sm.mp4'), poster: '/video/work/hidden-hills-couple.jpg', w: 1280, h: 640, alt: 'A couple at Hidden Hills Villas: a floating breakfast in the pool' },
       { type: 'video', title: 'Family', src: media('hidden-hills-family.mp4'), srcSm: media('hidden-hills-family-sm.mp4'), poster: '/video/work/hidden-hills-family.jpg', w: 1280, h: 640, alt: 'A family at Hidden Hills Villas: the welcome at the gate' },
@@ -274,8 +283,9 @@ export const projects: Project[] = [
       'The series follows travellers through Vietnam by day and by night: cycling through a lantern-lit old town, watching the sun go down from a glass platform over the sea, and riding a round basket boat through the water palms.',
       'Local work is part of the story too. Salt carriers cross the flats at sunset and toss salt into the light, and the trip ends at a night market, with plates of seafood under the lights of the stalls.',
     ],
-    cover: { src: '/img/work/hospitality/marriott-bonvoy/cover.jpg', w: 1080, h: 1350, alt: 'Two cyclists riding under paper lanterns in an old town street, reflected in a puddle', pos: '50% 36%' },
+    cover: { src: '/img/work/hospitality/marriott-bonvoy/cover.jpg', w: 1080, h: 1350, alt: 'Red incense sticks laid out in a heart of yellow, seen from above', pos: '50% 25%' },
     tile: { src: '/img/work/hospitality/marriott-bonvoy/tile.jpg', w: 880, h: 1100 },
+    logo: { src: '/img/work/hospitality/marriott-bonvoy/logo.png', w: 88, h: 27 },
     gallery: [
       { type: 'image', src: '/img/work/hospitality/marriott-bonvoy/01.jpg', w: 1080, h: 720, alt: 'A couple laughing together on a waterfront with a colourful hillside town behind' },
       { type: 'image', src: '/img/work/hospitality/marriott-bonvoy/02.jpg', w: 1080, h: 720, alt: 'A couple watching the sunset from a glass viewing platform over the sea' },
@@ -301,6 +311,7 @@ export const projects: Project[] = [
     ],
     cover: { src: '/img/work/products/cocosolis/cover.jpg', w: 2400, h: 1350, alt: 'A woman holding a Cocosolis bottle to her neck in a green lagoon', pos: '72% 50%' },
     tile: { src: '/img/work/products/cocosolis/tile.jpg', w: 2000, h: 1125 },
+    logo: { src: '/img/work/products/cocosolis/logo.png', w: 104, h: 41 },
     gallery: [
       { type: 'video', title: 'Aboard', src: media('cocosolis-1.mp4'), srcSm: media('cocosolis-1-sm.mp4'), poster: '/video/work/cocosolis-1.jpg', w: 1920, h: 1080, alt: 'Cocosolis bottles on the deck of a sailing ship' },
       { type: 'video', title: 'Island', src: media('cocosolis-3.mp4'), srcSm: media('cocosolis-3-sm.mp4'), poster: '/video/work/cocosolis-3.jpg', w: 1920, h: 1080, alt: 'Cocosolis in a green island lagoon' },
@@ -319,8 +330,9 @@ export const projects: Project[] = [
       '“Find Your Asri” began as a boutique luxury camera accessories brand, founded by our current Production Director, Cam Vaughne. Every piece was made by local artisans from their own homes, telling unique stories about the island in which they were handcrafted, with 20% of every sale supporting local people and communities in need.',
       'From the products themselves to the brand identity, creative direction, photography, filmmaking, and marketing, the brand was built, independently, from the ground up. That experience became the foundation of Find Your Asri today: turning ideas into distinctive brands, developing their visual identity, and telling the unique stories that bring them to life.',
     ],
-    cover: { src: '/img/work/products/find-your-asri/cover.jpg', w: 1920, h: 2400, alt: 'A photographer raising a camera on a leather strap in a rice field, a mountain behind', pos: '50% 40%' },
-    tile: { src: '/img/work/products/find-your-asri/tile.jpg', w: 880, h: 1100 },
+    cover: { src: '/img/work/products/find-your-asri/cover.jpg', w: 2400, h: 1500, alt: 'A photographer in a dark jacket raising his camera on a hillside, a lake and mountains behind', pos: '75% 40%' },
+    tile: { src: '/img/work/products/find-your-asri/tile.jpg', w: 1760, h: 1100 },
+    logo: { src: '/img/work/products/find-your-asri/logo.png', w: 104, h: 28 },
     gallery: [
       { type: 'image', src: '/img/work/products/find-your-asri/01.jpg', w: 1520, h: 1900, alt: 'An open kraft box with three leather straps in navy, mint and sand' },
       { type: 'image', src: '/img/work/products/find-your-asri/02.jpg', w: 1520, h: 1900, alt: 'Three leather straps in navy, mint and sand, side by side' },
@@ -342,8 +354,9 @@ export const projects: Project[] = [
       'Flanagan Surfboards are made by hand in a small room, with sanding blocks, tape and a lot of patience. We spent the day there with the shaper as he worked on a single board.',
       'The set stays close: hands on the rail, tape pulled off the nose, a signature in pencil on the blank. The last frame stands in the doorway, with racks of boards waiting behind him.',
     ],
-    cover: { src: '/img/work/products/flanagan-surfboards/cover.jpg', w: 2400, h: 1600, alt: 'A shaper sanding a white surfboard in a blue-walled bay', pos: '50% 50%' },
-    tile: { src: '/img/work/products/flanagan-surfboards/tile.jpg', w: 1100, h: 733 },
+    cover: { src: '/img/work/products/flanagan-surfboards/cover.jpg', w: 1920, h: 2400, alt: 'A hand marking a line on a white surfboard against a bright blue wall', pos: '50% 65%' },
+    tile: { src: '/img/work/products/flanagan-surfboards/tile.jpg', w: 880, h: 1100 },
+    logo: { src: '/img/work/products/flanagan-surfboards/logo.png', w: 40, h: 44 },
     gallery: [
       { type: 'image', src: '/img/work/products/flanagan-surfboards/01.jpg', w: 1520, h: 1900, alt: 'The shaper lifting a board onto its stand' },
       { type: 'image', src: '/img/work/products/flanagan-surfboards/02.jpg', w: 1900, h: 1187, alt: 'Tape being peeled from the nose of a board' },
@@ -386,6 +399,7 @@ export const projects: Project[] = [
     ],
     cover: { src: '/img/work/products/san-marzano-wine/cover.jpg', w: 2400, h: 1600, alt: 'A couple toasting with glasses of wine on a ship at dusk', pos: '60% 50%' },
     tile: { src: '/img/work/products/san-marzano-wine/tile.jpg', w: 1100, h: 733 },
+    logo: { src: '/img/work/products/san-marzano-wine/logo.png', w: 88, h: 38 },
     gallery: [
       { type: 'image', src: '/img/work/products/san-marzano-wine/01.jpg', w: 1900, h: 1267, alt: 'A man lying on a pink-sand beach beside a bottle, the sea behind him' },
       { type: 'image', src: '/img/work/products/san-marzano-wine/02.jpg', w: 1267, h: 1900, alt: 'A hand holding a bottle in the surf on pink sand' },

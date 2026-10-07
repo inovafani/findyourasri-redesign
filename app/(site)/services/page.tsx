@@ -19,7 +19,7 @@ export const metadata: Metadata = pageMetadata(pages.services);
  */
 export default function ServicesPage() {
   const cover = frames.dGoldenCrossing as Frame;
-  const close = frames.dPhinisiDusk as Frame;
+  const close = frames.svcTeam as Frame;
 
   return (
     <>

@@ -37,6 +37,20 @@ export default function WorkGrid({ items, ratio }: { items: WorkPiece[]; ratio: 
                   style={cover.pos ? { objectPosition: cover.pos } : undefined}
                 />
                 <span className="work-tile__scrim" aria-hidden="true" />
+                {piece.logo ? (
+                  // A masked block, not an <img>, so the mark renders white
+                  // over any photograph.
+                  <span
+                    className="work-tile__logo"
+                    aria-hidden="true"
+                    style={{
+                      width: piece.logo.w,
+                      height: piece.logo.h,
+                      WebkitMaskImage: `url(${piece.logo.src})`,
+                      maskImage: `url(${piece.logo.src})`,
+                    }}
+                  />
+                ) : null}
                 <span className="work-tile__text">
                   <span className="work-tile__title">{piece.title}</span>
                   {piece.meta ? <span className="work-tile__meta">{piece.meta}</span> : null}

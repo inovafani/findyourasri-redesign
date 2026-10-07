@@ -96,6 +96,8 @@ export type Sector = {
   /** Gate W8: each sector's first step, from its deck's closing slide. */
   firstStep: { title: string; body: string };
   formTitle: string;
+  /** A client's mark, drawn white in the corner of the sector's home tile. */
+  logo?: { src: string; w: number; h: number };
 };
 
 export type Partnership = {
@@ -408,6 +410,16 @@ export const frames = {
     subject: 'Beach from the air',
     sectors: ['brands'],
   },
+  brandsRose: {
+    id: 'brandsRose',
+    src: '/img/sector-brands-rose.jpg',
+    alt: 'Three bottles of rosé resting in a shell as a wave washes up a sandy beach',
+    w: 1600,
+    h: 2400,
+    subject: 'Rosé on the shore',
+    sectors: ['brands'],
+    pos: '50% 60%',
+  },
   destinationsPool: {
     id: 'destinationsPool',
     src: '/img/sector-destinations.jpg',
@@ -522,6 +534,13 @@ export const frames = {
   dSunsetSip: { id: 'dSunsetSip', src: '/img/drive/sunset-sip.jpg', alt: 'A guest in silhouette sipping wine at sunset', w: 2400, h: 1600, subject: 'A glass at sunset', sectors: ['brands', 'hospitality'], pos: '56% 50%' },
   dPoolTerrace: { id: 'dPoolTerrace', src: '/img/drive/pool-terrace.jpg', alt: 'A pool terrace with striped loungers and parasols among palms', w: 2400, h: 1350, subject: 'The pool terrace', sectors: ['hospitality'] },
   dFleetSails: { id: 'dFleetSails', src: '/img/drive/fleet-sails.jpg', alt: 'Two phinisi under red and black sails on open water, from the air', w: 2400, h: 1516, subject: 'Red and black sails', sectors: ['operators', 'brands'] },
+  // The lower half of /services/: Unsplash stock that shows the work (see scripts/optimize-services-frames.mjs).
+  svcGrowth: { id: 'svcGrowth', src: '/img/services/growth.jpg', alt: 'A camera operator at sunset with a cinema camera on his shoulder', w: 1600, h: 700, subject: 'A shoot on location', sectors: [] },
+  svcPerformance: { id: 'svcPerformance', src: '/img/services/performance.jpg', alt: 'A laptop on a table showing a website, a cup of coffee beside it', w: 1600, h: 700, subject: 'A website on a laptop', sectors: [] },
+  svcFoundation: { id: 'svcFoundation', src: '/img/services/foundation.jpg', alt: 'Two people sketching a plan on a whiteboard', w: 1200, h: 800, subject: 'Planning on a whiteboard', sectors: [] },
+  svcDistribution: { id: 'svcDistribution', src: '/img/services/distribution.jpg', alt: 'A hand holding a phone showing a social media post', w: 1200, h: 800, subject: 'A post on a social feed', sectors: [] },
+  svcOptimisation: { id: 'svcOptimisation', src: '/img/services/optimisation.jpg', alt: 'A laptop showing charts of site performance analytics', w: 1200, h: 800, subject: 'Analytics on a laptop', sectors: [] },
+  svcTeam: { id: 'svcTeam', src: '/img/services/team.jpg', alt: 'Three colleagues smiling around a laptop in a bright office', w: 2000, h: 1333, subject: 'A team around a laptop', sectors: [] },
   dPhinisiDusk: { id: 'dPhinisiDusk', src: '/img/drive/phinisi-dusk.jpg', alt: 'A phinisi under white sails at dusk, islands on the horizon', w: 2400, h: 1349, subject: 'A phinisi at dusk', sectors: ['operators'], pos: '50% 60%' },
   dDawnBay: { id: 'dDawnBay', src: '/img/drive/dawn-bay.jpg', alt: 'A phinisi at anchor in a bay of karst islands at first light', w: 1600, h: 2000, subject: 'First light in the bay', sectors: ['destinations', 'operators'] },
   dAmberSails: { id: 'dAmberSails', src: '/img/drive/amber-sails.jpg', alt: 'Phinisi under amber and black sails crossing at sea', w: 2400, h: 1350, subject: 'Crossing at sea', sectors: ['operators', 'brands'] },
@@ -607,6 +626,8 @@ export type WorkPiece = {
   href?: string;
   /** The tile's picture, for a project; films use their poster instead. */
   cover?: { src: string; w: number; h: number; alt: string; pos?: string };
+  /** A client's mark, drawn white in the tile's corner. */
+  logo?: { src: string; w: number; h: number };
   /**
    * Films play in place; everything else opens its project. `srcSm` is the
    * 720p cut phones get; both are web encodes of the masters in _src/video.
@@ -675,6 +696,7 @@ export const workPieces: WorkPiece[] = [
       tab: p.tab,
       href: projectHref(p),
       cover: { ...p.tile, alt: p.cover.alt, pos: p.cover.pos },
+      logo: p.logo,
     }),
   ),
   // Production · Films: DUMMY titles until Cam names the films.
@@ -795,25 +817,25 @@ export const stages: Stage[] = [
   'Scale',
 ];
 
-/** Each month carries a frame: first light, under sail, dusk. */
+/** Each month carries a frame, one for each stage of the work. */
 export const steps: { when: string; title: string; body: string; frame?: FrameId }[] = [
   {
     when: 'Month one',
     title: 'Foundation',
     body: 'Strategy and content planning, SEO and analytics setup, hero shoot and the first campaigns.',
-    frame: 'dDawnBay',
+    frame: 'svcFoundation',
   },
   {
     when: 'Month two',
     title: 'Distribution',
     body: 'Social publishing and SEO content, paid campaigns and creative testing, retargeting.',
-    frame: 'dPhinisiKarst',
+    frame: 'svcDistribution',
   },
   {
     when: 'Month three',
     title: 'Optimisation',
     body: 'Analyse what won, scale the creative that worked, grow the search position, plan the next cycle.',
-    frame: 'dPinkDusk',
+    frame: 'svcOptimisation',
   },
 ];
 
@@ -827,8 +849,8 @@ export const services: Service[] = [
     name: 'Social Media Management',
     claim: 'Consistency is the whole game.',
     title: 'Consistency Is the Whole Game',
-    // The monthly counts wait on the contract-pack check (W9).
-    body: 'Fifteen posts, fifteen stories and two reels a month, planned against a calendar.',
+    // No monthly counts: the mix and the volume are set per client, in the quote.
+    body: 'A content calendar built around your brand, your audience and your goals, with the mix and the volume set to fit.',
     points: [
       'Calendar, captions and copywriting.',
       'Publishing and community response.',
@@ -1003,7 +1025,7 @@ export const partnerships: Partnership[] = [
     term: 'Six-month minimum · ad spend excluded',
     reporting: 'Monthly',
     price: 'growth',
-    frame: 'dFleetSails',
+    frame: 'svcGrowth',
   },
   {
     slug: 'performance',
@@ -1018,7 +1040,7 @@ export const partnerships: Partnership[] = [
     term: 'Six-month minimum · ad spend excluded',
     reporting: 'Monthly',
     price: 'performance',
-    frame: 'dAmberSails',
+    frame: 'svcPerformance',
   },
 ];
 
@@ -1101,7 +1123,8 @@ export const sectors: Sector[] = [
     body: 'Campaign creative and full production service on location, from scout to master.',
     proof:
       'You are not briefing a fixer and hoping. You are briefing the director who will be on set.',
-    frame: 'dSunsetPour',
+    frame: 'brandsRose',
+    logo: { src: '/img/work/products/san-marzano-wine/logo.png', w: 88, h: 38 },
     pattern: 'meridians',
     services: [{ slug: 'production' }, { slug: 'creator-campaigns' }],
     firstStep: {
