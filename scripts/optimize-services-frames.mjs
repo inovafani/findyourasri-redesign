@@ -10,9 +10,12 @@
  *   node scripts/optimize-services-frames.mjs
  *
  * `y` is where the crop is centred, as a fraction of the photograph's height.
+ * `x` and `zoom` (both optional) centre it sideways and crop in tighter: zoom is
+ * the share of the photograph's width kept.
+ *
+ * `growth` is our own aerial of a beach dinner (_src/img/growth-pic.jpg).
  *
  * Credits (Unsplash):
- *   growth        Riccardo Sanmartini  https://unsplash.com/photos/FfBFrtfpUnM
  *   performance   Carriza Maiquez      https://unsplash.com/photos/IiHHmOcnnSA
  *   foundation    Kaleidico            https://unsplash.com/photos/26MJGnCM0Wc
  *   distribution  Lance Reis           https://unsplash.com/photos/8koSbeUK6O4
@@ -30,7 +33,7 @@ const STEP = { w: 1200, h: 800 };
 const BAND = { w: 2000, h: 1333 };
 
 const FRAMES = [
-  { out: 'growth.jpg', file: 'growth-riccardo-sanmartini-FfBFrtfpUnM.jpg', size: PLAN, y: 0.3 },
+  { out: 'growth.jpg', path: '_src/img/growth-pic.jpg', size: PLAN, y: 0.76, x: 0.5, zoom: 0.55 },
   { out: 'performance.jpg', file: 'performance-carriza-maiquez-IiHHmOcnnSA.jpg', size: PLAN, y: 0.5 },
   { out: 'foundation.jpg', file: 'foundation-kaleidico-26MJGnCM0Wc.jpg', size: STEP, y: 0.5 },
   { out: 'distribution.jpg', file: 'distribution-lance-reis-8koSbeUK6O4.jpg', size: STEP, y: 0.5 },
@@ -40,14 +43,16 @@ const FRAMES = [
 
 mkdirSync(OUT, { recursive: true });
 
-for (const { out, file, size, y } of FRAMES) {
-  const base = sharp(`${SRC}/${file}`).rotate().toColourspace('srgb');
+for (const { out, file, path, size, y, x = 0.5, zoom = 1 } of FRAMES) {
+  const base = sharp(path ?? `${SRC}/${file}`).rotate().toColourspace('srgb');
   const { width, height } = await base.clone().toBuffer({ resolveWithObject: true }).then((r) => r.info);
-  const cropH = Math.min(height, Math.round((width * size.h) / size.w));
+  const cropW = Math.round(width * zoom);
+  const cropH = Math.min(height, Math.round((cropW * size.h) / size.w));
+  const left = Math.max(0, Math.min(width - cropW, Math.round(x * width - cropW / 2)));
   const top = Math.max(0, Math.min(height - cropH, Math.round(y * height - cropH / 2)));
   const dest = `${OUT}/${out}`;
   await base
-    .extract({ left: 0, top, width, height: cropH })
+    .extract({ left, top, width: cropW, height: cropH })
     .resize(size.w, size.h, { kernel: 'lanczos3', withoutEnlargement: true })
     .jpeg({ quality: 78, mozjpeg: true, progressive: true })
     .toFile(dest);

@@ -535,7 +535,7 @@ export const frames = {
   dPoolTerrace: { id: 'dPoolTerrace', src: '/img/drive/pool-terrace.jpg', alt: 'A pool terrace with striped loungers and parasols among palms', w: 2400, h: 1350, subject: 'The pool terrace', sectors: ['hospitality'] },
   dFleetSails: { id: 'dFleetSails', src: '/img/drive/fleet-sails.jpg', alt: 'Two phinisi under red and black sails on open water, from the air', w: 2400, h: 1516, subject: 'Red and black sails', sectors: ['operators', 'brands'] },
   // The lower half of /services/: Unsplash stock that shows the work (see scripts/optimize-services-frames.mjs).
-  svcGrowth: { id: 'svcGrowth', src: '/img/services/growth.jpg', alt: 'A camera operator at sunset with a cinema camera on his shoulder', w: 1600, h: 700, subject: 'A shoot on location', sectors: [] },
+  svcGrowth: { id: 'svcGrowth', src: '/img/services/growth.jpg', alt: 'Guests gathered on a beach at dusk around long dinner tables, a DJ playing beneath pink light', w: 1600, h: 700, subject: 'A beach dinner at dusk', sectors: [] },
   svcPerformance: { id: 'svcPerformance', src: '/img/services/performance.jpg', alt: 'A laptop on a table showing a website, a cup of coffee beside it', w: 1600, h: 700, subject: 'A website on a laptop', sectors: [] },
   svcFoundation: { id: 'svcFoundation', src: '/img/services/foundation.jpg', alt: 'Two people sketching a plan on a whiteboard', w: 1200, h: 800, subject: 'Planning on a whiteboard', sectors: [] },
   svcDistribution: { id: 'svcDistribution', src: '/img/services/distribution.jpg', alt: 'A hand holding a phone showing a social media post', w: 1200, h: 800, subject: 'A post on a social feed', sectors: [] },
