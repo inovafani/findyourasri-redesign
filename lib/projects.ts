@@ -403,9 +403,9 @@ export const projects: Project[] = [
     gallery: [
       { type: 'image', src: '/img/work/products/san-marzano-wine/01.jpg', w: 1900, h: 1267, alt: 'A man lying on a pink-sand beach beside a bottle, the sea behind him' },
       { type: 'image', src: '/img/work/products/san-marzano-wine/02.jpg', w: 1267, h: 1900, alt: 'A hand holding a bottle in the surf on pink sand' },
-      { type: 'image', src: '/img/work/products/san-marzano-wine/03.jpg', w: 1900, h: 1267, alt: 'A beach party at dusk with a DJ, long tables and ships anchored offshore' },
-      { type: 'image', src: '/img/work/products/san-marzano-wine/04.jpg', w: 1900, h: 1267, alt: 'Staff carrying a tray of glasses, with local guests in sarongs beside them' },
-      { type: 'image', src: '/img/work/products/san-marzano-wine/05.jpg', w: 1900, h: 1267, alt: 'Two guests raising glasses at sunset with ships on the horizon' },
+      { type: 'image', src: '/img/work/products/san-marzano-wine/03.jpg', w: 1900, h: 1267, alt: 'A DJ in purple smoke and laser light, guests in silhouette and tasselled umbrellas around him' },
+      { type: 'image', src: '/img/work/products/san-marzano-wine/04.jpg', w: 1900, h: 1267, alt: 'A woman in silhouette sipping a glass of rosé at sunset, ships anchored on the horizon' },
+      { type: 'image', src: '/img/work/products/san-marzano-wine/05.jpg', w: 1900, h: 1069, alt: 'An aerial of five phinisi under sail on deep blue water, two of them under red sails' },
       { type: 'image', src: '/img/work/products/san-marzano-wine/06.jpg', w: 1900, h: 1267, alt: 'Guests holding up lit bottles in magenta light' },
       { type: 'image', src: '/img/work/products/san-marzano-wine/07.jpg', w: 1900, h: 1267, alt: 'Two lit bottles in close-up' },
       { type: 'image', src: '/img/work/products/san-marzano-wine/08.jpg', w: 1900, h: 1267, alt: 'Wine being poured into a glass against the sunset' },
