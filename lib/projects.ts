@@ -397,8 +397,8 @@ export const projects: Project[] = [
       'San Marzano Wine took its bottles to sea: a toast on a ship at dusk, a day on a pink-sand beach and a beach table set for dinner with sailing ships anchored offshore.',
       'As the light drops the colour changes from soft gold to magenta, and the bottles themselves are lit up and held above the crowd. The last frames stay close on the glass and the pour.',
     ],
-    cover: { src: '/img/work/products/san-marzano-wine/cover.jpg', w: 2400, h: 1600, alt: 'A couple toasting with glasses of wine on a ship at dusk', pos: '60% 50%' },
-    tile: { src: '/img/work/products/san-marzano-wine/tile.jpg', w: 1100, h: 733 },
+    cover: { src: '/img/work/products/san-marzano-wine/cover.jpg', w: 1600, h: 2400, alt: 'A bottle of rosé lying in sparkling water among chunks of ice', pos: '50% 50%' },
+    tile: { src: '/img/work/products/san-marzano-wine/tile.jpg', w: 733, h: 1100 },
     logo: { src: '/img/work/products/san-marzano-wine/logo.png', w: 88, h: 38 },
     gallery: [
       { type: 'image', src: '/img/work/products/san-marzano-wine/01.jpg', w: 1900, h: 1267, alt: 'A man lying on a pink-sand beach beside a bottle, the sea behind him' },

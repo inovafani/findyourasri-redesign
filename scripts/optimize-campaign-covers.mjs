@@ -26,6 +26,7 @@ const COVERS = [
   { file: 'FindYourAsri-cover.jpg', to: 'products/find-your-asri' },
   { file: 'Flanagan Surfboard-logo.jpg', to: 'products/flanagan-surfboards' },
   { file: 'hidden-hills-cover.png', to: 'hospitality/hidden-hills-villas' },
+  { file: 'sanmarzano-cover.jpg', to: 'products/san-marzano-wine' },
 ];
 
 /** Single-file images that are not a project's cover: the home sector tiles. */
