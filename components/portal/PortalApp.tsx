@@ -20,11 +20,31 @@ type Meta = { v: number; kdf: string; rounds: number; salt: string; cipher: stri
 
 type Tile = { big: string; what: string; note: string };
 type Filed = { label: string; date: string; state: string };
-type Phase = { n: string; phase: string; when: string; does: string };
-type Ask = { n: string; title: string; says: string; stop: string; open: boolean; waiting: string[] };
+type Phase = { n: string; phase: string; when: string; rel: string; does: string; state: string };
+type Check = {
+  n: string;
+  title: string;
+  need: string;
+  unlocks: string;
+  open: boolean;
+  answer: string;
+  in_form: boolean;
+};
+type Form = {
+  url: string;
+  button: string;
+  minutes: string;
+  note: string;
+  covers: string[];
+  covered: number;
+  total: number;
+  rest: string[];
+};
+type Step = { key: string; rail: string; title: string };
 type Layer = { layer: string; counts: string; readable: boolean; blocked: string };
 type Row = { what: string; when: string; has: string };
 type Item = { title: string; says: string };
+type Section = { title: string; sub: string };
 
 type Payload = {
   client: string;
@@ -35,12 +55,20 @@ type Payload = {
   filed: Filed[];
   countdown: Phase[];
   example: string;
-  asks: Ask[];
+  opening: { known: boolean; date: string; days: number };
+  checklist: Check[];
+  form: Form;
+  steps: Step[];
+  heads: { reporting: string; open: string };
   traction: Layer[];
   reporting: Row[];
   open: Item[];
-  rights: { logged: number; cleared: number; identifiable: number };
+  rights: { logged: number; cleared: number; identifiable: number; sentence: string };
   contact: { name: string; role: string };
+  cover: { title: string; lede: string; stamp: string };
+  sections: Record<string, Section>;
+  numbers_rule: string;
+  footer: { provenance: string; privacy: string };
 };
 
 const b64 = (s: string) => Uint8Array.from(atob(s), (ch) => ch.charCodeAt(0));
@@ -78,7 +106,9 @@ function Lock({ onOpen, error, busy }: { onOpen: (pw: string) => void; error: st
         <img src="/img/asri-white.png" alt="Asri" className="po-lock-mark" />
         <p className="po-kick">A private client page</p>
         <h1>Enter your password</h1>
-        <p className="po-lock-lede">We sent it with the link. The page opens on this device only.</p>
+        <p className="po-lock-lede">
+          We sent it with the link. The page stays locked until the password is typed in.
+        </p>
         <label htmlFor="po-pw" className="po-vh">
           Password
         </label>
@@ -105,226 +135,291 @@ function Lock({ onOpen, error, busy }: { onOpen: (pw: string) => void; error: st
 }
 
 /* --------------------------------------------------------------- the sections */
-function Head({ n, title, sub }: { n: string; title: string; sub?: string }) {
+function Head({ n, s, title }: { n: string; s: Section; title?: string }) {
   return (
     <header className="po-head">
       <p className="po-kick">
         <span className="po-num">{n}</span>
-        {title}
+        {title ?? s.title}
       </p>
-      {sub ? <p className="po-sub">{sub}</p> : null}
+      {s.sub ? <p className="po-sub">{s.sub}</p> : null}
     </header>
   );
 }
 
-function Page({ c }: { c: Payload }) {
-  const openAsks = c.asks.filter((a) => a.open).length;
+function Page({ c, ticksKey }: { c: Payload; ticksKey: string }) {
+  const [step, setStep] = useState(0);
+  const [ticks, setTicks] = useState<Set<string>>(new Set());
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const first = useRef(true);
+  const openItems = c.checklist.filter((a) => a.open).length;
+  const key = c.steps[step].key;
+
+  // The client's own ticks. They stay in this browser and reach nobody: the page says so, because a tick that
+  // looks like it told us something and did not is worse than no tick at all.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(ticksKey);
+      if (raw) setTicks(new Set(JSON.parse(raw) as string[]));
+    } catch {
+      /* storage may be blocked; the list still works, it just does not remember */
+    }
+  }, []);
+
+  const tick = (n: string) => {
+    setTicks((prev) => {
+      const next = new Set(prev);
+      if (next.has(n)) next.delete(n);
+      else next.add(n);
+      try {
+        localStorage.setItem(ticksKey, JSON.stringify([...next]));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
+
+  // Moving a step puts the reader at the top of the new one, but never steals focus on first paint.
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    stageRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }, [step]);
+
+  const go = (i: number) => setStep(Math.max(0, Math.min(c.steps.length - 1, i)));
+
   return (
     <div className="po">
-      <section className="po-cover">
+      <header className="po-top">
         <div className="po-in">
           <p className="po-kick">{c.client} and Asri</p>
-          <h1 className="po-title">The Runsheet</h1>
-          <p className="po-lede">
-            What we are doing, when it happens, and how you will see it working. One page, no jargon. If a line
-            here looks wrong to you, it is wrong, and we want to hear it.
-          </p>
+          <h1 className="po-title">{c.cover.title}</h1>
           <p className="po-stamp">
             <span className="po-live" aria-hidden="true" />
             Updated {c.built_human}
             <span className="po-dot">·</span>
-            This page is rebuilt from our own files, so it changes as the work does
+            {c.cover.stamp}
           </p>
+          <nav className="po-rail" aria-label="Sections">
+            {c.steps.map((s, i) => (
+              <button
+                key={s.key}
+                type="button"
+                className={i === step ? 'po-rail-on' : i < step ? 'po-rail-done' : ''}
+                aria-current={i === step ? 'step' : undefined}
+                onClick={() => go(i)}
+              >
+                <span className="po-rail-n">{i + 1}</span>
+                {s.rail}
+              </button>
+            ))}
+          </nav>
         </div>
-      </section>
+      </header>
 
-      <section className="po-sec">
-        <div className="po-in">
-          <Head n="01" title="Where this stands today" sub="Four numbers, each read from our files rather than typed in by hand." />
-          <div className="po-tiles">
-            {c.headline.tiles.map((t) => (
-              <div className="po-tile" key={t.what}>
-                <span className="po-big">{t.big}</span>
-                <span className="po-what">{t.what}</span>
-                <span className="po-note">{t.note}</span>
+      <div className="po-stage" ref={stageRef}>
+        <section className="po-sec" data-step={key}>
+          <div className="po-in">
+            <Head n={key} s={c.sections[key]} title={key === '06' ? `${c.sections['06'].title}: ${openItems} of ${c.checklist.length} still to do` : undefined} />
+
+            {key === '01' ? (
+              <>
+                <p className="po-lede po-lede-step">{c.cover.lede}</p>
+                <div className="po-tiles">
+                  {c.headline.tiles.map((t) => (
+                    <div className="po-tile" key={t.what}>
+                      <span className="po-big">{t.big}</span>
+                      <span className="po-what">{t.what}</span>
+                      <span className="po-note">{t.note}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {key === '02' ? (
+              <div className="po-cards">
+                {c.package.map((x) => (
+                  <div className="po-card" key={x.what}>
+                    <span className="po-card-big">{x.big}</span>
+                    <span className="po-card-what">{x.what}</span>
+                    <span className="po-note">{x.note}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            ) : null}
 
-      <section className="po-sec">
-        <div className="po-in">
-          <Head
-            n="02"
-            title="What you get every month"
-            sub="The whole monthly package. Anything outside these boxes is extra, and we quote it before we do it."
-          />
-          <div className="po-cards">
-            {c.package.map((p) => (
-              <div className="po-card" key={p.what}>
-                <span className="po-card-big">{p.big}</span>
-                <span className="po-card-what">{p.what}</span>
-                <span className="po-note">{p.note}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            {key === '03' ? (
+              <ul className="po-list">
+                {c.filed.map((f) => (
+                  <li key={f.label}>
+                    <span className="po-when">{f.date}</span>
+                    <span className="po-line">{f.label}</span>
+                    <span className={f.state === 'internal' ? 'po-pill' : 'po-pill po-pill-gold'}>
+                      {f.state === 'sent' ? 'With you' : f.state === 'ready' ? 'Ready for you' : 'Internal'}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
 
-      <section className="po-sec">
-        <div className="po-in">
-          <Head
-            n="03"
-            title="Built already"
-            sub="Finished work, before month one has officially started. The ones marked with you are waiting on an approval."
-          />
-          <ul className="po-list">
-            {c.filed.map((f) => (
-              <li key={f.label}>
-                <span className="po-when">{f.date}</span>
-                <span className="po-line">{f.label}</span>
-                <span className={f.state === 'yours' ? 'po-pill po-pill-gold' : 'po-pill'}>
-                  {f.state === 'yours' ? 'With you' : 'Internal'}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+            {key === '04' ? (
+              <>
+                <ol className="po-phases">
+                  {c.countdown.map((x) => (
+                    <li key={x.n} className={x.state ? `po-phase-${x.state}` : undefined}>
+                      <span className="po-phase-n">{x.n}</span>
+                      <div>
+                        <h3>
+                          {x.phase}
+                          {x.state === 'now' ? <span className="po-here">We are here</span> : null}
+                          {x.state === 'past' ? <span className="po-done-tag">Done</span> : null}
+                        </h3>
+                        <p className="po-phase-when">
+                          {x.when}
+                          {c.opening.known ? <span className="po-phase-rel">{x.rel}</span> : null}
+                        </p>
+                        <p className="po-phase-does">{x.does}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+                <p className="po-quote">{c.example}</p>
+              </>
+            ) : null}
 
-      <section className="po-sec po-cream">
-        <div className="po-in">
-          <Head
-            n="04"
-            title="The countdown to opening night"
-            sub="Opening night is day zero. Everything counts backwards and forwards from it. Give us the date and every row below becomes a real date."
-          />
-          <ol className="po-phases">
-            {c.countdown.map((p) => (
-              <li key={p.n}>
-                <span className="po-phase-n">{p.n}</span>
-                <div>
-                  <h3>{p.phase}</h3>
-                  <p className="po-phase-when">{p.when}</p>
-                  <p className="po-phase-does">{p.does}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-          <p className="po-quote">{c.example}</p>
-        </div>
-      </section>
-
-      <section className="po-sec">
-        <div className="po-in">
-          <Head
-            n="05"
-            title={`What we need from you: ${openAsks} of ${c.asks.length} still open`}
-            sub="Each one unlocks work that is already written and ready to run. This list ticks itself off as the answers arrive."
-          />
-          <ul className="po-asks">
-            {c.asks.map((a) => (
-              <li key={a.n} className={a.open ? '' : 'po-ask-done'}>
-                <span className="po-ask-n">{a.open ? a.n : '✓'}</span>
-                <div>
-                  <h3>{a.title}</h3>
-                  <p>{a.says}</p>
-                  {a.open ? (
-                    <>
-                      <p className="po-stop">{a.stop}</p>
-                      {a.waiting.length > 1 ? (
-                        <p className="po-note">Still missing: {a.waiting.join(', ')}.</p>
-                      ) : null}
-                    </>
-                  ) : (
-                    <p className="po-note">Answered. Thank you.</p>
-                  )}
-                </div>
-                <span className={a.open ? 'po-pill po-pill-gold' : 'po-pill'}>{a.open ? 'Open' : 'Done'}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="po-sec">
-        <div className="po-in">
-          <Head
-            n="06"
-            title="How we show it is working"
-            sub="Three layers. The top one is the one that matters, and it is the one we cannot read yet."
-          />
-          <ul className="po-layers">
-            {c.traction.map((t) => (
-              <li key={t.layer}>
-                <div>
-                  <h3>{t.layer}</h3>
-                  <p className="po-note">{t.counts}</p>
-                </div>
-                <p className={t.readable ? 'po-read' : 'po-unread'}>
-                  {t.readable ? 'Readable now' : t.blocked}
+            {key === '05' ? (
+              <div className="po-form">
+                <p className="po-form-line">
+                  It answers <strong>{c.form.covered} of the {c.form.total}</strong> things on your checklist, and
+                  it takes {c.form.minutes}.
                 </p>
-              </li>
-            ))}
-          </ul>
-          <p className="po-quote">
-            Our rule on numbers is strict: we report a number only when we can read it from a real source. No
-            estimates and no borrowed figures. If something is missing, the report says it is missing and names who
-            can fix it, including when that is us.
-          </p>
-        </div>
-      </section>
+                <a className="po-cta" href={c.form.url} target="_blank" rel="noreferrer">
+                  {c.form.button}
+                </a>
+                <p className="po-note po-form-note">{c.form.note}</p>
+                <h3 className="po-subhead">What it asks you</h3>
+                <ul className="po-covers">
+                  {c.form.covers.map((x) => (
+                    <li key={x}>{x}</li>
+                  ))}
+                </ul>
+                <p className="po-quote">
+                  The {c.form.rest.length} it does not cover are {c.form.rest.join(' and ')}. Those two go
+                  straight to {c.contact.name}, and they are the last two on your checklist.
+                </p>
+              </div>
+            ) : null}
 
-      <section className="po-sec">
-        <div className="po-in">
-          <Head n="07" title="How you hear from us" />
-          <ul className="po-list po-list-rows">
-            {c.reporting.map((r) => (
-              <li key={r.what}>
-                <span className="po-when">{r.when}</span>
-                <span className="po-line">
-                  <strong>{r.what}.</strong> {r.has}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+            {key === '06' ? (
+              <ul className="po-check">
+                {c.checklist.map((a) => {
+                  const done = !a.open;
+                  const ticked = ticks.has(a.n);
+                  return (
+                    <li key={a.n} className={done ? 'po-check-done' : ticked ? 'po-check-ticked' : ''}>
+                      <button
+                        type="button"
+                        className="po-box"
+                        onClick={() => (done ? undefined : tick(a.n))}
+                        disabled={done}
+                        aria-pressed={done || ticked}
+                        aria-label={done ? `${a.title}: we have this` : `Tick off ${a.title}`}
+                      >
+                        {done || ticked ? '✓' : a.n}
+                      </button>
+                      <div>
+                        <h3>{a.title}</h3>
+                        <p>{a.need}</p>
+                        <p className="po-unlocks">
+                          <span>Unlocks</span> {a.unlocks}
+                        </p>
+                        <p className="po-where">
+                          {a.in_form ? 'The form on the step before asks this.' : `Not in the form: tell ${c.contact.name}.`}
+                        </p>
+                        {done ? <p className="po-note">We have this: {a.answer}</p> : null}
+                      </div>
+                      <span className={done ? 'po-pill po-pill-gold' : 'po-pill'}>{done ? 'We have it' : 'To do'}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : null}
 
-      <section className="po-sec">
+            {key === '07' ? (
+              <>
+                <ul className="po-layers">
+                  {c.traction.map((t) => (
+                    <li key={t.layer}>
+                      <div>
+                        <h3>{t.layer}</h3>
+                        <p className="po-note">{t.counts}</p>
+                      </div>
+                      <p className={t.readable ? 'po-read' : 'po-unread'}>{t.readable ? 'Readable now' : t.blocked}</p>
+                    </li>
+                  ))}
+                </ul>
+                <p className="po-quote">{c.numbers_rule}</p>
+
+                <h3 className="po-subhead">{c.heads.reporting}</h3>
+                <ul className="po-list po-list-rows">
+                  {c.reporting.map((r) => (
+                    <li key={r.what}>
+                      <span className="po-when">{r.when}</span>
+                      <span className="po-line">
+                        <strong>{r.what}.</strong> {r.has}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <h3 className="po-subhead">{c.heads.open}</h3>
+                <ul className="po-open">
+                  {c.open.map((o) => (
+                    <li key={o.title}>
+                      <h3>{o.title}</h3>
+                      <p>{o.says}</p>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
+          </div>
+        </section>
+      </div>
+
+      <nav className="po-nav" aria-label="Move through the page">
         <div className="po-in">
-          <Head
-            n="08"
-            title="Still open"
-            sub="We would rather list these than pretend they are settled."
-          />
-          <ul className="po-open">
-            {c.open.map((o) => (
-              <li key={o.title}>
-                <h3>{o.title}</h3>
-                <p>{o.says}</p>
-              </li>
-            ))}
-          </ul>
+          <button type="button" className="po-back" onClick={() => go(step - 1)} disabled={step === 0}>
+            Back
+          </button>
+          <span className="po-count">
+            Step {step + 1} of {c.steps.length}
+          </span>
+          {step < c.steps.length - 1 ? (
+            <button type="button" className="po-next" onClick={() => go(step + 1)}>
+              Next: {c.steps[step + 1].rail}
+            </button>
+          ) : (
+            <button type="button" className="po-next" onClick={() => go(0)}>
+              Back to the start
+            </button>
+          )}
         </div>
-      </section>
+      </nav>
 
       <footer className="po-foot">
         <div className="po-in">
           <p>
-            <strong>Where these numbers come from.</strong> The counts on this page are read from our own working
-            files each time it is rebuilt: the brief we keep on your business, our hours log, and the register that
-            tracks every image and who has cleared it. Today that register holds {c.rights.logged} of your images,
-            of which {c.rights.cleared} are cleared for use. Nothing on this page is a projection.
+            <strong>Where these numbers come from.</strong> {c.footer.provenance}
           </p>
           <p>
             Questions, approvals, anything urgent: {c.contact.name}, {c.contact.role}.
           </p>
-          <p className="po-note">
-            Private page. Not listed anywhere and not visible to search engines. Volumes and scope are from the
-            service agreement. The dates in section 04 are relative to an opening date that is not yet set.
-          </p>
+          <p className="po-note">{c.footer.privacy}</p>
         </div>
       </footer>
     </div>
@@ -335,6 +430,7 @@ function Page({ c }: { c: Payload }) {
 export default function PortalApp({ slug }: { slug: string }) {
   const base = `/portal-data/${slug}`;
   const sessionKey = `asri-portal-${slug}-key`;
+  const ticksKey = `asri-portal-${slug}-ticks`;
 
   const [content, setContent] = useState<Payload | null>(null);
   const [error, setError] = useState('');
@@ -395,5 +491,9 @@ export default function PortalApp({ slug }: { slug: string }) {
       });
   }, [sessionKey, unlock]);
 
-  return content ? <Page c={content} /> : <Lock onOpen={onPassword} error={error} busy={busy} />;
+  return content ? (
+    <Page c={content} ticksKey={ticksKey} />
+  ) : (
+    <Lock onOpen={onPassword} error={error} busy={busy} />
+  );
 }
