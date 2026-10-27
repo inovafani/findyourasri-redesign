@@ -1,8 +1,14 @@
 # Backend form client profile
 
-Folder ini berisi sisi server untuk halaman `/client-profile/`. Site-nya statis
-(tidak punya server sendiri), jadi form mengirim data ke satu Edge Function di
-Supabase. Function itu yang menyimpan jawaban ke database dan file ke Storage.
+Folder ini berisi sisi server untuk dua form: `/client-profile/` (client profile)
+dan `/website-form/` (website brief). Site-nya statis (tidak punya server sendiri),
+jadi kedua form mengirim data ke satu Edge Function di Supabase. Function itu yang
+menyimpan jawaban ke database dan file ke Storage. Keduanya muncul di halaman
+`/admin/`.
+
+> **Menambah form website (`/website-form/`)?** Langsung ke bagian
+> [Form website](#form-website-website-form) di bawah. Ada 3 langkah, dan
+> urutannya penting.
 
 ## Cara pasang (tanpa terminal)
 
@@ -65,6 +71,37 @@ Kalau site kamu ada di Netlify: caranya sama, di **Site configuration**, lalu
 
 Kalau form menampilkan "This form is not connected yet", artinya langkah 4 belum
 selesai atau belum di-redeploy.
+
+## Form website (`/website-form/`)
+
+Form kedua, dibuat dari `_src/Asri Website Brief.html`, tanpa pertanyaan pilihan
+platform website (permintaan Hannah). Alamatnya `findyourasri.com/website-form/`,
+tersembunyi seperti `/client-profile/`: tidak ada di sitemap, tidak ada link ke sana,
+dan ada `noindex`. Jawabannya disimpan di tabel yang sama (`client_profiles`) dan
+file di bucket yang sama, dengan kolom baru `form_type` yang menandai asalnya
+(`client_profile` atau `website_brief`).
+
+Tidak ada pengaturan baru di Vercel: alamat function yang sama dipakai ulang.
+
+**Urutan pasang (penting):**
+
+1. **Jalankan SQL dulu.** **SQL Editor**, **New query**, paste isi
+   `supabase/migrations/20261028000000_client_profiles_form_type.sql`, lalu **Run**.
+   Aman diulang. Baris lama otomatis menjadi `client_profile`.
+2. **Perbarui function.** **Edge Functions**, `client-profile`, tab **Code**, hapus
+   isinya, paste seluruh `supabase/functions/client-profile/index.ts`, lalu
+   **Deploy**. JWT tetap **OFF**.
+3. **Push kode site** ke production.
+
+Kalau function sudah diperbarui tapi SQL belum dijalankan, client profile tetap
+tersimpan seperti biasa, sedangkan website brief **ditolak** (form menampilkan
+"This form is not switched on yet") supaya tidak tersimpan dengan label yang salah.
+Jalankan SQL-nya, lalu kirim ulang: jawaban klien masih ada di formnya.
+
+Di `/admin/` ada pilihan **All / Profiles / Websites** di kanan atas. Setiap baris
+diberi tanda **Profile** atau **Website**, dan kalau klien yang sama mengirim kedua
+form (email atau nama bisnis sama), halaman detailnya memberi link ke form satunya.
+Halaman `/admin/manage/` juga memuat keduanya.
 
 ## Halaman admin untuk tim (`/admin/`)
 
@@ -174,7 +211,7 @@ Bisa diisi di **Edge Functions**, lalu **Secrets**, atau lewat
 - **Batas ukuran file 50 MB** per file di paket Supabase Free. Kalau pakai paket
   Pro dan mau batas lebih besar, ubah `file_size_limit` di file SQL,
   `MAX_FILE_BYTES` di `index.ts`, dan `KIT_MAX_BYTES` di
-  `lib/client-profile/schema.ts`.
+  `lib/forms/engine.ts`.
 - **File yang di-upload tapi form-nya tidak jadi dikirim** tetap tersimpan di
   bucket. Bersihkan sesekali lewat dashboard **Storage** (folder yang namanya
   tidak ada di `client_profiles`).

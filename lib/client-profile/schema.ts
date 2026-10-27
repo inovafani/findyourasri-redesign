@@ -1,121 +1,16 @@
 /**
- * The client profile form: every section and question, the rules that show or
- * hide a question, and the "team follow-ups" derived from the answers.
+ * The client profile form: every section and question, the layout of the cards, and the "team follow-ups"
+ * derived from the answers. The rules and helpers shared with the website form live in lib/forms/engine.ts and
+ * are re-exported here, so existing imports of this file keep working.
  *
- * Ported from the intake prototype (_src/Asri Client Profile.html), question
- * for question. Uploads sit where the prototype put them, under the answer that
- * asks for them ('file' fields); the files themselves are not answers and are
- * kept apart from them. The rail and headings carry no numbering.
- *
- * Answers are keyed by field id. A question that is hidden by its `show`
- * rule reads as empty, so a changed mind never leaves a stale answer behind.
+ * Ported from the intake prototype (_src/Asri Client Profile.html), question for question. Uploads sit where the
+ * prototype put them, under the answer that asks for them ('file' fields). Other pages name these field ids
+ * (see the memory note on Tony's client page), so renaming one is a decision to make with him.
  */
 
-export type RefRow = { url: string; notes: string };
-export type Answer = string | string[] | boolean | RefRow[];
-export type Getter = (id: string) => Answer;
-export type Cond = (get: Getter) => boolean;
+import { applyLayout, filled, any, is, makeForm, not, hasValue, type Field, type FollowUp, type FormConfig, type Getter, type Section } from '../forms/engine';
 
-export type FieldType =
-  | 'text'
-  | 'email'
-  | 'tel'
-  | 'url'
-  | 'textarea'
-  | 'select'
-  | 'radio'
-  | 'checks'
-  | 'refs'
-  | 'consent'
-  /** Brand colours: swatches picked on screen. The answer is one string, "#0C0A08, #C9A063". */
-  | 'colors'
-  /** An upload. Holds no answer: the files live apart, keyed by this field's id. */
-  | 'file';
-
-export type Field = {
-  id: string;
-  label: string;
-  type: FieldType;
-  req?: boolean;
-  help?: string;
-  ph?: string;
-  opts?: readonly string[];
-  show?: Cond;
-  /** For 'file' fields: the category their files are filed under; 'auto' guesses from the file name. */
-  category?: KitCategory | 'auto';
-  /** The card this question sits in on screen. Set below, from GROUPS. */
-  group?: string;
-};
-
-export type Section = {
-  id: string;
-  title: string;
-  lede: string;
-  note?: string;
-  /** Rough minutes a client needs for it, for the "time left" line. Set below, from MINUTES. */
-  minutes?: number;
-  fields: Field[];
-};
-
-/* ---------- limits and categories for uploads ---------- */
-
-/** Keep in step with MAX_FILE_BYTES and EXTENSIONS in supabase/functions/client-profile/index.ts. */
-export const KIT_MAX_BYTES = 50 * 1024 * 1024;
-export const KIT_MAX_FILES = 40;
-export const KIT_EXTENSIONS = [
-  'pdf', 'png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'tif', 'tiff', 'heic',
-  'ai', 'eps', 'psd', 'indd', 'sketch', 'fig',
-  'zip', 'doc', 'docx', 'ppt', 'pptx', 'key', 'pages', 'xls', 'xlsx', 'numbers', 'csv', 'txt',
-  'ttf', 'otf', 'woff', 'woff2', 'mp4', 'mov',
-] as const;
-export const KIT_CATEGORIES = ['Logo', 'Brand guidelines', 'Photos', 'Renderings', 'Menu or price list', 'Press kit', 'Other'] as const;
-export type KitCategory = (typeof KIT_CATEGORIES)[number];
-
-/** A first guess at the category from the file name, so most files need no change. */
-export function guessCategory(name: string): KitCategory {
-  const n = name.toLowerCase();
-  const ext = n.includes('.') ? n.split('.').pop()! : '';
-  if (/logo|wordmark|monogram/.test(n)) return 'Logo';
-  if (/guideline|brand[\s_-]?(book|guide|manual|kit)|style[\s_-]?guide/.test(n)) return 'Brand guidelines';
-  if (/menu|rate|price|tariff/.test(n)) return 'Menu or price list';
-  if (/press|media[\s_-]?kit/.test(n)) return 'Press kit';
-  if (['jpg', 'jpeg', 'png', 'webp', 'heic', 'tif', 'tiff'].includes(ext)) return 'Photos';
-  return 'Other';
-}
-
-/* ---------- conditions ---------- */
-
-const is =
-  (id: string, ...vals: string[]): Cond =>
-  (get) => {
-    const x = get(id);
-    return Array.isArray(x) ? vals.some((v) => (x as string[]).includes(v)) : vals.includes(x as string);
-  };
-
-/** Answered, and not only with one of `vals`. An empty answer counts as hidden. */
-const not =
-  (id: string, ...vals: string[]): Cond =>
-  (get) => {
-    const x = get(id);
-    if (x === '') return false;
-    if (Array.isArray(x)) {
-      const list = x as string[];
-      return !(list.length === 0 || (vals.some((v) => list.includes(v)) && list.length === 1));
-    }
-    return !vals.includes(x as string);
-  };
-
-const filled =
-  (id: string): Cond =>
-  (get) => {
-    const x = get(id);
-    return Array.isArray(x) ? x.length > 0 : Boolean(x);
-  };
-
-const any =
-  (...fs: Cond[]): Cond =>
-  (get) =>
-    fs.some((f) => f(get));
+export * from '../forms/engine';
 
 const YNS = ['Yes', 'No', 'Not sure'] as const;
 const BUDGET = ['Under $2,000', '$2,000 to $5,000', '$5,000 to $10,000', '$10,000+', 'Prefer to discuss'] as const;
@@ -457,57 +352,17 @@ const GROUPS: Record<string, [string, string[]][]> = {
   ],
 };
 
-for (const s of sections) {
-  s.minutes = MINUTES[s.id];
-  for (const [title, ids] of GROUPS[s.id] ?? []) {
-    for (const id of ids) {
-      const f = s.fields.find((x) => x.id === id);
-      if (f) f.group = title;
-    }
-  }
-}
+applyLayout(sections, MINUTES, GROUPS);
 
-export const fields: Record<string, Field> = Object.fromEntries(sections.flatMap((s) => s.fields.map((f) => [f.id, f])));
 
-/* ---------- reading answers ---------- */
-
-export const emptyFor = (f: Field): Answer => (f.type === 'checks' || f.type === 'refs' ? [] : f.type === 'consent' ? false : '');
-
-export function hasValue(x: Answer): boolean {
-  if (Array.isArray(x)) return (x as unknown[]).some((r) => (typeof r === 'string' ? r : r && ((r as RefRow).url || (r as RefRow).notes)));
-  return x === true || (typeof x === 'string' && x.trim() !== '');
-}
-
-/** A getter over raw answers that applies the show rules: hidden questions read as empty. */
-export function makeGetter(answers: Record<string, Answer>): Getter {
-  const get: Getter = (id) => {
-    const f = fields[id];
-    if (!f) return '';
-    if (f.show && !f.show(get)) return emptyFor(f);
-    const x = answers[id];
-    return x === undefined ? emptyFor(f) : x;
-  };
-  return get;
-}
-
-export const isVisible = (f: Field, get: Getter) => !f.show || f.show(get);
-
-/** Everything the client should be sent: visible questions with an answer, nothing else. */
-export function collectAnswers(get: Getter): Record<string, Answer> {
-  const out: Record<string, Answer> = {};
-  for (const s of sections) {
-    for (const f of s.fields) {
-      if (!isVisible(f, get)) continue;
-      const x = get(f.id);
-      if (hasValue(x)) out[f.id] = f.type === 'refs' ? (x as RefRow[]).filter((r) => r.url || r.notes) : x;
-    }
-  }
-  return out;
-}
+const form = makeForm(sections, 'Client profile');
+export const fields = form.fields;
+export const makeGetter = form.makeGetter;
+export const collectAnswers = form.collectAnswers;
+export const answersAsText = form.answersAsText;
 
 /* ---------- follow-ups for the team ---------- */
 
-export type FollowUp = { kind: 'setup' | 'check' | 'note'; text: string };
 
 /**
  * What the team should do next, read off the answers. Stored with the profile
@@ -552,29 +407,20 @@ export function followUps(get: Getter, kitFiles: number): FollowUp[] {
   return out;
 }
 
-/* ---------- plain text copy of the answers ---------- */
 
-export function formatAnswer(f: Field, x: Answer): string {
-  if (f.type === 'refs') return (x as RefRow[]).filter((r) => r.url || r.notes).map((r) => (r.url || '(no link)') + (r.notes ? `: ${r.notes}` : '')).join('\n');
-  if (f.type === 'consent') return x ? 'Confirmed' : '';
-  if (Array.isArray(x)) return (x as string[]).join(', ');
-  return String(x).trim();
-}
-
-/** The answers as plain text, for the "copy my answers" button when sending fails or after it succeeds. */
-export function answersAsText(get: Getter, kit: { name: string; category: string; field: string }[]): string {
-  const lines: string[] = [`Client profile: ${get('biz_name') as string}`, ''];
-  for (const s of sections) {
-    const rows = s.fields.filter((f) => isVisible(f, get) && hasValue(get(f.id)));
-    const sectionFiles = kit.filter((k) => s.fields.some((f) => f.id === k.field));
-    if (!rows.length && !sectionFiles.length) continue;
-    lines.push(s.title.toUpperCase());
-    rows.forEach((f) => {
-      const t = formatAnswer(f, get(f.id));
-      lines.push(t.includes('\n') ? `${f.label}:\n${t}` : `${f.label}: ${t}`);
-    });
-    if (sectionFiles.length) lines.push(`Files sent: ${sectionFiles.map((k) => `${k.name} (${k.category})`).join(', ')}`);
-    lines.push('');
-  }
-  return lines.join('\n');
-}
+export const config: FormConfig = {
+  id: 'client_profile',
+  title: 'Client profile',
+  sub: 'It takes around 25 to 30 minutes. Your answers are saved on this device as you go, so you can stop and come back.',
+  noun: 'profile',
+  storeKey: 'asri-client-profile-v3',
+  sections,
+  fields,
+  chapters: CHAPTERS,
+  followUps,
+  makeGetter,
+  collectAnswers,
+  answersAsText,
+  exclusive: { platforms: 'None yet' },
+  doneFields: ['biz_name', 'contact_name', 'contact_email', 'sector', 'services', 'budget'],
+};

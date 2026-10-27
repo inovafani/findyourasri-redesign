@@ -68,7 +68,7 @@ for (const slug of hidden) {
 
 // Private pages that are not at the root: same four rules as a hidden page, checked by their own path. A page
 // nobody can find is still a page, and this is the check that proves it stayed that way.
-const privatePages = ['pitch/san-marzano-mongolia', 'client/mado-onna'];
+const privatePages = ['pitch/san-marzano-mongolia', 'client/mado-onna', 'client-profile', 'website-form'];
 
 for (const path of privatePages) {
   const page = join(OUT, path, 'index.html');

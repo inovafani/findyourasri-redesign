@@ -43,6 +43,12 @@
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
 
+# Website brief: same rules as the client profile.
+[[headers]]
+  for = "/website-form/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
 [[headers]]
   for = "/client/*"
   [headers.values]

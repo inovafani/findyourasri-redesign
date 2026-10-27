@@ -3,24 +3,18 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 
-import {
-  answersAsText,
-  fields,
-  formatAnswer,
-  hasValue,
-  makeGetter,
-  sections,
-  type Answer,
-} from '@/lib/client-profile/schema';
+import { formatAnswer, hasValue, type Answer } from '@/lib/forms/engine';
+
+import { FORMS, typeOf, type FormType } from './forms';
 
 import './admin.css';
 
 /**
- * The team's view of every submitted client profile, at /admin/.
+ * The team's view of everything clients have sent, at /admin/: client profiles and website briefs.
  *
  * The site is a static export, so this page holds no data. It signs in with a
  * Supabase Auth account (email and password, created in the dashboard), then
- * asks the client-profile Edge Function for the list and for each profile. The
+ * asks the client-profile Edge Function for the list and for each submission. The
  * function checks the token and the ADMIN_EMAILS list on every request, so
  * nothing here is the lock: it only shows what the function agrees to send.
  */
@@ -30,6 +24,7 @@ const STORE = 'asri-admin-session';
 const CONFIG_STORE = 'asri-admin-config';
 const LAYOUT_STORE = 'asri-admin-layout';
 const SEEN_STORE = 'asri-admin-seen';
+const KIND_STORE = 'asri-admin-kind';
 /** A profile opened in the last 20 minutes is shown again at once. Its file links last an hour. */
 const DETAIL_TTL = 20 * 60_000;
 /** Coming back to the list shows it as it was, and refreshes it quietly if it is older than this. */
@@ -47,6 +42,11 @@ type Row = {
   sector: string | null;
   services: string[];
   budget: string | null;
+  /** Which form it came from. Missing on rows saved before the column existed: those are client profiles. */
+  form_type?: FormType;
+  /** Pulled out of the answers of a website brief for the list; empty for client profiles. */
+  project_type?: string | null;
+  primary_action?: string | null;
   submitted_at: string;
   client_files: { count: number }[];
   followups?: { kind: string; text: string }[];
@@ -64,6 +64,10 @@ const CATEGORY_FIELD: Record<string, string> = {
   'Brand guidelines': 'guidelines_file',
   Logo: 'logo_files',
   Photos: 'photo_upload',
+  Inspiration: 'inspo_upload',
+  'Website copy': 'copy_upload',
+  'Supporting content': 'supporting_upload',
+  'Legal pages': 'legal_upload',
   Renderings: 'renders_upload',
   'Menu or price list': 'other_upload',
   'Press kit': 'other_upload',
@@ -84,6 +88,11 @@ const ref = (id: string) => `ASRI-${id.slice(0, 8).toUpperCase()}`;
 const filesOf = (r: Row) => r.client_files?.[0]?.count ?? 0;
 const setupOf = (r: Row) => (r.followups ?? []).filter((f) => f.kind === 'setup').length;
 const sectorOf = (r: Row) => (r.sector ?? '').split(' (')[0];
+/** The line under the name in the list: the sector of a client profile, the kind of project of a website brief. */
+const aboutOf = (r: Row) => (typeOf(r) === 'website_brief' ? r.project_type || '' : [sectorOf(r), r.country].filter(Boolean).join(' · '));
+/** The same client sending the other form: same email, or the same business name. */
+const sameClient = (a: Row, b: Row) =>
+  a.contact_email.trim().toLowerCase() === b.contact_email.trim().toLowerCase() || a.business_name.trim().toLowerCase() === b.business_name.trim().toLowerCase();
 const initials = (name: string) =>
   name
     .split(/\s+/)
@@ -147,6 +156,7 @@ export default function AdminApp() {
   const [refreshing, setRefreshing] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [layout, setLayout] = useState<'split' | 'list'>('split');
+  const [kind, setKind] = useState<'all' | FormType>('all');
   const [seen, setSeen] = useState<string[]>([]);
   const config = useRef<Config | null>(null);
   const configLoad = useRef<Promise<Config | null> | null>(null);
@@ -273,7 +283,7 @@ export default function AdminApp() {
       }
     } catch (e) {
       if (e instanceof SignInError) signOut(e.message);
-      else if (stillOpen()) setMessage('That profile did not load. Go back and try again.');
+      else if (stillOpen()) setMessage('That one did not load. Go back and try again.');
     }
   }
 
@@ -331,6 +341,8 @@ export default function AdminApp() {
       const chosen = localStorage.getItem(LAYOUT_STORE);
       /* eslint-disable react-hooks/set-state-in-effect -- one-off read of saved preferences */
       if (chosen === 'split' || chosen === 'list') setLayout(chosen);
+      const which = localStorage.getItem(KIND_STORE);
+      if (which === 'client_profile' || which === 'website_brief') setKind(which);
       const opened = JSON.parse(localStorage.getItem(SEEN_STORE) ?? '[]');
       if (Array.isArray(opened)) setSeen(opened.filter((x) => typeof x === 'string'));
       /* eslint-enable react-hooks/set-state-in-effect */
@@ -343,6 +355,15 @@ export default function AdminApp() {
     setLayout(next);
     try {
       localStorage.setItem(LAYOUT_STORE, next);
+    } catch {
+      // The choice just is not remembered.
+    }
+  }
+
+  function chooseKind(next: 'all' | FormType) {
+    setKind(next);
+    try {
+      localStorage.setItem(KIND_STORE, next);
     } catch {
       // The choice just is not remembered.
     }
@@ -406,9 +427,16 @@ export default function AdminApp() {
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
     return (rows ?? []).filter(
-      (r) => !q || [r.business_name, r.contact_name, r.contact_email, r.country ?? '', r.sector ?? ''].some((x) => x.toLowerCase().includes(q)),
+      (r) =>
+        (kind === 'all' || typeOf(r) === kind) &&
+        (!q || [r.business_name, r.contact_name, r.contact_email, r.country ?? '', r.sector ?? '', r.project_type ?? ''].some((x) => x.toLowerCase().includes(q))),
     );
-  }, [rows, query]);
+  }, [rows, query, kind]);
+  const counts = useMemo(() => {
+    const n = { all: rows?.length ?? 0, client_profile: 0, website_brief: 0 };
+    for (const r of rows ?? []) n[typeOf(r)] += 1;
+    return n;
+  }, [rows]);
 
   function open(id: string) {
     history.pushState(null, '', `#${id}`);
@@ -424,8 +452,9 @@ export default function AdminApp() {
   async function copyText() {
     if (!detail) return;
     const { profile, files } = detail;
+    const { cfg } = FORMS[typeOf(profile)];
     const text =
-      answersAsText(makeGetter(profile.answers), []) +
+      cfg.answersAsText(cfg.makeGetter(profile.answers), []) +
       (files.length ? `\nFiles:\n${files.map((f) => `- ${f.name} (${f.category})`).join('\n')}\n` : '');
     try {
       await navigator.clipboard.writeText(text);
@@ -451,7 +480,7 @@ export default function AdminApp() {
       <div className="tone-cream tm">
         <form className="tm__login" onSubmit={onSignIn}>
           <h1 className="tm__h1">Team sign in</h1>
-          <p className="tm__muted">Client profiles are private. Sign in with your Asri team account.</p>
+          <p className="tm__muted">Everything clients send is private. Sign in with your Asri team account.</p>
           <label className="field">
             <span className="field__label">Email</span>
             <input name="email" type="email" autoComplete="username" required />
@@ -506,7 +535,14 @@ export default function AdminApp() {
 
   const detailEl =
     detail && detail.profile.id === selected ? (
-      <Detail profile={detail.profile} files={detail.files} onCopy={copyText} copied={copied} />
+      <Detail
+        profile={detail.profile}
+        files={detail.files}
+        onCopy={copyText}
+        copied={copied}
+        related={(rows ?? []).filter((r) => r.id !== detail.profile.id && typeOf(r) !== typeOf(detail.profile) && sameClient(r, detail.profile))}
+        onOpen={open}
+      />
     ) : message ? null : (
       <Opening row={rows?.find((r) => r.id === selected)} />
     );
@@ -514,12 +550,19 @@ export default function AdminApp() {
   const head = (
     <div className="tm__head">
       <div>
-        <h1 className="tm__h1">Client profiles</h1>
+        <h1 className="tm__h1">{kind === 'all' ? 'Submissions' : FORMS[kind].plural}</h1>
         <span className="tm__muted">
-          {rows === null ? 'Loading…' : `${rows.length} ${rows.length === 1 ? 'profile' : 'profiles'}`}
+          {rows === null ? 'Loading…' : `${counts[kind]} ${counts[kind] === 1 ? 'submission' : 'submissions'}`}
         </span>
       </div>
       <div className="tm-tools-top">
+        <div className="tm-view" role="group" aria-label="Show">
+          {(['all', 'client_profile', 'website_brief'] as const).map((k) => (
+            <button key={k} type="button" aria-pressed={kind === k} onClick={() => chooseKind(k)}>
+              {k === 'all' ? 'All' : k === 'client_profile' ? 'Profiles' : 'Websites'} <span className="tm-view__n">{counts[k]}</span>
+            </button>
+          ))}
+        </div>
         <button type="button" className="tm__link" onClick={() => loadList(true)} disabled={refreshing}>
           {refreshing ? 'Refreshing…' : 'Refresh'}
         </button>
@@ -531,16 +574,16 @@ export default function AdminApp() {
     <>
       <div className="tm-tools">
         <label className="tm__search">
-          <span className="tm__sr">Search profiles</span>
+          <span className="tm__sr">Search submissions</span>
           <input type="search" placeholder="Search by business, name or email" value={query} onChange={(e) => setQuery(e.target.value)} />
         </label>
       </div>
       {rows === null ? (
         message ? null : <p className="tm__muted">Loading…</p>
       ) : rows.length === 0 ? (
-        <p className="tm__empty">No profiles yet. They appear here as soon as a client sends the form.</p>
+        <p className="tm__empty">Nothing yet. Submissions appear here as soon as a client sends a form.</p>
       ) : shown.length === 0 ? (
-        <p className="tm__empty">Nothing matches that.</p>
+        <p className="tm__empty">{query.trim() || kind === 'all' ? 'Nothing matches that.' : `No ${FORMS[kind].plural.toLowerCase()} yet.`}</p>
       ) : (
         <div className={layout === 'split' ? 'tm-compact' : 'tm-rows'}>
           {shown.map((r) => {
@@ -549,6 +592,7 @@ export default function AdminApp() {
               r,
               fresh,
               selected: r.id === selected,
+              showType: kind === 'all',
               onOpen: () => open(r.id),
               onHover: () => prefetch(r.id),
             };
@@ -571,12 +615,12 @@ export default function AdminApp() {
             {selected ? (
               <>
                 <button type="button" className="tm__link tm-split__back" onClick={back}>
-                  All profiles
+                  All submissions
                 </button>
                 {detailEl}
               </>
             ) : (
-              <p className="tm__empty">Pick a client on the left to read their profile.</p>
+              <p className="tm__empty">Pick a client on the left to read what they sent.</p>
             )}
           </div>
         </div>
@@ -589,7 +633,7 @@ export default function AdminApp() {
       <div className="tone-cream tm">
         {top}
         <button type="button" className="tm__link tm__back" onClick={back}>
-          All profiles
+          All submissions
         </button>
         {message ? <p className="tm__error" role="alert">{message}</p> : null}
         {detailEl}
@@ -609,7 +653,13 @@ export default function AdminApp() {
 
 /* ---------------------------------------------------------------- list rows */
 
-type RowProps = { r: Row; fresh: boolean; selected: boolean; onOpen: () => void; onHover: () => void };
+type RowProps = { r: Row; fresh: boolean; selected: boolean; showType: boolean; onOpen: () => void; onHover: () => void };
+
+/** Which form a row came from, as a small tag. Shown when the list mixes both. */
+function TypeTag({ r }: { r: Row }) {
+  const t = typeOf(r);
+  return <span className={`tm-type tm-type--${t}`}>{t === 'website_brief' ? 'Website' : 'Profile'}</span>;
+}
 
 function TodoPill({ r }: { r: Row }) {
   // Until the function sends follow-ups with the list, say nothing rather than claim there is nothing to do.
@@ -619,7 +669,7 @@ function TodoPill({ r }: { r: Row }) {
 }
 
 /** The full-width list row: who, what they want, files, what the team has to do, and how long ago. */
-function RichRow({ r, fresh, onOpen, onHover }: RowProps) {
+function RichRow({ r, fresh, showType, onOpen, onHover }: RowProps) {
   const files = filesOf(r);
   return (
     <a
@@ -639,17 +689,26 @@ function RichRow({ r, fresh, onOpen, onHover }: RowProps) {
           {r.business_name}
           {fresh ? <i className="tm-dot" title="Not opened yet" /> : null}
         </b>
-        <small>{[sectorOf(r), r.country].filter(Boolean).join(' · ') || 'Sector not given'}</small>
+        <small>
+          {showType ? <TypeTag r={r} /> : null}
+          {aboutOf(r) || (typeOf(r) === 'website_brief' ? 'Project not given' : 'Sector not given')}
+        </small>
       </span>
       <span className="tm-row__who">
         <b className="tm-row__plain">{r.contact_name}</b>
         <small>{r.contact_email}</small>
       </span>
       <span className="tm-svc">
-        {r.services.slice(0, 2).map((x) => (
-          <span key={x}>{x.split(' (')[0]}</span>
-        ))}
-        {r.services.length > 2 ? <span>+{r.services.length - 2}</span> : null}
+        {typeOf(r) === 'website_brief' ? (
+          r.primary_action ? <span>{r.primary_action}</span> : null
+        ) : (
+          <>
+            {r.services.slice(0, 2).map((x) => (
+              <span key={x}>{x.split(' (')[0]}</span>
+            ))}
+            {r.services.length > 2 ? <span>+{r.services.length - 2}</span> : null}
+          </>
+        )}
       </span>
       <span className="tm-row__files">{files ? `${files} file${files === 1 ? '' : 's'}` : 'No files'}</span>
       <span className="tm-row__end">
@@ -661,7 +720,7 @@ function RichRow({ r, fresh, onOpen, onHover }: RowProps) {
 }
 
 /** The narrow row beside an open profile. */
-function CompactRow({ r, fresh, selected, onOpen, onHover }: RowProps) {
+function CompactRow({ r, fresh, selected, showType, onOpen, onHover }: RowProps) {
   const n = setupOf(r);
   return (
     <a
@@ -679,7 +738,8 @@ function CompactRow({ r, fresh, selected, onOpen, onHover }: RowProps) {
         {r.business_name}
       </b>
       <small>
-        {[sectorOf(r), ago(r.submitted_at)].filter(Boolean).join(' · ')}
+        {showType ? <TypeTag r={r} /> : null}
+        {[typeOf(r) === 'website_brief' ? r.project_type : sectorOf(r), ago(r.submitted_at)].filter(Boolean).join(' · ')}
         {n ? <span className="tm-todo tm-todo--small">{n} to set up</span> : null}
       </small>
     </a>
@@ -690,7 +750,24 @@ function CompactRow({ r, fresh, selected, onOpen, onHover }: RowProps) {
 
 const KIND: Record<string, string> = { setup: 'Set up', check: 'Check', note: 'Note' };
 
-function Detail({ profile, files, onCopy, copied }: { profile: Profile; files: FileRow[]; onCopy: () => void; copied: string }) {
+function Detail({
+  profile,
+  files,
+  onCopy,
+  copied,
+  related,
+  onOpen,
+}: {
+  profile: Profile;
+  files: FileRow[];
+  onCopy: () => void;
+  copied: string;
+  related: Row[];
+  onOpen: (id: string) => void;
+}) {
+  const formType = typeOf(profile);
+  const { cfg, label } = FORMS[formType];
+  const { sections, fields } = cfg;
   const answers = profile.answers ?? {};
   const text = (id: string) => (typeof answers[id] === 'string' ? (answers[id] as string) : '');
   const phone = text('contact_phone');
@@ -703,7 +780,10 @@ function Detail({ profile, files, onCopy, copied }: { profile: Profile; files: F
   const extra = Object.entries(answers).filter(([k, v]) => !known.has(k) && hasValue(v as Answer));
   const categories = [...new Set(files.map((f) => f.category))];
 
+  const isBrief = formType === 'website_brief';
   const sector = text('sector') === 'Other' ? text('sector_other') : text('sector').split(' (')[0];
+  const action = text('primary_action') === 'Other' ? text('primary_other') || 'Other' : text('primary_action');
+  const dated = text('hard_deadline').startsWith('Yes');
   const where = [text('city'), text('country')].filter(Boolean).join(', ');
   const wants = Array.isArray(answers.services) ? (answers.services as string[]).map((x) => x.split(' (')[0]) : [];
   const colours = text('colors').split(/[,\s]+/).filter((c) => /^#[0-9a-f]{6}$/i.test(c));
@@ -718,7 +798,17 @@ function Detail({ profile, files, onCopy, copied }: { profile: Profile; files: F
     <article className="tm__detail">
       <h1 className="tm__h1">{profile.business_name}</h1>
       <p className="tm__muted">
-        Received {date(profile.submitted_at)} from {profile.contact_name}. Reference {ref(profile.id)}.
+        {label} received {date(profile.submitted_at)} from {profile.contact_name}. Reference {ref(profile.id)}.
+        {related.map((r) => (
+          <span key={r.id}>
+            {' '}
+            Also sent their {FORMS[typeOf(r)].label.toLowerCase()} ({date(r.submitted_at)}):{' '}
+            <button type="button" className="tm__link" onClick={() => onOpen(r.id)}>
+              open it
+            </button>
+            .
+          </span>
+        ))}
       </p>
       <div className="tm-reach">
         <a className="tm-reach__item" href={`mailto:${profile.contact_email}`}>
@@ -783,25 +873,49 @@ function Detail({ profile, files, onCopy, copied }: { profile: Profile; files: F
 
       <section id="tm-overview" className="tm-over">
         <div className="tm-facts">
-          <div className="tm-fact">
-            <small>Business</small>
-            <b>{sector || 'Sector not given'}</b>
-            <span>{[text('stage'), where].filter(Boolean).join(' · ') || 'No more detail'}</span>
-          </div>
-          <div className="tm-fact">
-            <small>Wants</small>
-            <b>{wants.length ? `${wants.slice(0, 3).join(', ')}${wants.length > 3 ? `, +${wants.length - 3} more` : ''}` : 'Not given'}</b>
-            <span>{text('budget') ? `Budget: ${text('budget')}` : 'No budget given'}</span>
-          </div>
+          {isBrief ? (
+            <>
+              <div className="tm-fact">
+                <small>Project</small>
+                <b>{text('project_type') || 'Not given'}</b>
+                <span>{text('why_now') ? `Why now: ${text('why_now')}` : 'No reason given'}</span>
+              </div>
+              <div className="tm-fact">
+                <small>Main action</small>
+                <b>{action || 'Not given'}</b>
+                <span>{text('copy_owner') ? `Copy: ${text('copy_owner')}` : 'Copy not decided'}</span>
+              </div>
+              <div className="tm-fact">
+                <small>Deadline</small>
+                <b>{dated ? text('deadline_date') || 'Date not given' : 'No fixed date'}</b>
+                <span>{dated ? text('deadline_reason') || 'Reason not given' : 'Nothing tied to it'}</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="tm-fact">
+                <small>Business</small>
+                <b>{sector || 'Sector not given'}</b>
+                <span>{[text('stage'), where].filter(Boolean).join(' · ') || 'No more detail'}</span>
+              </div>
+              <div className="tm-fact">
+                <small>Wants</small>
+                <b>{wants.length ? `${wants.slice(0, 3).join(', ')}${wants.length > 3 ? `, +${wants.length - 3} more` : ''}` : 'Not given'}</b>
+                <span>{text('budget') ? `Budget: ${text('budget')}` : 'No budget given'}</span>
+              </div>
+            </>
+          )}
           <div className="tm-fact">
             <small>Contact</small>
             <b>{[profile.contact_name, text('contact_role')].filter(Boolean).join(', ')}</b>
             <span>{[profile.contact_email, phone].filter(Boolean).join(' · ')}</span>
           </div>
-          <div className="tm-fact">
-            <small>Brand colours</small>
-            {colours.length ? <Swatches value={colours.join(', ')} /> : <b>None given</b>}
-          </div>
+          {isBrief ? null : (
+            <div className="tm-fact">
+              <small>Brand colours</small>
+              {colours.length ? <Swatches value={colours.join(', ')} /> : <b>None given</b>}
+            </div>
+          )}
         </div>
 
         {profile.followups?.length ? (
@@ -894,7 +1008,7 @@ function Opening({ row }: { row?: Row }) {
       <h1 className="tm__h1">{row?.business_name ?? 'Loading…'}</h1>
       {row ? (
         <p className="tm__muted">
-          Received {date(row.submitted_at)} from {row.contact_name}. Reference {ref(row.id)}.
+          {FORMS[typeOf(row)].label} received {date(row.submitted_at)} from {row.contact_name}. Reference {ref(row.id)}.
         </p>
       ) : null}
       <p className="tm__muted tm__note" role="status">

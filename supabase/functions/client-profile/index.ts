@@ -1,13 +1,14 @@
 /**
- * The back end of /client-profile/ and /admin/. The site is a static export, so
- * it has no server of its own: the form and the admin page call this function,
+ * The back end of /client-profile/, /website-form/ and /admin/. The site is a static export, so
+ * it has no server of its own: the forms and the admin page call this function,
  * which is the only thing that touches the client_* tables and the
  * client-brand-assets bucket.
  *
  * Actions, all POST with a JSON body. Public (the client's form):
  *   upload-url  { action, draftId, name, size }
  *               -> { path, signedUrl, apikey }   (the browser PUTs the file there)
- *   submit      { action, draftId, answers, followups, files, source, website, turnstile }
+ *   submit      { action, formType, draftId, answers, followups, files, source, website, turnstile }
+ *               formType is 'client_profile' (the default) or 'website_brief'
  *               -> { ok: true, ref }
  *   config      { action } -> { url, anonKey }   (what the admin page needs to sign in)
  * Admin only (Authorization: Bearer <access token of a signed-in admin>):
@@ -26,7 +27,7 @@
  *   ADMIN_EMAILS          comma-separated emails allowed into /admin/. Empty means nobody.
  *   ALLOWED_ORIGINS       comma-separated; defaults to the live site and localhost
  *   TURNSTILE_SECRET_KEY  optional: turns on the Turnstile check on submit
- *   NOTIFY_WEBHOOK_URL    optional: Slack-compatible incoming webhook, posted to when a profile arrives
+ *   NOTIFY_WEBHOOK_URL    optional: Slack-compatible incoming webhook, posted to when a profile or brief arrives
  *   ADMIN_URL             optional: the /admin/ address, added to that message as a link
  */
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -44,7 +45,13 @@ const EXTENSIONS = new Set([
   'zip', 'doc', 'docx', 'ppt', 'pptx', 'key', 'pages', 'xls', 'xlsx', 'numbers', 'csv', 'txt',
   'ttf', 'otf', 'woff', 'woff2', 'mp4', 'mov',
 ]);
-const CATEGORIES = new Set(['Logo', 'Brand guidelines', 'Photos', 'Renderings', 'Menu or price list', 'Press kit', 'Other']);
+const CATEGORIES = new Set([
+  'Logo', 'Brand guidelines', 'Photos', 'Renderings', 'Menu or price list', 'Press kit',
+  'Inspiration', 'Website copy', 'Supporting content', 'Legal pages',
+  'Other',
+]);
+// The two forms stored in client_profiles. Anything else (or nothing, from a page cached before the website form) is a client profile.
+const FORM_TYPES = new Set(['client_profile', 'website_brief']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const KEY = /^[A-Za-z0-9_]{1,60}$/; // field ids such as url_Instagram have capitals
@@ -214,13 +221,18 @@ async function submit(req: Request, body: Record<string, unknown>, ipHash: strin
   const draftId = str(body.draftId, 40);
   if (!UUID.test(draftId)) throw new Fail(400, 'bad_draft');
 
+  const rawType = body.formType === undefined ? 'client_profile' : str(body.formType, 30);
+  if (!FORM_TYPES.has(rawType)) throw new Fail(400, 'bad_form');
+  const formType = rawType;
+
   const answers = cleanAnswers(body.answers);
   const businessName = str(answers.biz_name, 200);
   const contactName = str(answers.contact_name, 200);
   const contactEmail = str(answers.contact_email, 200);
   if (!businessName || !contactName) throw new Fail(400, 'missing_fields');
   if (!EMAIL.test(contactEmail)) throw new Fail(400, 'bad_email');
-  if (answers.consent !== true) throw new Fail(400, 'consent');
+  // Only the client profile asks for consent to use the materials; the website brief has no such question.
+  if (formType === 'client_profile' && answers.consent !== true) throw new Fail(400, 'consent');
 
   if (await rateLimited(ipHash, 'submit', SUBMITS_PER_HOUR)) throw new Fail(429, 'rate_limited');
   await verifyTurnstile(str(body.turnstile, 4000), ip);
@@ -260,7 +272,7 @@ async function submit(req: Request, body: Record<string, unknown>, ipHash: strin
       .map(([key, value]) => [key, str(value, 200)]),
   );
 
-  const { error: profileError } = await db.from('client_profiles').insert({
+  const row = {
     id: draftId,
     business_name: businessName,
     contact_name: contactName,
@@ -271,9 +283,16 @@ async function submit(req: Request, body: Record<string, unknown>, ipHash: strin
     budget: str(answers.budget, 100) || null,
     answers,
     followups: cleanFollowups(body.followups),
-    consent: true,
+    consent: answers.consent === true,
     source,
-  });
+  };
+  let { error: profileError } = await db.from('client_profiles').insert({ ...row, form_type: formType });
+  if (profileError && /form_type/i.test(profileError.message ?? '')) {
+    // The form_type column has not been added yet (run the SQL for it). A client profile is what every row was
+    // before, so it is saved as it was. A website brief is refused: filing it as a profile would mislabel it.
+    if (formType !== 'client_profile') throw new Fail(503, 'not_ready');
+    ({ error: profileError } = await db.from('client_profiles').insert(row));
+  }
   if (profileError) throw profileError;
 
   if (fileRows.length) {
@@ -288,13 +307,13 @@ async function submit(req: Request, body: Record<string, unknown>, ipHash: strin
     }
   }
 
-  await notify(draftId, businessName, contactName, contactEmail, fileRows.length).catch((e) => console.error('notify failed', e));
+  await notify(formType, draftId, businessName, contactName, contactEmail, fileRows.length).catch((e) => console.error('notify failed', e));
   return json(req, 200, { ok: true, ref: refFor(draftId) });
 }
 
 const refFor = (id: string) => `ASRI-${id.slice(0, 8).toUpperCase()}`;
 
-async function notify(id: string, business: string, contact: string, email: string, files: number) {
+async function notify(formType: string, id: string, business: string, contact: string, email: string, files: number) {
   const url = Deno.env.get('NOTIFY_WEBHOOK_URL');
   if (!url) return;
   const admin = Deno.env.get('ADMIN_URL');
@@ -303,7 +322,7 @@ async function notify(id: string, business: string, contact: string, email: stri
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      text: `New client profile: ${business}. ${contact} (${email}), ${files} file${files === 1 ? '' : 's'}.${link}`,
+      text: `New ${formType === 'website_brief' ? 'website brief' : 'client profile'}: ${business}. ${contact} (${email}), ${files} file${files === 1 ? '' : 's'}.${link}`,
     }),
   });
 }
@@ -346,16 +365,22 @@ async function requireAdmin(req: Request) {
   return email;
 }
 
+/**
+ * The rows for the list. project_type and primary_action are pulled out of `answers` (they mean something for
+ * website briefs and are empty for client profiles) so the list can show them without sending every answer.
+ */
+async function listRows() {
+  const columns = 'id,business_name,contact_name,contact_email,country,sector,services,budget,status,submitted_at,followups,project_type:answers->>project_type,primary_action:answers->>primary_action,client_files(count)';
+  const query = (select: string) => db.from('client_profiles').select(select).order('submitted_at', { ascending: false }).limit(500);
+  const res = await query(`${columns},form_type`);
+  // Before the form_type column exists, every row is a client profile.
+  if (res.error && /form_type/i.test(res.error.message ?? '')) return query(columns);
+  return res;
+}
+
 async function adminList(req: Request) {
   // The token check and the read run together: a refused caller is rejected before anything is returned.
-  const [, { data, error }] = await Promise.all([
-    requireAdmin(req),
-    db
-      .from('client_profiles')
-      .select('id,business_name,contact_name,contact_email,country,sector,services,budget,status,submitted_at,followups,client_files(count)')
-      .order('submitted_at', { ascending: false })
-      .limit(500),
-  ]);
+  const [, { data, error }] = await Promise.all([requireAdmin(req), listRows()]);
   if (error) throw error;
   return json(req, 200, { profiles: data });
 }

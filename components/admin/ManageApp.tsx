@@ -4,12 +4,13 @@ import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { AdminError, adminCall, API, clearSession, readSession } from './adminSession';
+import { FORMS, typeOf, type FormType } from './forms';
 
 import './admin.css';
 
 /**
- * /admin/manage/: delete client profiles for good. Pick one or several, read what will go, type DELETE.
- * The function removes the profile's answers, its file rows and every file in its storage folder.
+ * /admin/manage/: delete client profiles and website briefs for good. Pick one or several, read what will go, type DELETE.
+ * The function removes the submission's answers, its file rows and every file in its storage folder.
  */
 
 type Row = {
@@ -17,6 +18,7 @@ type Row = {
   business_name: string;
   contact_name: string;
   contact_email: string;
+  form_type?: FormType;
   submitted_at: string;
   client_files?: { count: number }[];
 };
@@ -141,20 +143,20 @@ export default function ManageApp() {
     <div className="tone-cream tm tm--wide">
       <div className="tm__top">
         <Link href="/admin/" className="tm__link">
-          Back to profiles
+          Back to submissions
         </Link>
         <span className="tm__muted">{readSession()?.email}</span>
       </div>
 
       <div className="tm__head">
         <div>
-          <h1 className="tm__h1">Manage profiles</h1>
-          <span className="tm__muted">{rows === null ? 'Loading…' : `${rows.length} ${rows.length === 1 ? 'profile' : 'profiles'}`}</span>
+          <h1 className="tm__h1">Manage submissions</h1>
+          <span className="tm__muted">{rows === null ? 'Loading…' : `${rows.length} ${rows.length === 1 ? 'submission' : 'submissions'}`}</span>
         </div>
       </div>
 
       <p className="tm-warn">
-        Deleting removes the profile, all of its answers and every file the client uploaded. It cannot be undone. Use it for test data,
+        Deleting removes the profile or brief, all of its answers and every file the client uploaded. It cannot be undone. Use it for test data,
         or when a client asks to be removed.
       </p>
 
@@ -163,7 +165,7 @@ export default function ManageApp() {
       {result ? (
         <div className={`tm-result${result.failed.length ? ' tm-result--bad' : ''}`} role="status">
           <b>
-            Deleted {result.profiles} {result.profiles === 1 ? 'profile' : 'profiles'} and {result.files} {result.files === 1 ? 'file' : 'files'}.
+            Deleted {result.profiles} {result.profiles === 1 ? 'submission' : 'submissions'} and {result.files} {result.files === 1 ? 'file' : 'files'}.
           </b>
           {result.failed.length ? (
             <ul>
@@ -177,13 +179,13 @@ export default function ManageApp() {
 
       <div className="tm-tools">
         <label className="tm__search">
-          <span className="tm__sr">Search profiles</span>
+          <span className="tm__sr">Search submissions</span>
           <input type="search" placeholder="Search by business, name, email or reference" value={query} onChange={(e) => setQuery(e.target.value)} />
         </label>
       </div>
 
       {rows === null ? null : rows.length === 0 ? (
-        <p className="tm__empty">No profiles. Nothing to delete.</p>
+        <p className="tm__empty">Nothing here. Nothing to delete.</p>
       ) : (
         <div className="tm-manage">
           <div className="tm-manage__head">
@@ -205,7 +207,7 @@ export default function ManageApp() {
               </label>
               <span className="tm-manage__who">
                 <b>{r.business_name}</b>
-                <small>{r.contact_name} &middot; {r.contact_email}</small>
+                <small>{FORMS[typeOf(r)].label} &middot; {r.contact_name} &middot; {r.contact_email}</small>
               </span>
               <span className="tm-manage__ref">{ref(r.id)}</span>
               <span>{date(r.submitted_at)}</span>
@@ -220,7 +222,7 @@ export default function ManageApp() {
       )}
 
       {picked.length > 0 && !asking ? (
-        <div className="tm-bar" role="region" aria-label="Selected profiles">
+        <div className="tm-bar" role="region" aria-label="Selected submissions">
           <span>
             <b>{picked.length}</b> selected
           </span>
@@ -228,7 +230,7 @@ export default function ManageApp() {
             Clear selection
           </button>
           <button type="button" className="tm-danger" onClick={() => ask(picked)}>
-            Delete {picked.length} {picked.length === 1 ? 'profile' : 'profiles'}&hellip;
+            Delete {picked.length} {picked.length === 1 ? 'submission' : 'submissions'}&hellip;
           </button>
         </div>
       ) : null}
@@ -237,14 +239,14 @@ export default function ManageApp() {
         <div className="tm-modal" role="dialog" aria-modal="true" aria-labelledby="tm-modal-title">
           <div className="tm-modal__box">
             <h2 className="tm__h2" id="tm-modal-title">
-              Delete {chosen.length} {chosen.length === 1 ? 'profile' : 'profiles'} for good?
+              Delete {chosen.length} {chosen.length === 1 ? 'submission' : 'submissions'} for good?
             </h2>
             <ul className="tm-modal__list">
               {chosen.map((r) => (
                 <li key={r.id}>
                   <b>{r.business_name}</b>
                   <small>
-                    {ref(r.id)} &middot; {filesOf(r)} {filesOf(r) === 1 ? 'file' : 'files'}
+                    {FORMS[typeOf(r)].label} &middot; {ref(r.id)} &middot; {filesOf(r)} {filesOf(r) === 1 ? 'file' : 'files'}
                   </small>
                 </li>
               ))}
