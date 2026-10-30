@@ -8,7 +8,7 @@
  * (see the memory note on Tony's client page), so renaming one is a decision to make with him.
  */
 
-import { applyLayout, filled, any, is, makeForm, not, hasValue, type Field, type FollowUp, type FormConfig, type Getter, type Section } from '../forms/engine';
+import { applyLayout, filled, is, makeForm, not, hasValue, type Field, type FollowUp, type FormConfig, type Getter, type Section } from '../forms/engine';
 
 export * from '../forms/engine';
 
@@ -180,8 +180,6 @@ export const sections: Section[] = [
       { id: 'domain_name', label: 'Domain name', type: 'text', ph: 'yourbrand.com', show: is('domain_owned', 'Yes') },
       { id: 'domain_registrar', label: 'Where is it registered?', type: 'text', ph: 'GoDaddy, Namecheap, Cloudflare...', show: is('domain_owned', 'Yes') },
       { id: 'domain_account', label: 'Is the domain in an account you control?', type: 'radio', opts: ['Yes', 'No, a developer or previous agency holds it', 'Not sure'], show: is('domain_owned', 'Yes') },
-      { id: 'refs', label: 'Three to five websites you love, and why', type: 'refs', help: 'Tell us what you like or dislike about each: the look, how easy it is to book or buy, the pages, the feel.', show: any(not('has_site', 'Yes'), is('site_feel', 'Needs improvements', 'Want a full rebuild')) },
-      { id: 'site_pages', label: 'Pages or features you think you need', type: 'textarea', help: 'Booking, menus, events calendar, gallery, shop, journal, multiple languages...', show: any(not('has_site', 'Yes'), is('site_feel', 'Want a full rebuild')) },
     ],
   },
   {
@@ -327,7 +325,6 @@ const GROUPS: Record<string, [string, string[]][]> = {
   website: [
     ['Your site today', ['has_site', 'site_url', 'site_platform', 'site_manager', 'site_manager_detail', 'site_feel', 'site_issues']],
     ['Your domain', ['domain_owned', 'domain_name', 'domain_registrar', 'domain_account']],
-    ['What you would like', ['refs', 'site_pages']],
   ],
   social: [
     ['Social media', ['platforms', ...PLATFORMS.map((p) => `url_${p.replace(/\W/g, '')}`), 'social_manager', 'post_freq', 'social_keep']],
