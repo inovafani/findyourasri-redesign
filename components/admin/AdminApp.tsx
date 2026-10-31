@@ -801,11 +801,14 @@ function Detail({
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  // The system scrollbar hides itself on a Mac, so the section bar carries a thin line that fills as the page is read.
+  // The system scrollbar hides itself on a Mac, so the section bar shows where the reading is: a thin line
+  // that fills with the page, and the tab of the section on screen.
   const article = useRef<HTMLElement>(null);
   const jumpBar = useRef<HTMLElement>(null);
+  const [active, setActive] = useState('tm-overview');
   useEffect(() => {
     let frame = 0;
+    let current = '';
     const paint = () => {
       frame = 0;
       const bar = jumpBar.current;
@@ -813,11 +816,27 @@ function Detail({
       const room = document.documentElement.scrollHeight - window.innerHeight;
       const read = room > 0 ? Math.min(1, Math.max(0, window.scrollY / room)) : 0;
       bar.style.setProperty('--read', String(read));
+
+      // The section on screen is the last one whose top has reached the bar; at the very bottom, the last one.
+      const tabs = [...bar.querySelectorAll<HTMLButtonElement>('button[data-to]')];
+      const line = bar.getBoundingClientRect().bottom + 24;
+      let id = tabs[0]?.dataset.to ?? '';
+      for (const t of tabs) {
+        const el = document.getElementById(t.dataset.to ?? '');
+        if (el && el.getBoundingClientRect().top <= line) id = t.dataset.to ?? id;
+      }
+      if (room > 0 && read > 0.995) id = tabs[tabs.length - 1]?.dataset.to ?? id;
+      if (id === current) return;
+      current = id;
+      setActive(id);
+      // Keep the tab in view inside the bar without moving the page.
+      const tab = tabs.find((t) => t.dataset.to === id);
+      if (tab) bar.scrollTo({ left: tab.offsetLeft - (bar.clientWidth - tab.offsetWidth) / 2, behavior: 'smooth' });
     };
     const queue = () => {
       if (!frame) frame = requestAnimationFrame(paint);
     };
-    paint();
+    queue();
     window.addEventListener('scroll', queue, { passive: true });
     window.addEventListener('resize', queue);
     // Opening or closing a section changes the page height without a scroll.
@@ -895,15 +914,15 @@ function Detail({
       </div>
 
       <nav className="tm-jump" aria-label="Jump to a section" ref={jumpBar}>
-        <button type="button" onClick={() => jump('tm-overview')}>
+        <button type="button" data-to="tm-overview" aria-current={active === 'tm-overview' || undefined} onClick={() => jump('tm-overview')}>
           Overview
         </button>
         {secs.map(({ s }) => (
-          <button key={s.id} type="button" onClick={() => jump(`tm-${s.id}`)}>
+          <button key={s.id} type="button" data-to={`tm-${s.id}`} aria-current={active === `tm-${s.id}` || undefined} onClick={() => jump(`tm-${s.id}`)}>
             {s.title}
           </button>
         ))}
-        <button type="button" onClick={() => jump('tm-files')}>
+        <button type="button" data-to="tm-files" aria-current={active === 'tm-files' || undefined} onClick={() => jump('tm-files')}>
           All files
         </button>
       </nav>
