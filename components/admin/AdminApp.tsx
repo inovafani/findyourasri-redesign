@@ -362,6 +362,13 @@ export default function AdminApp() {
 
   function chooseKind(next: 'all' | FormType) {
     setKind(next);
+    // An open profile from the other form would sit beside a list that no longer has it, so close it.
+    const openRow = rows?.find((r) => r.id === selected);
+    if (openRow && next !== 'all' && typeOf(openRow) !== next) {
+      history.pushState(null, '', window.location.pathname + window.location.search);
+      setSelected('');
+      setDetail(null);
+    }
     try {
       localStorage.setItem(KIND_STORE, next);
     } catch {
@@ -794,8 +801,38 @@ function Detail({
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  // The system scrollbar hides itself on a Mac, so the section bar carries a thin line that fills as the page is read.
+  const article = useRef<HTMLElement>(null);
+  const jumpBar = useRef<HTMLElement>(null);
+  useEffect(() => {
+    let frame = 0;
+    const paint = () => {
+      frame = 0;
+      const bar = jumpBar.current;
+      if (!bar) return;
+      const room = document.documentElement.scrollHeight - window.innerHeight;
+      const read = room > 0 ? Math.min(1, Math.max(0, window.scrollY / room)) : 0;
+      bar.style.setProperty('--read', String(read));
+    };
+    const queue = () => {
+      if (!frame) frame = requestAnimationFrame(paint);
+    };
+    paint();
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue);
+    // Opening or closing a section changes the page height without a scroll.
+    const watch = new ResizeObserver(queue);
+    if (article.current) watch.observe(article.current);
+    return () => {
+      window.removeEventListener('scroll', queue);
+      window.removeEventListener('resize', queue);
+      watch.disconnect();
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [profile.id]);
+
   return (
-    <article className="tm__detail">
+    <article className="tm__detail" ref={article}>
       <h1 className="tm__h1">{profile.business_name}</h1>
       <p className="tm__muted">
         {label} received {date(profile.submitted_at)} from {profile.contact_name}. Reference {ref(profile.id)}.
@@ -857,7 +894,7 @@ function Detail({
         </button>
       </div>
 
-      <nav className="tm-jump" aria-label="Jump to a section">
+      <nav className="tm-jump" aria-label="Jump to a section" ref={jumpBar}>
         <button type="button" onClick={() => jump('tm-overview')}>
           Overview
         </button>

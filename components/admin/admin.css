@@ -142,7 +142,8 @@
   margin: 12px 0 0;
   padding: 10px 0;
   overflow-x: auto;
-  background: var(--a-canvas);
+  /* --read (0 to 1) is set from the page scroll; the gold line grows along the bottom edge. */
+  background: linear-gradient(var(--gold), var(--gold)) left bottom / calc(var(--read, 0) * 100%) 3px no-repeat, var(--a-canvas);
   border-bottom: 1px solid var(--a-line-soft);
   scrollbar-width: thin;
 }
