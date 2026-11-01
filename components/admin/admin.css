@@ -142,9 +142,13 @@
   margin: 12px 0 0;
   padding: 10px 0;
   overflow-x: auto;
-  /* --read (0 to 1) is set from the page scroll; the gold line grows along the bottom edge. */
-  background: linear-gradient(var(--gold), var(--gold)) left bottom / calc(var(--read, 0) * 100%) 3px no-repeat, var(--a-canvas);
-  border-bottom: 1px solid var(--a-line-soft);
+  /* --read (0 to 1) is set from the page scroll; the gold line grows along the bottom edge. It is drawn in the
+     border, because a visible scrollbar of this bar would sit over anything drawn in the padding. */
+  background:
+    linear-gradient(var(--gold), var(--gold)) left bottom / calc(var(--read, 0) * 100%) 3px no-repeat border-box,
+    linear-gradient(var(--a-line-soft), var(--a-line-soft)) left bottom / 100% 1px no-repeat border-box,
+    var(--a-canvas);
+  border-bottom: 3px solid transparent;
   scrollbar-width: thin;
 }
 .tm-jump button { all: unset; box-sizing: border-box; flex: none; padding: 5px 12px; border: 1px solid var(--a-line); cursor: pointer; color: var(--a-ink-2); font: 400 13.5px/1.3 var(--font-sans); white-space: nowrap; }
