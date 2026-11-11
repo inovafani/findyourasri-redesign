@@ -1,0 +1,432 @@
+/*
+ * MADÒ ONNÀ December social calendar (components/madoonna/SocialCalendar.tsx). Mirrors the shared draft: a light
+ * reading page, one narrow column, MADÒ black and gold for the hero and the countdown pill. Scoped under .msp.
+ */
+.msp {
+  --msp-page: #fbfaf9;
+  --msp-raised: #f4efec;
+  --msp-hairline: #eae9ea;
+  --msp-ink: #251f21;
+  --msp-ink-2: #585254;
+  --msp-ink-3: #969394;
+  --msp-teal: #73a89a;
+  --msp-teal-ink: #4f8576;
+  --msp-black: #16120e;
+  --msp-gold: #c8a050;
+  --msp-display: var(--font-display, Didot, 'Bodoni 72', 'Bodoni Moda', Georgia, serif);
+  --msp-text: 'Avenir Next', var(--font-nunito), 'Nunito Sans', system-ui, sans-serif;
+  min-height: 100vh;
+  background: var(--msp-page);
+  color: var(--msp-ink);
+  font: 400 14px/24px var(--msp-text);
+  -webkit-font-smoothing: antialiased;
+}
+.msp *,
+.msp *::before,
+.msp *::after {
+  box-sizing: border-box;
+}
+.msp img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+:where(.msp) :where(p, h1, h2, h3, dl, dd, ol, ul, figure) {
+  margin: 0;
+  padding: 0;
+}
+:where(.msp button) {
+  font: inherit;
+  color: inherit;
+}
+.msp button:focus-visible {
+  outline: 2px solid var(--msp-teal);
+  outline-offset: 2px;
+}
+
+.msp-wrap {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 48px 36px 80px;
+}
+
+/* Head */
+.msp-head h1 {
+  font: 400 36px / 1.1 var(--msp-display);
+  letter-spacing: -0.01em;
+}
+.msp-fact {
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--msp-ink-2);
+}
+.msp-intro {
+  margin-top: 12px;
+  max-width: 62ch;
+}
+
+/* Hero */
+.msp-hero {
+  margin: 40px 0 48px;
+  padding: 40px 24px 32px;
+  border-radius: 24px;
+  background: var(--msp-black);
+  text-align: center;
+}
+.msp-hero img {
+  width: 168px;
+  margin: 0 auto 16px;
+}
+.msp-hero-line {
+  color: var(--msp-gold);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+.msp-hero-sub {
+  margin-top: 6px;
+  color: rgba(244, 239, 236, 0.66);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+/* Figures */
+.msp-figure img {
+  border-radius: 12px;
+  width: 100%;
+}
+/* A lone render keeps its proportions and stops at 600px tall, like the original gallery. */
+.msp-figure > img {
+  width: auto;
+  max-height: 600px;
+}
+.msp-figure figcaption {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--msp-ink-2);
+}
+.msp-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.msp-pair img {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* Sections */
+.msp-section {
+  margin-top: 56px;
+}
+.msp-section h2 {
+  margin-bottom: 20px;
+  font: 400 21px/1.25 var(--msp-display);
+}
+.msp-body {
+  max-width: 62ch;
+  margin-bottom: 24px;
+}
+.msp-small {
+  margin: 4px 0 12px;
+  font-size: 12px;
+  color: var(--msp-ink-2);
+}
+.msp-sub {
+  margin: 28px 0 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.msp-sub span {
+  display: block;
+  font-weight: 400;
+  color: var(--msp-ink-2);
+}
+
+/* Label / value rows */
+.msp-facts > div {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 16px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--msp-hairline);
+}
+.msp-facts > div:last-child {
+  border-bottom: 0;
+}
+.msp-facts dt {
+  color: var(--msp-ink-2);
+}
+.msp-steps + .msp-facts {
+  margin-top: 24px;
+}
+
+/* Scene and story lists */
+.msp-steps {
+  list-style: none;
+  counter-reset: msp-step;
+}
+.msp-steps li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--msp-hairline);
+  counter-increment: msp-step;
+}
+.msp-steps li:last-child {
+  border-bottom: 0;
+}
+.msp-steps.is-numbered li {
+  position: relative;
+  padding-left: 25px;
+}
+.msp-steps.is-numbered li::before {
+  content: counter(msp-step) '.';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  color: var(--msp-ink-2);
+}
+.msp-steps strong {
+  display: block;
+  font-weight: 600;
+}
+.msp-steps span {
+  display: block;
+  color: var(--msp-ink-2);
+}
+.msp-steps em {
+  flex-shrink: 0;
+  max-width: 45%;
+  font-style: normal;
+  font-weight: 500;
+  color: var(--msp-teal-ink);
+  text-align: right;
+}
+
+/* Captions */
+.msp-caption {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 20px 0 8px;
+  padding: 16px;
+  border: 1px solid var(--msp-hairline);
+  border-radius: 12px;
+  white-space: pre-line;
+}
+.msp-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid var(--msp-hairline);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(37, 31, 33, 0.05);
+}
+.msp-copy:hover {
+  background: var(--msp-raised);
+}
+
+/* Callouts */
+.msp-callout {
+  margin-top: 28px;
+}
+.msp-callout strong {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.msp-callout.is-warning {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: var(--msp-raised);
+}
+.msp-callout.is-note {
+  padding: 2px 0 2px 12px;
+  border-left: 2px solid var(--msp-hairline);
+}
+
+/* Filters */
+.msp-filter {
+  margin-bottom: 16px;
+}
+.msp-filter > span {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--msp-ink-2);
+}
+.msp-filter > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.msp-filter button {
+  min-height: 34px;
+  padding: 4px 12px;
+  border: 1px solid var(--msp-hairline);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+.msp-filter button:hover {
+  background: var(--msp-raised);
+}
+.msp-filter button[aria-pressed='true'] {
+  border-color: var(--msp-teal);
+  background: var(--msp-teal);
+  color: #fff;
+}
+
+/* Post cards */
+.msp-week {
+  margin-top: 28px;
+}
+.msp-week-title {
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--msp-ink-2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.msp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-items: start;
+}
+.msp-card {
+  border: 1px solid var(--msp-hairline);
+  border-radius: 12px;
+  background: var(--msp-page);
+  overflow: hidden;
+}
+.msp-card.is-open {
+  border-color: var(--msp-gold);
+}
+.msp-card-head {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 10px;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.msp-card-date {
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.msp-card-name {
+  font-size: 13.5px;
+  line-height: 1.35;
+}
+.msp-card-head:hover .msp-card-name,
+.msp-card.is-open .msp-card-name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.msp-pill {
+  justify-self: start;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--msp-raised);
+  color: var(--msp-ink-2);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.msp-phase-tease {
+  background: #f3e9d4;
+  color: #7a5f24;
+}
+.msp-phase-reveal {
+  background: #e8efe9;
+  color: #3d6b52;
+}
+.msp-phase-buildup {
+  background: #e9ecf4;
+  color: #42557f;
+}
+.msp-phase-countdown {
+  background: var(--msp-black);
+  color: var(--msp-gold);
+}
+.msp-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--msp-hairline);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.msp-card-body > div {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 8px;
+}
+.msp-card-body dt {
+  color: var(--msp-ink-2);
+  font-weight: 600;
+}
+
+.msp-source {
+  max-width: 56ch;
+  margin-top: 48px;
+}
+
+@media (max-width: 600px) {
+  .msp-wrap {
+    padding: 32px 16px 56px;
+  }
+  .msp-head h1 {
+    font-size: 28px;
+  }
+  .msp-hero img {
+    width: 136px;
+  }
+  .msp-hero {
+    margin: 28px 0 24px;
+    border-radius: 18px;
+  }
+  .msp-section {
+    margin-top: 44px;
+  }
+  .msp-grid {
+    grid-template-columns: 1fr;
+  }
+  .msp-card-head {
+    grid-template-columns: auto auto 1fr;
+  }
+  .msp-card-name {
+    grid-column: 1 / -1;
+  }
+  .msp-facts > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .msp-steps li {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .msp-steps em {
+    max-width: none;
+    text-align: left;
+  }
+  .msp-pair {
+    grid-template-columns: 1fr;
+  }
+}
