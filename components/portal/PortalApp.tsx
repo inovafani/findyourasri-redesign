@@ -16,7 +16,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import './portal.css';
 
-type Meta = { v: number; kdf: string; rounds: number; salt: string; cipher: string };
+export type Meta = { v: number; kdf: string; rounds: number; salt: string; cipher: string };
 
 type Tile = { big: string; what: string; note: string };
 type Filed = { label: string; date: string; state: string };
@@ -71,10 +71,10 @@ type Payload = {
   footer: { provenance: string; privacy: string };
 };
 
-const b64 = (s: string) => Uint8Array.from(atob(s), (ch) => ch.charCodeAt(0));
-const toB64 = (u: Uint8Array) => btoa(String.fromCharCode(...u));
+export const b64 = (s: string) => Uint8Array.from(atob(s), (ch) => ch.charCodeAt(0));
+export const toB64 = (u: Uint8Array) => btoa(String.fromCharCode(...u));
 
-async function deriveKey(pw: string, meta: Meta) {
+export async function deriveKey(pw: string, meta: Meta) {
   const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
   return crypto.subtle.deriveKey(
     { name: 'PBKDF2', salt: b64(meta.salt), iterations: meta.rounds, hash: 'SHA-256' },
@@ -85,13 +85,13 @@ async function deriveKey(pw: string, meta: Meta) {
   );
 }
 
-async function openBlob(key: CryptoKey, buf: ArrayBuffer) {
+export async function openBlob(key: CryptoKey, buf: ArrayBuffer) {
   const b = new Uint8Array(buf);
   return crypto.subtle.decrypt({ name: 'AES-GCM', iv: b.slice(0, 12) }, key, b.slice(12));
 }
 
 /* ------------------------------------------------------------------ the lock */
-function Lock({ onOpen, error, busy }: { onOpen: (pw: string) => void; error: string; busy: boolean }) {
+export function Lock({ onOpen, error, busy }: { onOpen: (pw: string) => void; error: string; busy: boolean }) {
   const [pw, setPw] = useState('');
   return (
     <div className="po-lock">

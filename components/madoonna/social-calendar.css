@@ -94,11 +94,6 @@
   border-radius: 12px;
   width: 100%;
 }
-/* A lone render keeps its proportions and stops at 600px tall, like the original gallery. */
-.msp-figure > img {
-  width: auto;
-  max-height: 600px;
-}
 .msp-figure figcaption {
   margin-top: 10px;
   font-size: 12px;

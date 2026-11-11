@@ -55,6 +55,11 @@
     X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
+  for = "/madoonna-social-proposal/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
   for = "/portal-data/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
