@@ -13,6 +13,7 @@ type Params = Record<string, string | number | undefined>;
 declare global {
   interface Window {
     dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
@@ -20,6 +21,8 @@ export function track(event: string, params: Params = {}) {
   if (typeof window === 'undefined') return;
   const clean = Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined && v !== ''));
   (window.dataLayer = window.dataLayer || []).push({ event, ...clean });
+  // gtag.js ignores plain dataLayer objects, so GA4 (tagged directly in app/layout.tsx) needs the event as a command.
+  window.gtag?.('event', event, clean);
 }
 
 export const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'] as const;

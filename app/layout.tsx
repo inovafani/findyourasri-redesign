@@ -81,19 +81,26 @@ if(s!==null){var o=parseInt(s,10);if(o>0)document.documentElement.style.scrollBe
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('anim-ready');}catch(e){}})();`;
 
 /**
- * Google Tag Manager, behind W11: nothing loads until NEXT_PUBLIC_GTM_ID is
- * set at build time. Consent Mode v2 defaults are declared before GTM, denied
- * for EEA and UK visitors and granted elsewhere. GA4 and the Meta pixel are
- * configured inside the container, not here.
+ * Google Analytics 4 (NEXT_PUBLIC_GA_ID) and Google Tag Manager (W11,
+ * NEXT_PUBLIC_GTM_ID), each loaded only when its ID is set at build time.
+ * Consent Mode v2 defaults are declared first, in the same script, so no tag
+ * reads them late: denied for EEA and UK visitors (cookieless pings only, as
+ * there is no consent banner yet to grant them) and granted elsewhere.
+ * GA4 is tagged here directly, so it must not also be configured inside the
+ * GTM container, or every page view counts twice.
  */
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 const EEA_UK = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IS','IE','IT','LV','LI','LT','LU','MT','NL','NO','PL','PT','RO','SK','SI','ES','SE','GB'];
-const gtm = GTM_ID
-  ? `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+const tags =
+  GA_ID || GTM_ID
+    ? `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
 gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',region:${JSON.stringify(EEA_UK)}});
 gtag('consent','default',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'});
-(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',${JSON.stringify(GTM_ID)});`
-  : '';
+${GA_ID ? `gtag('js',new Date());gtag('config',${JSON.stringify(GA_ID)});
+(function(d){var j=d.createElement('script');j.async=true;j.src='https://www.googletagmanager.com/gtag/js?id='+${JSON.stringify(encodeURIComponent(GA_ID))};d.head.appendChild(j);})(document);` : ''}
+${GTM_ID ? `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',${JSON.stringify(GTM_ID)});` : ''}`
+    : '';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -106,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body>
         <script dangerouslySetInnerHTML={{ __html: boot }} />
-        {gtm ? <script dangerouslySetInnerHTML={{ __html: gtm }} /> : null}
+        {tags ? <script dangerouslySetInnerHTML={{ __html: tags }} /> : null}
 
         {/* The phone header hands navigation to a JS-driven sheet, so without
             JS there would be no nav at all. Fall back to the inline links. */}

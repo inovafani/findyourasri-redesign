@@ -40,7 +40,8 @@ export default function PrivacyPage() {
         ) : (
           <p>
             We use the details you send through our contact form only to reply to you. The full
-            notice is being finalised. For any question about your data, write to{' '}
+            notice is being finalised. We also use Google Analytics to see which pages are read
+            and how visitors find us. In the UK and EU it runs without analytics cookies. For any question about your data, write to{' '}
             <a href={mailto}>{site.email}</a>.
           </p>
         )}
